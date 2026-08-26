@@ -17,6 +17,9 @@ permissions:
 
 jobs:
   build_and_deploy:
+    # This fork builds and tests only. Publishing a release and deploying the
+    # website belong to upstream, so the job is a no-op anywhere else.
+    if: github.repository == 'cheat2001/eyebreak'
     runs-on: ubuntu-latest
     defaults:
       run:
