@@ -1,0 +1,14 @@
+# The website is out of scope for this repo's tooling. It has its own
+# dependencies and its own build.
+website/
+
+# Build output.
+build/
+DerivedData/
+
+# Xcode owns these and rewrites them on its own terms.
+**/*.xcassets/
+
+# Historical records. Reformatting them churns git blame for no benefit.
+docs/releases/
+CHANGELOG.md
