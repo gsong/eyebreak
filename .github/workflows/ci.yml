@@ -28,7 +28,9 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO
 
-      - name: Run tests (if any)
+      # This step gates the build. It has no `|| echo` fallback and no
+      # continue-on-error, so a failing test fails CI.
+      - name: Run tests
         run: |
           xcodebuild test \
             -project EyeBreak.xcodeproj \
@@ -37,8 +39,7 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            || echo "No tests configured yet"
-        continue-on-error: true
+            DEVELOPMENT_TEAM=""
 
       - name: Check for warnings
         run: |
