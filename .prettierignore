@@ -12,3 +12,6 @@ DerivedData/
 # Historical records. Reformatting them churns git blame for no benefit.
 docs/releases/
 CHANGELOG.md
+
+# Vendored from github/gh-stack. Reformatting it would churn every re-vendor.
+.claude/skills/gh-stack/
