@@ -22,7 +22,7 @@
 - [x] Full-screen blur overlay during breaks
 - [x] Motivational break messages
 - [x] Progress circle countdown
-- [x] Early break exit (ESC or click)
+- [x] Early break exit (ESC or Skip Break button)
 - [x] Auto-resume after break
 - [x] Success notification after break
 
@@ -103,7 +103,8 @@
 - [ ] Countdown timer visible during break
 - [ ] Break ends automatically after duration
 - [ ] ESC key exits break early
-- [ ] Click exits break early
+- [ ] Skip Break button exits break early
+- [ ] A click elsewhere on the overlay does not exit the break
 - [ ] Success notification appears after break
 
 ### Settings

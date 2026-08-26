@@ -90,7 +90,7 @@ Pomodoro is a time management technique: 25 minutes of work followed by a 5-minu
 
 ### Can I skip a break?
 
-Yes, press ESC or click anywhere during the break. However, we don't recommend it—your eyes need the rest!
+Yes, press ESC or click the Skip Break button on the overlay. However, we don't recommend it—your eyes need the rest!
 
 ### Does the timer pause when I'm away?
 

@@ -79,12 +79,11 @@ struct BreakOverlayView: View {
             startTimer()
             isMessageFocused = true
             
-            // Add ESC key monitoring safely
-            eventMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [onSkip] event in
+            // ESC monitoring. A local monitor only sees events macOS already
+            // routed to EyeBreak, so this depends on the overlay window being key.
+            eventMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
                 if event.keyCode == 53 { // ESC key
-                    DispatchQueue.main.async {
-                        onSkip()
-                    }
+                    skip()
                     return nil // Consume the event
                 }
                 return event
@@ -96,11 +95,6 @@ struct BreakOverlayView: View {
             if let monitor = eventMonitor {
                 NSEvent.removeMonitor(monitor)
                 eventMonitor = nil
-            }
-        }
-        .onTapGesture {
-            DispatchQueue.main.async {
-                onSkip()
             }
         }
     }
@@ -274,7 +268,33 @@ struct BreakOverlayView: View {
     
     private var skipHint: some View {
         VStack(spacing: 12) {
-            Text("Press ESC or click anywhere to skip")
+            // The overlay used to skip on a tap anywhere, which was safe only
+            // because the first click was eaten by app activation. Now that the
+            // first click lands, a stray one would end the break, so skipping
+            // needs a deliberate target.
+            Button(action: skip) {
+                HStack(spacing: 8) {
+                    Image(systemName: "forward.fill")
+                        .font(.system(size: 12))
+                    Text("Skip Break")
+                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                }
+                .foregroundColor(currentTheme.accentColor)
+                .padding(.vertical, 10)
+                .padding(.horizontal, 24)
+                .background(
+                    Capsule()
+                        .fill(currentTheme.accentColor.opacity(0.12))
+                )
+                .overlay(
+                    Capsule()
+                        .stroke(currentTheme.accentColor.opacity(0.4), lineWidth: 1.5)
+                )
+            }
+            .buttonStyle(.plain)
+            .help("Skip this break")
+            
+            Text("Press ESC or click Skip Break to skip")
                 .font(.system(size: 14, design: .rounded))
                 .foregroundColor(currentTheme.secondaryTextColor.opacity(currentTheme.secondaryTextOpacity * 0.8))
             
@@ -291,6 +311,12 @@ struct BreakOverlayView: View {
     }
     
     // MARK: - Methods
+    
+    private func skip() {
+        DispatchQueue.main.async {
+            onSkip()
+        }
+    }
     
     private func startAnimation() {
         withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {

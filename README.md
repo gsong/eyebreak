@@ -231,7 +231,7 @@ Click the eye icon to access:
 
 - Your screen will blur and show a break overlay
 - Follow the on-screen instructions to rest your eyes
-- Press **ESC** or click anywhere to end early (not recommended!)
+- Press **ESC** or click **Skip Break** to end early (not recommended!)
 - The break automatically ends after the configured duration
 
 ### Customization

@@ -113,7 +113,14 @@ class BreakTimerManager: ObservableObject {
     
     /// Skip the current break (discouraged!)
     func skipBreak() {
-        guard case .breaking = state else { return }
+        guard case .breaking = state else {
+            // Stop or Pause during a break leaves the breaking state behind but
+            // not the overlay. The overlay holds keyboard focus now, so leaving
+            // it up would trap the user behind a screen that ignores ESC and
+            // Skip. Tear it down instead.
+            ScreenBlurManager.shared.hideOverlay()
+            return
+        }
         
         settings.updateStats(breaksSkipped: 1)
         endBreak()

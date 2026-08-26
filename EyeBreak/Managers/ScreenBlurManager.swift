@@ -14,7 +14,10 @@ class ScreenBlurManager {
     static let shared = ScreenBlurManager()
     
     private var overlayWindows: [NSWindow] = []
-    private var hostingControllers: [NSHostingController<BreakOverlayView>] = []
+    private var hostingViews: [NSHostingView<BreakOverlayView>] = []
+    /// The app that was frontmost when the break started. The overlay activates
+    /// EyeBreak to take keyboard focus, so it has to hand focus back on the way out.
+    private var previousFrontmostApp: NSRunningApplication?
     private let windowQueue = DispatchQueue(label: "com.eyebreak.window", qos: .userInteractive)
     
     enum OverlayStyle {
@@ -47,7 +50,7 @@ class ScreenBlurManager {
             window.orderOut(nil)
         }
         self.overlayWindows.removeAll()
-        self.hostingControllers.removeAll()
+        self.hostingViews.removeAll()
         
         
         // Get the screen with mouse cursor (the active screen user is on)
@@ -77,18 +80,32 @@ class ScreenBlurManager {
             }
         )
         
-        let hostingController = NSHostingController(rootView: overlayView)
-        hostingController.view.frame = activeScreen.frame
+        let hostingView = FirstMouseHostingView(rootView: overlayView)
+        hostingView.frame = activeScreen.frame
         
-        window.contentView = hostingController.view
+        window.contentView = hostingView
         
-        // CRITICAL: Show window WITHOUT activating the app
-        // This prevents desktop switching but still shows the overlay
+        // Remember who had focus so the break can hand it back. Ignore EyeBreak
+        // itself, or a preview started from Settings would make us the app we
+        // return to.
+        let frontmost = NSWorkspace.shared.frontmostApplication
+        if frontmost?.processIdentifier != ProcessInfo.processInfo.processIdentifier {
+            self.previousFrontmostApp = frontmost
+        }
+        
+        // The overlay has to be modal. ESC runs off a local event monitor, which
+        // only sees events macOS already routed to EyeBreak, and macOS routes
+        // keys to the frontmost app. So the app activates and the window takes
+        // key status. The window joins all Spaces, so EyeBreak always has a
+        // window on the current one, which is what keeps activation from
+        // switching Spaces.
+        NSApp.activate()
         window.orderFrontRegardless()
+        window.makeKey()
         
         
         self.overlayWindows.append(window)
-        self.hostingControllers.append(hostingController)
+        self.hostingViews.append(hostingView)
         
     }
     
@@ -119,7 +136,18 @@ class ScreenBlurManager {
         
         // Clear arrays
         self.overlayWindows.removeAll()
-        self.hostingControllers.removeAll()
+        self.hostingViews.removeAll()
+        
+        // Give focus back to whatever the break interrupted. Every way out of a
+        // break — timer expiry, ESC, the Skip button, and Stop or Pause from the
+        // menu — ends up here.
+        //
+        // `from: .current` tells macOS that EyeBreak is yielding, which is what
+        // lets the other app take focus under cooperative activation.
+        if let previous = self.previousFrontmostApp {
+            self.previousFrontmostApp = nil
+            _ = previous.activate(from: .current)
+        }
     }
     
     // MARK: - Private Methods
@@ -148,6 +176,17 @@ class ScreenBlurManager {
         window.canHide = false
         
         return window
+    }
+}
+
+// MARK: - Custom Content View
+
+/// Hosting view that takes the click which activates EyeBreak instead of
+/// swallowing it. Without this the first click on the overlay only brings the
+/// app forward, and a skip needs two clicks.
+private final class FirstMouseHostingView<Content: View>: NSHostingView<Content> {
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool {
+        return true
     }
 }
 
