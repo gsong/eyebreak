@@ -25,6 +25,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Nothing here pushes with the token; drop it from .git/config.
+          persist-credentials: false
 
       - name: Show toolchain
         run: |
@@ -33,9 +36,12 @@ jobs:
 
       - name: Resolve version
         id: get_version
+        env:
+          # Never interpolate an input into the shell; it is caller-supplied.
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            VERSION="${{ inputs.version }}"
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            VERSION="$INPUT_VERSION"
           else
             VERSION="${GITHUB_REF#refs/tags/v}"
           fi
@@ -43,8 +49,9 @@ jobs:
           echo "Building version $VERSION"
 
       - name: Stamp version into Info.plist
+        env:
+          VERSION: ${{ steps.get_version.outputs.VERSION }}
         run: |
-          VERSION="${{ steps.get_version.outputs.VERSION }}"
           IFS='.' read -r MAJ MIN PAT <<< "${VERSION%%-*}"
           BUILD=$(( 10#${MAJ:-0} * 10000 + 10#${MIN:-0} * 100 + 10#${PAT:-0} ))
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" EyeBreak/Info.plist
@@ -59,8 +66,10 @@ jobs:
         run: ./scripts/build_dmg.sh
 
       - name: Verify DMG
+        env:
+          VERSION: ${{ steps.get_version.outputs.VERSION }}
         run: |
-          DMG="EyeBreak-v${{ steps.get_version.outputs.VERSION }}.dmg"
+          DMG="EyeBreak-v${VERSION}.dmg"
           test -f "$DMG" || { echo "::error::$DMG was not produced"; ls -la; exit 1; }
           hdiutil verify "$DMG"
           MP=$(mktemp -d)
@@ -70,10 +79,12 @@ jobs:
           hdiutil detach "$MP" -quiet
 
       - name: Package ZIP for Sparkle
+        env:
+          VERSION: ${{ steps.get_version.outputs.VERSION }}
         run: |
           APP="build/DerivedData/Build/Products/Release/EyeBreak.app"
           test -d "$APP" || { echo "::error::built app not found at $APP"; exit 1; }
-          ZIP="EyeBreak-v${{ steps.get_version.outputs.VERSION }}.zip"
+          ZIP="EyeBreak-v${VERSION}.zip"
           # ditto preserves symlinks, permissions and the framework layout that
           # a plain `zip` would flatten and break.
           ditto -c -k --sequesterRsrc --keepParent "$APP" "$ZIP"
@@ -100,8 +111,10 @@ jobs:
             ./scripts/make_appcast.sh "EyeBreak-v${EYEBREAK_VERSION}.zip" sparkle/bin/sign_update
 
       - name: Verify appcast signature
+        env:
+          VERSION: ${{ steps.get_version.outputs.VERSION }}
         run: |
-          ZIP="EyeBreak-v${{ steps.get_version.outputs.VERSION }}.zip"
+          ZIP="EyeBreak-v${VERSION}.zip"
           SIG=$(python3 -c "import re,sys; print(re.search(r'sparkle:edSignature=\"([^\"]+)\"', open('appcast.xml').read()).group(1))")
           KEY_FILE="$(mktemp)"
           printf '%s' "${{ secrets.SPARKLE_PRIVATE_KEY }}" > "$KEY_FILE"
@@ -110,8 +123,10 @@ jobs:
           echo "✅ appcast signature verifies against the release ZIP"
 
       - name: Calculate checksums
+        env:
+          VERSION: ${{ steps.get_version.outputs.VERSION }}
         run: |
-          DMG="EyeBreak-v${{ steps.get_version.outputs.VERSION }}.dmg"
+          DMG="EyeBreak-v${VERSION}.dmg"
           shasum -a 256 "$DMG" | tee checksums.txt
 
       - name: Upload build artifacts

@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main, develop]
 
+# Builds, tests and lints only; nothing here writes to the repo.
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Build and Test
@@ -14,6 +18,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Nothing here pushes with the token; drop it from .git/config.
+          persist-credentials: false
 
       - name: Show Xcode version
         run: xcodebuild -version
@@ -60,6 +67,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Nothing here pushes with the token; drop it from .git/config.
+          persist-credentials: false
 
       - name: Install SwiftLint
         run: brew install swiftlint
@@ -75,6 +85,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Nothing here pushes with the token; drop it from .git/config.
+          persist-credentials: false
 
       - name: Check for TODO/FIXME
         run: |

@@ -9,6 +9,12 @@ on:
     paths:
       - "website/**"
       - ".github/workflows/firebase-hosting-merge.yml"
+
+# The Firebase service account authenticates the deploy. repoToken only
+# comments on PRs, and a push to main has none.
+permissions:
+  contents: read
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
@@ -17,6 +23,9 @@ jobs:
         working-directory: ./website
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Nothing here pushes with the token; drop it from .git/config.
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
