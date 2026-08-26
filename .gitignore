@@ -157,3 +157,6 @@ appcast.xml
 EyeBreak-v*.zip
 sparkle/
 sparkle*.tar.xz
+
+## Claude Code
+.claude/settings.local.json

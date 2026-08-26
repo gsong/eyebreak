@@ -1,0 +1,28 @@
+{
+  "enabledPlugins": {
+    "repo-maintenance@gsong-marketplace": true
+  },
+  "extraKnownMarketplaces": {
+    "gsong-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "gsong/claude-marketplace"
+      },
+      "autoUpdate": true
+    }
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && jq -r '.tool_response.filePath // .tool_input.file_path' | { read -r f; case \"$f\" in *.md|*.json|*.yml|*.yaml) mise exec -- prettier --write \"$f\" ;; esac; } 2>/dev/null || true",
+            "statusMessage": "Formatting with prettier"
+          }
+        ]
+      }
+    ]
+  }
+}
