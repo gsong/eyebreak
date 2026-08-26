@@ -6,8 +6,9 @@ on:
     paths:
       - "docs/**"
       - "*.md"
+  # No base-branch filter, for the same reason as ci.yml: stacked pull requests
+  # target the layer below rather than main.
   pull_request:
-    branches: [main]
     paths:
       - "docs/**"
       - "*.md"
@@ -16,9 +17,15 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  check-links:
-    name: Check Documentation Links
+  # Both checks are advisory and finish in seconds, so one runner and one
+  # checkout serve them both. They used to be two separate jobs.
+  docs:
+    name: Links and Spelling
     runs-on: ubuntu-latest
 
     steps:
@@ -34,17 +41,6 @@ jobs:
           use-quiet-mode: "yes"
           config-file: ".github/markdown-link-check-config.json"
         continue-on-error: true
-
-  spell-check:
-    name: Spell Check
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          # Nothing here pushes with the token; drop it from .git/config.
-          persist-credentials: false
 
       - name: Spell check
         uses: streetsidesoftware/cspell-action@e0668cf020899e887ee8ad4d173c31738a79eae8 # v9.0.1
