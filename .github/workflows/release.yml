@@ -20,6 +20,9 @@ permissions:
 jobs:
   build-and-release:
     name: Build and Create Release
+    # This fork builds and tests only. Publishing a release and deploying the
+    # website belong to upstream, so the job is a no-op anywhere else.
+    if: github.repository == 'cheat2001/eyebreak'
     runs-on: macos-latest
 
     steps:
