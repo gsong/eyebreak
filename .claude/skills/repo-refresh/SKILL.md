@@ -1,6 +1,6 @@
 ---
 name: repo-refresh
-description: Run all repo maintenance tasks in sequence — upgrade mise tools, resolve Swift package dependencies, upgrade GitHub Actions, audit workflows with zizmor — with per-step commits and a PR. Use when the user asks to refresh, upgrade, or maintain the repo.
+description: Run all repo maintenance tasks in sequence — upgrade mise tools, upgrade the gh-stack extension, resolve Swift package dependencies, upgrade GitHub Actions, audit workflows with zizmor — with per-step commits and a PR. Use when the user asks to refresh, upgrade, or maintain the repo.
 ---
 
 # Repo Refresh
@@ -57,7 +57,66 @@ Commit:
 chore: upgrade mise tools
 ```
 
-### Step 2: Resolve Swift package dependencies
+### Step 2: Upgrade the gh-stack extension and its vendored skill
+
+This repo stacks its PRs with `gh stack`. Two pieces have to stay on the same version: the
+extension, installed globally through `gh`, and `.claude/skills/gh-stack/SKILL.md`, a copy of
+upstream's skill pinned to a tag. When they drift, the skill documents commands and flags the
+installed extension does not have.
+
+Compare the three versions:
+
+```bash
+gh stack --version
+gh api repos/github/gh-stack/releases/latest --jq '.tag_name, .published_at'
+grep -m1 "github-ref:" .claude/skills/gh-stack/SKILL.md
+```
+
+Apply the same 7-day cool-down as Step 4. Skip a release published less than 7 days ago, and say so
+rather than upgrading quietly.
+
+If a newer tag qualifies, upgrade the extension:
+
+```bash
+gh extension upgrade stack
+```
+
+Then re-vendor the skill from that same tag. List the directory before you download. Tag v0.1.0
+ships one `SKILL.md`, but upstream's default branch has since grown a `references/` subdirectory
+that a later tag will carry:
+
+```bash
+TAG=$(gh stack --version | awk '{print "v" $NF}')
+gh api "repos/github/gh-stack/contents/skills/gh-stack?ref=$TAG" --jq '.[] | "\(.type) \(.name)"'
+gh api "repos/github/gh-stack/contents/skills/gh-stack/SKILL.md?ref=$TAG" \
+  -H "Accept: application/vnd.github.raw" > .claude/skills/gh-stack/SKILL.md
+```
+
+That raw fetch overwrites the frontmatter, so restore it. The vendored file is upstream's body with
+a `metadata:` block added, recording where the copy came from:
+
+```yaml
+metadata:
+  author: github
+  github-path: skills/gh-stack
+  github-ref: refs/tags/<tag>
+  github-repo: https://github.com/github/gh-stack
+  github-tree-sha: <sha>
+```
+
+Get the SHA from `gh api "repos/github/gh-stack/contents/skills/gh-stack?ref=$TAG" --jq '.[0].sha'`.
+Change nothing else in the file. `.prettierignore` covers this path, so prettier leaves it alone and
+the body stays byte-comparable with upstream.
+
+**Verify:** `gh stack --version` matches the tag in the skill's `github-ref`.
+
+Commit:
+
+```
+chore: upgrade the gh-stack extension and skill
+```
+
+### Step 3: Resolve Swift package dependencies
 
 The app depends on Sparkle through Swift Package Manager, declared in `EyeBreak.xcodeproj`. The
 version range lives in `project.pbxproj`; the resolved commit lives in
@@ -94,7 +153,7 @@ Commit:
 chore: update Swift package dependencies
 ```
 
-### Step 3: Upgrade GitHub Actions
+### Step 4: Upgrade GitHub Actions
 
 Invoke the `gs:repo-maintenance:gha` skill. It handles minimumReleaseAge resolution, dry-run
 preview, and user confirmation. It does NOT perform git operations.
@@ -118,7 +177,7 @@ Commit:
 chore: upgrade GitHub Actions dependencies
 ```
 
-### Step 4: Audit workflows with zizmor
+### Step 5: Audit workflows with zizmor
 
 Invoke the `gs:repo-maintenance:zizmor` skill. It runs the audit, researches each finding type, and
 asks before applying fixes. It does NOT perform git operations.
@@ -139,7 +198,7 @@ Commit:
 chore: address zizmor workflow findings
 ```
 
-### Step 5: Check formatting is clean
+### Step 6: Check formatting is clean
 
 The `PostToolUse` hook in `.claude/settings.json` formats every Markdown, YAML, or JSON file
 Claude edits directly. It never sees the files the maintenance tools rewrite on their own —
@@ -150,7 +209,8 @@ mise exec -- prettier --check .
 ```
 
 `.prettierignore` keeps prettier away from `website/`, build output, `*.xcassets/`, `CHANGELOG.md`,
-and `docs/releases/`. Prettier does not read Swift — that is what SwiftLint in `ci.yml` is for.
+`docs/releases/`, and `.claude/skills/gh-stack/`. Prettier does not read Swift — that is what
+SwiftLint in `ci.yml` is for.
 
 If it reports anything, run `--write`, then commit:
 
