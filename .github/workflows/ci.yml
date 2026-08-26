@@ -2,16 +2,24 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
+  # No base-branch filter. Work here is reviewed as stacked pull requests, whose
+  # base is the layer below rather than main. Filtering on main would leave every
+  # layer except the bottom one untested.
   pull_request:
-    branches: [main, develop]
 
 # Builds, tests and lints only; nothing here writes to the repo.
 permissions:
   contents: read
 
+# Every run compiles from scratch on an empty runner, so a superseded run has
+# nothing worth finishing. A second push to a branch cancels the first run.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
+  build-test:
     name: Build and Test
     runs-on: macos-latest
 
@@ -25,52 +33,8 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
-      - name: Build
-        run: |
-          xcodebuild clean build \
-            -project EyeBreak.xcodeproj \
-            -scheme EyeBreak \
-            -configuration Debug \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO
-
-      # This step gates the build. It has no `|| echo` fallback and no
-      # continue-on-error, so a failing test fails CI.
-      - name: Run tests
-        run: |
-          xcodebuild test \
-            -project EyeBreak.xcodeproj \
-            -scheme EyeBreak \
-            -destination 'platform=macOS' \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO \
-            DEVELOPMENT_TEAM=""
-
-      - name: Check for warnings
-        run: |
-          xcodebuild clean build \
-            -project EyeBreak.xcodeproj \
-            -scheme EyeBreak \
-            -configuration Debug \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO \
-            | grep -A 5 "warning:" || echo "No warnings found! 🎉"
-        continue-on-error: true
-
-  lint:
-    name: SwiftLint
-    runs-on: macos-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          # Nothing here pushes with the token; drop it from .git/config.
-          persist-credentials: false
-
+      # SwiftLint runs before the build. It costs seconds, and going first means
+      # a broken build still reports lint findings.
       - name: Install SwiftLint
         run: brew install swiftlint
 
@@ -78,9 +42,37 @@ jobs:
         run: swiftlint lint --reporter github-actions-logging
         continue-on-error: true
 
-  code-quality:
-    name: Code Quality Checks
-    runs-on: macos-latest
+      # One compile does the work two macOS jobs used to do. The shared scheme
+      # marks EyeBreak.app buildForTesting, so `test` produces the same Release
+      # binary the old separate build job produced, then runs the suite on it.
+      #
+      # `shell: bash` runs with -eo pipefail. Without it the pipe into tee would
+      # hide a failing test behind tee's exit status.
+      - name: Build and test
+        shell: bash
+        run: |
+          xcodebuild test \
+            -project EyeBreak.xcodeproj \
+            -scheme EyeBreak \
+            -configuration Release \
+            -destination 'platform=macOS' \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            DEVELOPMENT_TEAM="" \
+            2>&1 | tee build.log
+
+      # Advisory. This reads the log the step above already wrote, where it used
+      # to be a third full clean build. It runs even when the build fails, which
+      # is when the surrounding lines matter most.
+      - name: Report warnings
+        if: always()
+        run: grep -A 5 "warning:" build.log || echo "No warnings found! 🎉"
+
+  checks:
+    name: Repo Checks
+    # Two shell commands. Neither needs a macOS runner.
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -90,11 +82,18 @@ jobs:
           persist-credentials: false
 
       - name: Check for TODO/FIXME
-        run: |
-          echo "Checking for TODO/FIXME comments..."
-          grep -r "TODO\|FIXME" EyeBreak/ || echo "No TODO/FIXME found"
-        continue-on-error: true
+        run: grep -rn "TODO\|FIXME" EyeBreak/ || echo "No TODO/FIXME found"
 
-      - name: Check file permissions
+      # The old form could not fail: `find -exec test -x` exits 0 whether or not
+      # anything matched, so a script that lost its execute bit passed silently.
+      # docs/PUBLISHING.md invokes these as ./scripts/foo.sh, so a missing bit is
+      # a real break.
+      - name: Check script permissions
         run: |
-          find . -name "*.sh" -type f -exec test -x {} \; -exec echo "✓ {}" \; || echo "Some shell scripts are not executable"
+          not_executable="$(find scripts -name '*.sh' -type f ! -perm -u+x)"
+          if [ -n "$not_executable" ]; then
+            echo "These scripts are not executable:"
+            echo "$not_executable"
+            exit 1
+          fi
+          echo "Every script under scripts/ is executable"
