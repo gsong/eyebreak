@@ -1,0 +1,12 @@
+[settings]
+# Supply-chain hardening: only install tool versions published at least 7 days
+# ago, giving time to discover compromised releases. Matches the default
+# cool-down the repo-refresh skill applies to GitHub Actions upgrades.
+minimum_release_age = "7d"
+
+[tools]
+# Formats the Markdown, YAML, and JSON in this repo. Not the Swift, and never
+# the website — see .prettierignore.
+"npm:prettier" = "3.9.6"
+# Workflow security audit. The repo-refresh skill requires it on PATH.
+zizmor = "1.29.0"
