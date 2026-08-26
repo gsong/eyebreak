@@ -65,7 +65,7 @@ class ScreenBlurManager {
         let overlayView = BreakOverlayView(
             duration: duration,
             style: style,
-            onSkip: { [weak self] in
+            onSkip: {
                 // Ensure onSkip is called on main thread safely
                 if Thread.isMainThread {
                     onSkip()

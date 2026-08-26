@@ -73,10 +73,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // THEN change to accessory mode
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             NSApp.setActivationPolicy(.accessory)
-            
-            // Verify status bar is still visible after mode change
-            if let bar = self.statusBar, let item = bar.statusItem {
-            }
         }
         
         // Setup global keyboard shortcuts

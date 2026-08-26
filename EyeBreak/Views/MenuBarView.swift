@@ -234,7 +234,7 @@ struct MenuBarView: View {
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .symbolEffect(.bounce.byLayer, options: .repeating)
+                        .symbolEffect(.bounce.byLayer, value: seconds)
                     
                     Text("\(seconds)s until break")
                         .font(.system(.title3, design: .monospaced))
