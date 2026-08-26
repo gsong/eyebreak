@@ -32,6 +32,12 @@
 		A1000001F /* AmbientReminderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001E /* AmbientReminderView.swift */; };
 		A10000023 /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000021 /* ColorTheme.swift */; };
 		A10000024 /* ColorThemeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000022 /* ColorThemeSettingsView.swift */; };
+		A20000001 /* TimerStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000 /* TimerStateTests.swift */; };
+		A20000003 /* PersistedValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000002 /* PersistedValueTests.swift */; };
+		A20000005 /* SettingsHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000004 /* SettingsHelperTests.swift */; };
+		A20000010 /* TimerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000002 /* TimerState.swift */; };
+		A20000011 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000004 /* Settings.swift */; };
+		A20000012 /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000021 /* ColorTheme.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +68,10 @@
 		A10000021 /* ColorTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTheme.swift; sourceTree = "<group>"; };
 		A10000022 /* ColorThemeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorThemeSettingsView.swift; sourceTree = "<group>"; };
 		A1FFFFFF1 /* EyeBreak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EyeBreak.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000 /* TimerStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerStateTests.swift; sourceTree = "<group>"; };
+		A20000002 /* PersistedValueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistedValueTests.swift; sourceTree = "<group>"; };
+		A20000004 /* SettingsHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelperTests.swift; sourceTree = "<group>"; };
+		A2FFFFFF1 /* EyeBreakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EyeBreakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,6 +141,7 @@
 			isa = PBXGroup;
 			children = (
 				A1FFFFF01 /* EyeBreak */,
+				A2FFFFF01 /* EyeBreakTests */,
 				A1FFFFFF0 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -153,8 +164,19 @@
 			isa = PBXGroup;
 			children = (
 				A1FFFFFF1 /* EyeBreak.app */,
+				A2FFFFFF1 /* EyeBreakTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A2FFFFF01 /* EyeBreakTests */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000 /* TimerStateTests.swift */,
+				A20000002 /* PersistedValueTests.swift */,
+				A20000004 /* SettingsHelperTests.swift */,
+			);
+			path = EyeBreakTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -180,6 +202,21 @@
 			productReference = A1FFFFFF1 /* EyeBreak.app */;
 			productType = "com.apple.product-type.application";
 		};
+		A2FFFFFF2 /* EyeBreakTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A20000060 /* Build configuration list for PBXNativeTarget "EyeBreakTests" */;
+			buildPhases = (
+				A2FFFFEF0 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = EyeBreakTests;
+			productName = EyeBreakTests;
+			productReference = A2FFFFFF1 /* EyeBreakTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -191,6 +228,9 @@
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					A1FFFFFF2 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					A2FFFFFF2 = {
 						CreatedOnToolsVersion = 15.0;
 					};
 				};
@@ -212,6 +252,7 @@
 			projectRoot = "";
 			targets = (
 				A1FFFFFF2 /* EyeBreak */,
+				A2FFFFFF2 /* EyeBreakTests */,
 			);
 		};
 /* End PBXProject section */
@@ -255,6 +296,19 @@
 				A1000001D /* AmbientReminderManager.swift in Sources */,
 				A1000001F /* AmbientReminderView.swift in Sources */,
 				A10000024 /* ColorThemeSettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A2FFFFEF0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A20000001 /* TimerStateTests.swift in Sources */,
+				A20000003 /* PersistedValueTests.swift in Sources */,
+				A20000005 /* SettingsHelperTests.swift in Sources */,
+				A20000010 /* TimerState.swift in Sources */,
+				A20000011 /* Settings.swift in Sources */,
+				A20000012 /* ColorTheme.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -526,6 +580,44 @@
 			};
 			name = Release;
 		};
+		A20000061 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.eyebreak.app.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A20000062 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.eyebreak.app.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -543,6 +635,15 @@
 			buildConfigurations = (
 				A10000063 /* Debug */,
 				A10000064 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A20000060 /* Build configuration list for PBXNativeTarget "EyeBreakTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A20000061 /* Debug */,
+				A20000062 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
