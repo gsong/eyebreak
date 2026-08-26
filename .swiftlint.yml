@@ -1,0 +1,53 @@
+# SwiftLint runs its default rule set, which this file trims down to what the
+# fork actually enforces.
+#
+# The Swift under EyeBreak/ is upstream's (cheat2001/eyebreak) and we rebase
+# onto it, so reformatting it here would conflict on every sync. Rules upstream
+# violates wholesale are disabled below rather than fixed. They enforce nothing
+# either way, and left on they bury the findings that do matter.
+#
+# Severity decides whether CI blocks. `swiftlint lint` exits non-zero for
+# error-severity violations only, so errors fail the build while warnings stay
+# advisory annotations on the pull request.
+
+# Without this SwiftLint walks the whole working directory, which locally
+# includes the vendored Sparkle sources under build/. A clean CI checkout has no
+# build/, so local and CI runs would disagree.
+included:
+  - EyeBreak
+  - EyeBreakTests
+
+disabled_rules:
+  # Whitespace and blank lines. 959 trailing-whitespace findings on their own.
+  - trailing_whitespace
+  - vertical_whitespace
+  # The size and shape of upstream's types and functions. Fair observations
+  # about code we do not own and will not restructure in a fork.
+  - cyclomatic_complexity
+  - file_length
+  - function_body_length
+  - function_parameter_count
+  - type_body_length
+  # Upstream's SwiftUI views pass closures this way throughout.
+  - multiple_closures_with_trailing_closure
+
+line_length:
+  # SwiftUI modifier chains and long user-facing strings pass the default 120
+  # routinely. 200 still catches a line nobody can read.
+  warning: 200
+  error: 300
+
+identifier_name:
+  # Color components, coordinates and loop counters are idiomatic Swift, and
+  # `id` is the name Identifiable requires. The default three-character minimum
+  # rejects every one of them.
+  excluded:
+    - a
+    - b
+    - g
+    - i
+    - id
+    - r
+    - up
+    - x
+    - y
