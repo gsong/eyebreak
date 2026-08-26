@@ -61,17 +61,20 @@ git push -u origin main
 ### Method 1: Direct Download (Easiest for Users)
 
 **What users do:**
+
 1. Go to your releases page: `https://github.com/YOUR_USERNAME/lookaway/releases`
 2. Download `EyeBreak-v1.0.0.dmg`
 3. Open DMG, drag app to Applications
 4. Done! ✅
 
 **Pros:**
+
 - No technical knowledge required
 - Works immediately
 - Most familiar to Mac users
 
 **Cons:**
+
 - Manual updates (users must check for new versions)
 
 ### Method 2: Homebrew Cask (For Tech-Savvy Users)
@@ -79,6 +82,7 @@ git push -u origin main
 **Setup (One-time):**
 
 1. Create a Homebrew tap repository:
+
    ```bash
    # Create new repo on GitHub: homebrew-eyebreak
    git clone https://github.com/YOUR_USERNAME/homebrew-eyebreak.git
@@ -97,17 +101,20 @@ git push -u origin main
    ```
 
 **Pros:**
+
 - Easy updates: `brew upgrade eyebreak`
 - Automated installation
 - Popular among developers
 
 **Cons:**
+
 - Requires Homebrew installed
 - More setup work for you
 
 ### Method 3: Mac App Store (Advanced)
 
 **Requirements:**
+
 - Apple Developer Program ($99/year)
 - App notarization and code signing
 - App Store review process
@@ -121,6 +128,7 @@ Without code signing, users will see a warning: "EyeBreak is from an unidentifie
 ### Free Option: Ad-hoc Signing
 
 The build script already does this automatically. Users can still open the app by:
+
 1. Right-click → Open
 2. Or System Settings → Privacy & Security → "Open Anyway"
 
@@ -191,6 +199,7 @@ lookaway/
 A free, open-source macOS app to help you take care of your eyes.
 
 ## ✨ Features
+
 - 20-20-20 rule reminders
 - Animated eye exercises
 - Ambient reminders while working
@@ -199,11 +208,13 @@ A free, open-source macOS app to help you take care of your eyes.
 ## 📥 Installation
 
 ### Download (Recommended)
+
 1. Download [EyeBreak.dmg](releases/latest)
 2. Open and drag to Applications
 3. Open EyeBreak and grant permissions
 
 ### Homebrew
+
 \`\`\`bash
 brew tap YOUR_USERNAME/eyebreak
 brew install --cask cheat2001/tap/eyebreak
@@ -212,20 +223,25 @@ brew install --cask cheat2001/tap/eyebreak
 See [INSTALLATION.md](INSTALLATION.md) for more options.
 
 ## 🖼️ Screenshots
+
 [Add screenshots here]
 
 ## ⌨️ Keyboard Shortcuts
+
 - ⌘⇧S - Start timer
 - ⌘⇧B - Take break now
 - ⌘⇧R - Show reminder
 
 ## 🤝 Contributing
+
 Pull requests are welcome!
 
 ## 📄 License
+
 MIT License - Free to use and modify
 
 ## ❤️ Support
+
 If you like EyeBreak, please star ⭐ the repo!
 ```
 
@@ -234,15 +250,18 @@ If you like EyeBreak, please star ⭐ the repo!
 ### Common Issues:
 
 **"cannot be opened because the developer cannot be verified"**
+
 - This is normal for unsigned apps
 - Users can right-click → Open, or go to System Settings → Privacy & Security
 
 **Homebrew cask fails**
+
 - Make sure the ZIP file is publicly accessible
 - Update SHA256 hash in `eyebreak.rb`
 - Test with `brew install --cask --debug cheat2001/tap/eyebreak`
 
 **Build fails**
+
 - Ensure Xcode Command Line Tools are installed: `xcode-select --install`
 - Check macOS version compatibility
 

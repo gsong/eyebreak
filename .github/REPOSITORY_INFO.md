@@ -70,6 +70,7 @@ Check the [Releases](https://github.com/cheat2001/eyebreak/releases) page for pr
 ## Support
 
 If you find EyeBreak helpful, please consider:
+
 - ⭐️ Starring the repository
 - 🐛 Reporting bugs
 - 💡 Suggesting features

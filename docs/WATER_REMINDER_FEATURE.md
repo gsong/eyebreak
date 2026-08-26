@@ -1,27 +1,32 @@
 # Water Reminder Feature Documentation
 
 ## Overview
+
 The Water Reminder feature adds gentle, customizable hydration reminders to help users stay healthy during work sessions. This feature integrates seamlessly with EyeBreak's existing reminder system.
 
 ## ✨ Features Implemented
 
 ### 1. **Professional SF Symbols Icons**
+
 - ✅ Replaced emojis with professional SF Symbol icons
 - ✅ 8 curated water-related icons (drop.fill, waterbottle.fill, etc.)
 - ✅ Hierarchical rendering mode for modern appearance
 - ✅ Consistent with app's design language
 
 ### 2. **Sound Support**
+
 - ✅ Plays "Glass" sound effect when reminder appears
 - ✅ Respects global sound settings
 - ✅ Works for both notification and ambient styles
 
 ### 3. **Three Reminder Styles**
+
 1. **Notification** - System notification banner
 2. **Ambient Pop-up** - Floating glass-morphism window
 3. **Both** - Notification + pop-up for maximum visibility
 
 ### 4. **Full Customization**
+
 - ✅ Custom icon picker with 16 water-themed SF Symbols
 - ✅ Custom message input
 - ✅ Live preview of custom reminder
@@ -29,6 +34,7 @@ The Water Reminder feature adds gentle, customizable hydration reminders to help
 - ✅ Blue/cyan color theme (water-inspired)
 
 ### 5. **Flexible Timing**
+
 - 30 minutes
 - 45 minutes
 - 1 hour (default)
@@ -38,9 +44,11 @@ The Water Reminder feature adds gentle, customizable hydration reminders to help
 ## 🎨 UI Components
 
 ### Settings Section Location
+
 **Settings → Breaks Tab → 💧 Water Reminders**
 
 ### Components Added
+
 1. **Toggle Card** - Enable/disable with gradient animation
 2. **Interval Picker** - Segmented control for timing
 3. **Style Picker** - Choose notification, ambient, or both
@@ -49,7 +57,9 @@ The Water Reminder feature adds gentle, customizable hydration reminders to help
 6. **Preview Card** - See custom reminder before using
 
 ### Custom Icon Picker
+
 Curated water-related SF Symbols:
+
 - drop.fill
 - waterbottle.fill
 - drop.circle.fill
@@ -70,6 +80,7 @@ Curated water-related SF Symbols:
 ## 🔧 Technical Implementation
 
 ### Files Modified
+
 1. **WaterReminderManager.swift** (New)
    - Timer management
    - Sound playback
@@ -99,6 +110,7 @@ Curated water-related SF Symbols:
    - Menu bar command
 
 ### Architecture
+
 ```
 WaterReminderManager (Singleton)
 ├── Timer scheduling
@@ -112,11 +124,13 @@ WaterReminderManager (Singleton)
 ```
 
 ## ⌨️ Keyboard Shortcuts
+
 - `⌘⇧W` - Show water reminder immediately (global & local)
 
 ## 🎯 User Experience
 
 ### Default Messages (8 variations)
+
 1. "Time for Water! - Stay hydrated! Take a sip of water."
 2. "Hydration Check - Don't forget to drink some water!"
 3. "Water Break - Your body needs water. Take a quick sip!"
@@ -127,6 +141,7 @@ WaterReminderManager (Singleton)
 8. "Wellness Check - Take a moment to drink some water."
 
 ### Custom Reminder Flow
+
 1. User enables "Use Custom Reminder"
 2. User selects icon from grid picker
 3. User types custom message
@@ -135,6 +150,7 @@ WaterReminderManager (Singleton)
 6. Reminder uses custom content
 
 ### Visual Design
+
 - **Color Theme**: Blue/Cyan gradients (water-inspired)
 - **Icon Style**: Hierarchical SF Symbols
 - **Animation**: Spring animations for smooth transitions
@@ -142,7 +158,9 @@ WaterReminderManager (Singleton)
 - **Shadow**: Soft blue shadow for depth
 
 ## 📊 Settings Persistence
+
 All settings stored in UserDefaults:
+
 - `waterReminderEnabled`
 - `waterReminderInterval`
 - `waterReminderStyle`
@@ -153,12 +171,14 @@ All settings stored in UserDefaults:
 ## 🔄 Integration with Existing Features
 
 ### Works Alongside
+
 - ✅ Eye break reminders (independent timer)
 - ✅ Ambient reminders (different purpose)
 - ✅ Sound settings (respects global toggle)
 - ✅ Notification permissions (uses same system)
 
 ### Similar Pattern To
+
 - Ambient Reminders (customization UI)
 - Break Overlays (glass-morphism design)
 - Settings Structure (consistent layout)
@@ -166,6 +186,7 @@ All settings stored in UserDefaults:
 ## 🚀 Next Steps for User
 
 ### To Use the Feature:
+
 1. Open Xcode project
 2. Add `WaterReminderManager.swift` to the project:
    - Right-click **Managers** folder
@@ -181,11 +202,13 @@ All settings stored in UserDefaults:
 ## 💡 Usage Tips
 
 ### Recommended Settings
+
 - **Interval**: 1 hour (for typical office work)
 - **Style**: Ambient (non-intrusive but visible)
 - **Custom**: Use for personal motivation messages
 
 ### Best Practices
+
 - Don't set interval too short (< 30 min can be annoying)
 - Test with `⌘⇧W` before committing to schedule
 - Use custom messages that resonate with you
@@ -194,29 +217,34 @@ All settings stored in UserDefaults:
 ## 🎨 Design Philosophy
 
 ### Professional & Consistent
+
 - SF Symbols instead of emojis
 - Matches app's existing design language
 - Blue/cyan theme (distinct from orange ambient reminders)
 
 ### User-Friendly
+
 - Clear labeling and descriptions
 - Live previews
 - Helpful suggestions
 - Test button for immediate feedback
 
 ### Flexible
+
 - Multiple timing options
 - Three reminder styles
 - Full customization capability
 - Easy to enable/disable
 
 ## 🐛 Error Handling
+
 - Gracefully handles missing sound files
 - Falls back to default icon if custom is empty
 - Handles notification permission denial
 - Timer cleanup on disable
 
 ## 🎉 Success Metrics
+
 - Non-intrusive but effective
 - Customizable to personal preferences
 - Integrates seamlessly with existing features

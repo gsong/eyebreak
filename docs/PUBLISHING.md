@@ -21,6 +21,7 @@ cd /Users/chansocheat.sok/Desktop/vibe-coding/eyebreak
 ```
 
 This will create:
+
 - `Build/EyeBreak.xcarchive` - Archive for distribution
 - `Build/Export/EyeBreak.app` - Unsigned app bundle
 - `Build/EyeBreak.zip` - ZIP archive for direct download
@@ -32,6 +33,7 @@ This will create:
 Before releasing, test both distribution formats:
 
 ### Test the DMG:
+
 ```bash
 open Build/EyeBreak-v2.0.0.dmg
 # Drag app to Applications, then launch
@@ -39,12 +41,14 @@ open /Applications/EyeBreak.app
 ```
 
 ### Test the ZIP:
+
 ```bash
 unzip Build/EyeBreak.zip -d /tmp/
 open /tmp/EyeBreak.app
 ```
 
 ### Verify Features:
+
 - [ ] App launches successfully
 - [ ] Menu bar icon appears
 - [ ] Settings open correctly
@@ -104,9 +108,9 @@ git push origin v2.0.0
 2. **Fill in Release Details:**
 
    **Choose a tag:** `v2.0.0` (should appear in dropdown after push)
-   
+
    **Release title:** `🎨 v2.0.0 - Theme Customization Release`
-   
+
    **Description:** Copy from RELEASE_NOTES_v2.0.0.md
 
    ```markdown
@@ -117,11 +121,13 @@ git push origin v2.0.0
    ## 🌟 Highlights
 
    ### Complete Theme Customization System
+
    - **Default Theme** - Classic vibrant colors
    - **Random Color** - 20 curated palettes, fresh each time
    - **Custom Theme** - Full control over all colors and effects
 
    ### Enhanced Customization
+
    - Professional SF Symbol icon picker (16 icons)
    - Independent themes for reminders and overlays
    - Smart caching for consistent display
@@ -132,12 +138,14 @@ git push origin v2.0.0
    ### macOS (14.0+)
 
    **DMG Installer (Recommended):**
+
    1. Download `EyeBreak-v2.0.0.dmg`
    2. Remove quarantine: `xattr -cr EyeBreak-v2.0.0.dmg`
    3. Open DMG and drag to Applications
    4. Launch EyeBreak
 
    **ZIP Archive:**
+
    1. Download `EyeBreak.zip`
    2. Extract and move to Applications
    3. Launch EyeBreak
@@ -148,12 +156,16 @@ git push origin v2.0.0
 
    **DMG SHA-256:**
    ```
+
    [SHA256 will be here after build]
+
    ```
 
    **ZIP SHA-256:**
    ```
+
    [SHA256 will be here after build]
+
    ```
 
    ## 📋 Full Changelog
@@ -267,6 +279,7 @@ If critical issues are discovered:
    - Check "This is a pre-release"
 
 2. **Create hotfix:**
+
    ```bash
    git checkout -b hotfix/v2.0.1
    # Fix issues
@@ -299,7 +312,7 @@ If critical issues are discovered:
 ✅ Checksums match downloaded files  
 ✅ App launches and works correctly  
 ✅ All v2.0.0 features are functional  
-✅ Documentation is accurate and complete  
+✅ Documentation is accurate and complete
 
 ---
 

@@ -2,45 +2,45 @@ name: Documentation
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
-      - 'docs/**'
-      - '*.md'
+      - "docs/**"
+      - "*.md"
   pull_request:
-    branches: [ main ]
+    branches: [main]
     paths:
-      - 'docs/**'
-      - '*.md'
+      - "docs/**"
+      - "*.md"
 
 jobs:
   check-links:
     name: Check Documentation Links
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v7
-      
-    - name: Check links
-      uses: gaurav-nelson/github-action-markdown-link-check@v1
-      with:
-        use-quiet-mode: 'yes'
-        config-file: '.github/markdown-link-check-config.json'
-      continue-on-error: true
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Check links
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: "yes"
+          config-file: ".github/markdown-link-check-config.json"
+        continue-on-error: true
 
   spell-check:
     name: Spell Check
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v7
-      
-    - name: Spell check
-      uses: streetsidesoftware/cspell-action@v9
-      with:
-        files: |
-          **/*.md
-          **/*.swift
-        config: '.github/cspell.json'
-      continue-on-error: true
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Spell check
+        uses: streetsidesoftware/cspell-action@v9
+        with:
+          files: |
+            **/*.md
+            **/*.swift
+          config: ".github/cspell.json"
+        continue-on-error: true

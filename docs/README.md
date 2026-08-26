@@ -17,33 +17,33 @@ Complete documentation for EyeBreak - a macOS menu bar app for reducing eye stra
 
 ### For Users
 
-| Document | Description |
-|----------|-------------|
-| [Quick Start Guide](../QUICK_START.md) | Get started in 5 minutes |
-| [Installation Guide](INSTALLATION.md) | Detailed installation help |
-| [FAQ](FAQ.md) | Common questions & troubleshooting |
+| Document                               | Description                        |
+| -------------------------------------- | ---------------------------------- |
+| [Quick Start Guide](../QUICK_START.md) | Get started in 5 minutes           |
+| [Installation Guide](INSTALLATION.md)  | Detailed installation help         |
+| [FAQ](FAQ.md)                          | Common questions & troubleshooting |
 
 ### For Developers
 
-| Document | Description |
-|----------|-------------|
+| Document                            | Description               |
+| ----------------------------------- | ------------------------- |
 | [Development Guide](DEVELOPMENT.md) | Setup & build from source |
-| [Architecture](ARCHITECTURE.md) | Code structure & design |
-| [Testing Guide](TESTING.md) | How to test the app |
+| [Architecture](ARCHITECTURE.md)     | Code structure & design   |
+| [Testing Guide](TESTING.md)         | How to test the app       |
 
 ### For Maintainers
 
-| Document | Description |
-|----------|-------------|
-| [Distribution Guide](DISTRIBUTION.md) | Building releases |
-| [Publishing Guide](PUBLISHING.md) | Creating GitHub releases |
+| Document                              | Description              |
+| ------------------------------------- | ------------------------ |
+| [Distribution Guide](DISTRIBUTION.md) | Building releases        |
+| [Publishing Guide](PUBLISHING.md)     | Creating GitHub releases |
 
 ### Release History
 
-| Document | Description |
-|----------|-------------|
+| Document                                                 | Description                 |
+| -------------------------------------------------------- | --------------------------- |
 | [v2.0.0 Release Notes](releases/RELEASE_NOTES_v2.0.0.md) | Theme customization release |
-| [v1.0.0 Release Notes](releases/RELEASE_NOTES_v1.0.0.md) | Initial release |
+| [v1.0.0 Release Notes](releases/RELEASE_NOTES_v1.0.0.md) | Initial release             |
 
 ## 🔗 Quick Links
 
@@ -62,35 +62,35 @@ Want to improve the docs?
 
 See [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines.
 
-│   ├── ARCHITECTURE.md    # Technical design- **Want to modify the menu bar icon?** → [Menu Bar Icon Guide](MENU_BAR_ICON_GUIDE.md)
+│ ├── ARCHITECTURE.md # Technical design- **Want to modify the menu bar icon?** → [Menu Bar Icon Guide](MENU_BAR_ICON_GUIDE.md)
 
-│   ├── TESTING.md         # Testing guide
+│ ├── TESTING.md # Testing guide
 
-│   ├── DISTRIBUTION.md    # Package & distribute## Documentation Structure
+│ ├── DISTRIBUTION.md # Package & distribute## Documentation Structure
 
-│   ├── PUBLISHING.md      # Create releases
+│ ├── PUBLISHING.md # Create releases
 
-│   └── FAQ.md             # Troubleshooting```
+│ └── FAQ.md # Troubleshooting```
 
 │docs/
 
-├── EyeBreak/              # Source code├── README.md                    # This file - documentation index
+├── EyeBreak/ # Source code├── README.md # This file - documentation index
 
-│   ├── Managers/          # Core logic├── QUICKSTART.md               # 5-minute setup guide
+│ ├── Managers/ # Core logic├── QUICKSTART.md # 5-minute setup guide
 
-│   ├── Models/            # Data models├── INSTALLATION.md             # Detailed installation instructions
+│ ├── Models/ # Data models├── INSTALLATION.md # Detailed installation instructions
 
-│   ├── Views/             # SwiftUI views├── ARCHITECTURE.md             # Technical architecture
+│ ├── Views/ # SwiftUI views├── ARCHITECTURE.md # Technical architecture
 
-│   └── Resources/         # Assets & icons├── BUILD.md                    # Building and distribution
+│ └── Resources/ # Assets & icons├── BUILD.md # Building and distribution
 
-│├── DISTRIBUTION.md             # Distribution guide
+│├── DISTRIBUTION.md # Distribution guide
 
-├── scripts/               # Build & automation scripts├── TESTING.md                  # Testing guide
+├── scripts/ # Build & automation scripts├── TESTING.md # Testing guide
 
-└── Build/                 # Output directory for DMG files├── FAQ.md                      # Frequently asked questions
+└── Build/ # Output directory for DMG files├── FAQ.md # Frequently asked questions
 
-```├── ICON_GUIDE.md              # Icon customization guide
+````├── ICON_GUIDE.md              # Icon customization guide
 
 └── MENU_BAR_ICON_GUIDE.md     # Menu bar icon guide
 
@@ -118,7 +118,7 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines.
 
 | **Troubleshoot issues** | [FAQ.md](FAQ.md) |└── QUICKSTART_PUBLISHING.md   # Publishing quick start
 
-```
+````
 
 ## 🆘 Need Help?
 

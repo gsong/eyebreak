@@ -2,35 +2,35 @@ name: Build and Test
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 jobs:
   build:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
 
-    - name: Show toolchain
-      run: xcodebuild -version
+      - name: Show toolchain
+        run: xcodebuild -version
 
-    - name: Build
-      run: |
-        xcodebuild clean build \
-          -project EyeBreak.xcodeproj \
-          -scheme EyeBreak \
-          -configuration Release \
-          -derivedDataPath ./build/DerivedData \
-          -destination 'platform=macOS' \
-          CODE_SIGNING_REQUIRED=NO \
-          CODE_SIGNING_ALLOWED=NO
+      - name: Build
+        run: |
+          xcodebuild clean build \
+            -project EyeBreak.xcodeproj \
+            -scheme EyeBreak \
+            -configuration Release \
+            -derivedDataPath ./build/DerivedData \
+            -destination 'platform=macOS' \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
 
-    - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v7
-      if: success()
-      with:
-        name: EyeBreak-Build
-        path: build/DerivedData/Build/Products/Release/EyeBreak.app
-        retention-days: 7
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v7
+        if: success()
+        with:
+          name: EyeBreak-Build
+          path: build/DerivedData/Build/Products/Release/EyeBreak.app
+          retention-days: 7

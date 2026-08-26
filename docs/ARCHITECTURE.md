@@ -3,6 +3,7 @@
 This document describes the architecture and technical design of EyeBreak.
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Design Patterns](#design-patterns)
 - [Core Components](#core-components)
@@ -13,6 +14,7 @@ This document describes the architecture and technical design of EyeBreak.
 ## Overview
 
 EyeBreak is built using modern macOS development practices:
+
 - **Language**: Swift 5.9+
 - **UI Framework**: SwiftUI
 - **Architecture**: MVVM (Model-View-ViewModel)
@@ -59,7 +61,7 @@ class BreakTimerManager: ObservableObject {
 struct EyeBreakApp: App {
     @StateObject private var timerManager = BreakTimerManager()
     @StateObject private var idleDetector = IdleDetector()
-    
+
     var body: some Scene {
         MenuBarExtra("EyeBreak", systemImage: "eye") {
             MenuBarView()
@@ -76,9 +78,11 @@ struct EyeBreakApp: App {
 ### 2. Managers (Business Logic)
 
 #### BreakTimerManager
+
 **Purpose**: Core timer logic and state management
 
 **Key Responsibilities**:
+
 - Start/stop/pause timer
 - Countdown logic
 - State transitions (idle → working → preBreak → break)
@@ -86,6 +90,7 @@ struct EyeBreakApp: App {
 - Persist statistics
 
 **Key Properties**:
+
 ```swift
 @Published var state: TimerState
 @Published var secondsRemaining: Int
@@ -94,19 +99,22 @@ struct EyeBreakApp: App {
 ```
 
 #### IdleDetector
+
 **Purpose**: Monitor user activity and pause timer when idle
 
 **Key Responsibilities**:
+
 - Use IOKit to track system idle time
 - Detect when user goes idle (>5 min default)
 - Auto-resume on activity return
 - Handle sleep/wake events
 
 **Implementation**:
+
 ```swift
 func checkIdleTime() {
     let idleTime = CGEventSource.secondsSinceLastEventType(
-        .combinedSessionState, 
+        .combinedSessionState,
         eventType: .mouseMoved
     )
     if idleTime > threshold {
@@ -116,18 +124,22 @@ func checkIdleTime() {
 ```
 
 #### NotificationManager
+
 **Purpose**: Handle all notification logic
 
 **Key Responsibilities**:
+
 - Request notification permissions
 - Schedule pre-break warnings
 - Send break notifications
 - Handle notification actions
 
 #### ScreenBlurManager
+
 **Purpose**: Manage full-screen blur overlay
 
 **Key Responsibilities**:
+
 - Create and manage NSWindow overlays
 - Apply blur effects
 - Handle multi-display setups
@@ -136,6 +148,7 @@ func checkIdleTime() {
 ### 3. Models
 
 #### TimerState
+
 ```swift
 enum TimerState: String {
     case idle
@@ -147,6 +160,7 @@ enum TimerState: String {
 ```
 
 #### Settings
+
 ```swift
 struct AppSettings {
     var workInterval: Int = 20
@@ -159,6 +173,7 @@ struct AppSettings {
 ```
 
 #### BreakRecord
+
 ```swift
 struct BreakRecord: Codable {
     let timestamp: Date
@@ -170,30 +185,35 @@ struct BreakRecord: Codable {
 ### 4. Views
 
 #### MenuBarView
+
 - Main popover interface
 - Shows timer state and controls
 - Displays quick stats
 - Access to settings and stats views
 
 #### BreakOverlayView
+
 - Full-screen overlay during breaks
 - Circular progress indicator
 - Break instructions
 - Early dismissal option
 
 #### SettingsView
+
 - Comprehensive settings interface
 - Real-time preview of changes
 - Preset configurations
 - Reset to defaults
 
 #### OnboardingView
+
 - 4-page welcome flow
 - Educational content
 - Permission requests
 - Only shown on first launch
 
 #### StatsView
+
 - Daily/weekly/monthly statistics
 - Charts and graphs (macOS 13+)
 - Insights and recommendations
@@ -279,6 +299,7 @@ Check CGEventSource idle time
 ### @StateObject vs @ObservedObject
 
 - **@StateObject**: Used when creating the manager (owns the lifecycle)
+
   ```swift
   @StateObject private var timerManager = BreakTimerManager()
   ```
@@ -291,6 +312,7 @@ Check CGEventSource idle time
 ### @AppStorage for Persistence
 
 Settings are persisted using `@AppStorage`:
+
 ```swift
 @AppStorage("workInterval") var workInterval: Int = 20
 @AppStorage("breakDuration") var breakDuration: Int = 20
@@ -299,6 +321,7 @@ Settings are persisted using `@AppStorage`:
 ### UserDefaults for Complex Data
 
 Statistics and history use `UserDefaults`:
+
 ```swift
 let encoder = JSONEncoder()
 let data = try encoder.encode(breakHistory)
@@ -312,11 +335,13 @@ UserDefaults.standard.set(data, forKey: "breakHistory")
 Required for screen blur overlay.
 
 **Request**:
+
 ```swift
 CGRequestScreenRecordingPermission()
 ```
 
 **Check**:
+
 ```swift
 CGPreflightScreenCaptureAccess()
 ```
@@ -328,6 +353,7 @@ CGPreflightScreenCaptureAccess()
 Required for break reminders.
 
 **Request**:
+
 ```swift
 UNUserNotificationCenter.current()
     .requestAuthorization(options: [.alert, .sound])
@@ -338,27 +364,32 @@ UNUserNotificationCenter.current()
 ## Threading Model
 
 ### Main Thread
+
 - All UI updates
 - Timer callbacks
 - State changes
 
 ### Background Threads
+
 - None (app is lightweight enough for main thread)
 - Future: Could move statistics calculations to background
 
 ## Performance Considerations
 
 ### Timer Optimization
+
 - Uses `Timer.publish()` from Combine (efficient)
 - Cancels timer when app is idle
 - No unnecessary updates
 
 ### Memory Management
+
 - Weak references where appropriate
 - No retain cycles
 - Proper cleanup in `deinit`
 
 ### Window Management
+
 - Break overlay windows created on-demand
 - Released immediately after break
 - One window per display (multi-monitor support)
@@ -366,16 +397,19 @@ UNUserNotificationCenter.current()
 ## Testing Strategy
 
 ### Manual Testing
+
 - Core functionality tests in `TESTING.md`
 - Permission scenarios
 - Edge cases (sleep, multiple displays, etc.)
 
 ### Future: Unit Tests
+
 - Test timer logic in isolation
 - Test state transitions
 - Mock managers for view testing
 
 ### Future: UI Tests
+
 - Test user flows
 - Test accessibility
 - Automated smoke tests
@@ -383,6 +417,7 @@ UNUserNotificationCenter.current()
 ## Future Enhancements
 
 ### Planned Architecture Improvements
+
 1. **Dependency Injection**: Use a proper DI container
 2. **Repository Pattern**: Abstract data persistence
 3. **Coordinator Pattern**: Improve navigation
@@ -390,6 +425,7 @@ UNUserNotificationCenter.current()
 5. **Analytics**: Optional, privacy-respecting usage metrics
 
 ### Scalability Considerations
+
 - App is designed to be lightweight and simple
 - Architecture supports adding new break styles
 - Easy to add new reminder types

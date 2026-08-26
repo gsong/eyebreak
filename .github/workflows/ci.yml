@@ -2,86 +2,85 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 jobs:
   build:
     name: Build and Test
     runs-on: macos-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v7
-      
-    - name: Show Xcode version
-      run: xcodebuild -version
-      
-    - name: Build
-      run: |
-        xcodebuild clean build \
-          -project EyeBreak.xcodeproj \
-          -scheme EyeBreak \
-          -configuration Debug \
-          CODE_SIGN_IDENTITY="" \
-          CODE_SIGNING_REQUIRED=NO \
-          CODE_SIGNING_ALLOWED=NO
 
-      
-    - name: Run tests (if any)
-      run: |
-        xcodebuild test \
-          -project EyeBreak.xcodeproj \
-          -scheme EyeBreak \
-          -destination 'platform=macOS' \
-          CODE_SIGN_IDENTITY="" \
-          CODE_SIGNING_REQUIRED=NO \
-          CODE_SIGNING_ALLOWED=NO \
-          || echo "No tests configured yet"
-      continue-on-error: true
-      
-    - name: Check for warnings
-      run: |
-        xcodebuild clean build \
-          -project EyeBreak.xcodeproj \
-          -scheme EyeBreak \
-          -configuration Debug \
-          CODE_SIGN_IDENTITY="" \
-          CODE_SIGNING_REQUIRED=NO \
-          CODE_SIGNING_ALLOWED=NO \
-          | grep -A 5 "warning:" || echo "No warnings found! 🎉"
-      continue-on-error: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build
+        run: |
+          xcodebuild clean build \
+            -project EyeBreak.xcodeproj \
+            -scheme EyeBreak \
+            -configuration Debug \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Run tests (if any)
+        run: |
+          xcodebuild test \
+            -project EyeBreak.xcodeproj \
+            -scheme EyeBreak \
+            -destination 'platform=macOS' \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            || echo "No tests configured yet"
+        continue-on-error: true
+
+      - name: Check for warnings
+        run: |
+          xcodebuild clean build \
+            -project EyeBreak.xcodeproj \
+            -scheme EyeBreak \
+            -configuration Debug \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            | grep -A 5 "warning:" || echo "No warnings found! 🎉"
+        continue-on-error: true
 
   lint:
     name: SwiftLint
     runs-on: macos-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v7
-      
-    - name: Install SwiftLint
-      run: brew install swiftlint
-      
-    - name: Run SwiftLint
-      run: swiftlint lint --reporter github-actions-logging
-      continue-on-error: true
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: Run SwiftLint
+        run: swiftlint lint --reporter github-actions-logging
+        continue-on-error: true
 
   code-quality:
     name: Code Quality Checks
     runs-on: macos-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v7
-      
-    - name: Check for TODO/FIXME
-      run: |
-        echo "Checking for TODO/FIXME comments..."
-        grep -r "TODO\|FIXME" EyeBreak/ || echo "No TODO/FIXME found"
-      continue-on-error: true
-      
-    - name: Check file permissions
-      run: |
-        find . -name "*.sh" -type f -exec test -x {} \; -exec echo "✓ {}" \; || echo "Some shell scripts are not executable"
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Check for TODO/FIXME
+        run: |
+          echo "Checking for TODO/FIXME comments..."
+          grep -r "TODO\|FIXME" EyeBreak/ || echo "No TODO/FIXME found"
+        continue-on-error: true
+
+      - name: Check file permissions
+        run: |
+          find . -name "*.sh" -type f -exec test -x {} \; -exec echo "✓ {}" \; || echo "Some shell scripts are not executable"

@@ -54,12 +54,14 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 ### Setting Up Your Development Environment
 
 1. Clone your fork:
+
    ```bash
    git clone https://github.com/YOUR-USERNAME/eyebreak.git
    cd eyebreak
    ```
 
 2. Open the project in Xcode:
+
    ```bash
    open EyeBreak.xcodeproj
    ```
@@ -179,6 +181,7 @@ Add dark mode support to break overlay
 ```
 
 Good commit message format:
+
 - Use present tense ("Add feature" not "Added feature")
 - Use imperative mood ("Move cursor to..." not "Moves cursor to...")
 - Limit first line to 72 characters

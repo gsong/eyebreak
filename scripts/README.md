@@ -5,6 +5,7 @@ This directory contains automation scripts for building, testing, and distributi
 ## Available Scripts
 
 ### 🔨 build_release.sh
+
 Builds a release version of EyeBreak and creates distribution packages.
 
 ```bash
@@ -12,11 +13,13 @@ Builds a release version of EyeBreak and creates distribution packages.
 ```
 
 **Creates:**
+
 - `Build/Export/EyeBreak.app` - The application bundle
 - `Build/EyeBreak-v1.0.0.dmg` - DMG installer for distribution
 - `Build/EyeBreak.zip` - Zip archive for Homebrew
 
 ### 🧪 test_build.sh
+
 Runs a test build to verify the project compiles correctly.
 
 ```bash
@@ -24,6 +27,7 @@ Runs a test build to verify the project compiles correctly.
 ```
 
 ### 🧹 clean_build.sh
+
 Cleans all build artifacts and derived data.
 
 ```bash
@@ -31,6 +35,7 @@ Cleans all build artifacts and derived data.
 ```
 
 ### 📦 build_dmg.sh
+
 Creates a DMG installer from an existing app bundle.
 
 ```bash
@@ -38,6 +43,7 @@ Creates a DMG installer from an existing app bundle.
 ```
 
 ### 🚀 run_app.sh
+
 Builds and runs the app for testing.
 
 ```bash
@@ -45,6 +51,7 @@ Builds and runs the app for testing.
 ```
 
 ### ⚙️ setup.sh
+
 Initial setup script to verify project structure.
 
 ```bash
@@ -52,6 +59,7 @@ Initial setup script to verify project structure.
 ```
 
 ### 🎨 generate_placeholder_icons.sh
+
 Generates placeholder app icons (for development).
 
 ```bash
@@ -61,11 +69,13 @@ Generates placeholder app icons (for development).
 ## Usage
 
 Make scripts executable (first time only):
+
 ```bash
 chmod +x scripts/*.sh
 ```
 
 Then run any script:
+
 ```bash
 ./scripts/[script-name].sh
 ```
