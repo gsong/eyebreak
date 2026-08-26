@@ -54,10 +54,35 @@ xcodebuild -project "$ROOT/EyeBreak.xcodeproj" \
 /usr/libexec/PlistBuddy -c "Set :SUEnableAutomaticChecks false" \
     "$BUILT/Contents/Info.plist"
 
-# Mark the build so you can tell it apart from a release in the About window and
-# in Finder's Get Info panel.
-SHORT_VERSION="$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$BUILT/Contents/Info.plist")"
-/usr/libexec/PlistBuddy -c "Set :CFBundleVersion $(git -C "$ROOT" rev-parse --short HEAD)-dev" \
+# Stamp the version the same way a release does.
+#
+# The committed CFBundleShortVersionString is deliberately stale: release.yml
+# derives the real version from the git tag and stamps it at build time, without
+# committing the result. Local builds skip that workflow, so without this block
+# they report whatever the checked-in value happens to be (2.2.0 since v2.3.0).
+#
+# The tag has to be reachable for this to work. If `git describe` finds nothing,
+# fetch tags from upstream:  git fetch upstream --tags
+TAG="$(git -C "$ROOT" describe --tags --abbrev=0 2>/dev/null || true)"
+if [ -z "$TAG" ]; then
+    echo "No reachable git tag, so the version would be wrong." >&2
+    echo "Fetch them first:  git fetch upstream --tags" >&2
+    exit 1
+fi
+
+BASE_VERSION="${TAG#v}"
+SHA="$(git -C "$ROOT" rev-parse --short HEAD)"
+SHORT_VERSION="$BASE_VERSION-dev.$SHA"
+
+# Same arithmetic as release.yml, so CFBundleVersion stays comparable with what
+# the appcast advertises. Sparkle compares this field, and a non-numeric value
+# makes a manual update check behave unpredictably.
+IFS='.' read -r MAJ MIN PAT <<< "${BASE_VERSION%%-*}"
+BUILD=$(( 10#${MAJ:-0} * 10000 + 10#${MIN:-0} * 100 + 10#${PAT:-0} ))
+
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $SHORT_VERSION" \
+    "$BUILT/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD" \
     "$BUILT/Contents/Info.plist"
 
 # xcodebuild already signed the app and the nested Sparkle framework, in the
@@ -92,7 +117,7 @@ ditto "$BUILT" "$INSTALLED"
 open "$INSTALLED"
 
 echo
-echo "Installed $SHORT_VERSION ($(git -C "$ROOT" rev-parse --short HEAD)-dev) to $INSTALLED"
+echo "Installed $SHORT_VERSION (build $BUILD) to $INSTALLED"
 echo
 echo "The menu bar icon should be back. If macOS asks for Accessibility or"
 echo "Screen Recording again, grant it once; the stable certificate keeps the"
