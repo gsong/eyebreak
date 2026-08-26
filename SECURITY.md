@@ -51,12 +51,14 @@ Security issues we're interested in:
 EyeBreak follows these security practices:
 
 ### Data Privacy
+
 - ✅ All data stored locally using UserDefaults
 - ✅ No network requests or data transmission
 - ✅ No analytics or telemetry
 - ✅ No third-party SDKs or dependencies
 
 ### macOS Security
+
 - ✅ App Sandbox enabled
 - ✅ Hardened Runtime enabled
 - ✅ Code signing required
@@ -64,13 +66,16 @@ EyeBreak follows these security practices:
 - ✅ User permission requests for all privileged operations
 
 ### Code Security
+
 - ✅ Swift's memory safety features
 - ✅ No use of unsafe pointers (except in IdleDetector with IOKit)
 - ✅ Input validation where applicable
 - ✅ Secure coding practices
 
 ### Permissions
+
 The app requests only necessary permissions:
+
 - **Screen Recording**: Required only for screen blur feature
 - **Notifications**: Optional, for break reminders
 

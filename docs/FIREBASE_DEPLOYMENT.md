@@ -14,6 +14,7 @@ This guide will help you deploy the EyeBreak website to Firebase Hosting with au
 You can either create a new project or use an existing one from your list:
 
 **Option A: Create a new project via Firebase Console**
+
 1. Go to [Firebase Console](https://console.firebase.google.com/)
 2. Click "Add Project"
 3. Name it "EyeBreak" (project ID will be auto-generated)
@@ -97,6 +98,7 @@ git push origin main
 ```
 
 The GitHub Action will automatically:
+
 1. Detect changes in the `website/` directory
 2. Install dependencies
 3. Build the website
@@ -124,6 +126,7 @@ To use a custom domain:
 ## Workflow Triggers
 
 The deployment workflow runs when:
+
 - You push changes to the `main` branch that affect the `website/` directory
 - You manually trigger it from GitHub Actions tab (workflow_dispatch)
 

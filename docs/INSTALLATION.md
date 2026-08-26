@@ -26,6 +26,7 @@ brew install --cask cheat2001/tap/eyebreak
 ### Method 3: Build from Source
 
 **Requirements:**
+
 - macOS 14.0 or later
 - Xcode 15.0 or later
 - Command Line Tools for Xcode
@@ -54,7 +55,7 @@ xcodebuild -project EyeBreak.xcodeproj -scheme EyeBreak -configuration Release b
    - Go to **System Settings > Privacy & Security > Accessibility**
    - Enable EyeBreak
 
-2. **Configure Settings**: 
+2. **Configure Settings**:
    - Open EyeBreak Settings
    - Set your preferred work interval (default: 20 minutes)
    - Set break duration (default: 20 seconds)
@@ -73,13 +74,16 @@ xcodebuild -project EyeBreak.xcodeproj -scheme EyeBreak -configuration Release b
 ## 🆘 Troubleshooting
 
 **App won't open (Security warning)**
+
 - Right-click the app and select "Open"
 - Or go to System Settings > Privacy & Security > Security and click "Open Anyway"
 
 **Keyboard shortcuts don't work**
+
 - Grant Accessibility permissions in System Settings
 
 **App crashes on launch**
+
 - Make sure you're running macOS 14.0 or later
 - Try deleting the app and reinstalling
 
@@ -88,6 +92,7 @@ xcodebuild -project EyeBreak.xcodeproj -scheme EyeBreak -configuration Release b
 To check for updates, visit the [Releases page](https://github.com/YOUR_USERNAME/lookaway/releases).
 
 If installed via Homebrew:
+
 ```bash
 brew upgrade eyebreak
 ```
@@ -95,10 +100,12 @@ brew upgrade eyebreak
 ## 🗑️ Uninstallation
 
 **Manual installation:**
+
 - Drag EyeBreak.app to Trash from Applications folder
 - Remove settings: `rm -rf ~/Library/Preferences/com.eyebreak.app.plist`
 
 **Homebrew installation:**
+
 ```bash
 brew uninstall --cask cheat2001/tap/eyebreak
 ```

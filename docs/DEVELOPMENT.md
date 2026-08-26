@@ -55,10 +55,12 @@ EyeBreak/
 The app requires these permissions to function:
 
 ### Notifications (Required)
+
 - Requested automatically on first launch
 - Used for break reminders
 
 ### Screen Recording (Optional)
+
 - Required for screen blur feature
 - Can be granted in System Settings > Privacy & Security > Screen Recording
 - If denied, the app will show notification-only breaks

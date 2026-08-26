@@ -4,7 +4,7 @@
 
 ### Your Eyes Deserve a Break
 
-*A simple, minimalistic, distraction-free macOS app that helps reduce digital eye strain by following the scientifically-backed 20-20-20 rule.*
+_A simple, minimalistic, distraction-free macOS app that helps reduce digital eye strain by following the scientifically-backed 20-20-20 rule._
 
 [![macOS](https://img.shields.io/badge/macOS-14.0+-blue.svg)](https://www.apple.com/macos)
 [![Swift](https://img.shields.io/badge/Swift-5.9+-orange.svg)](https://swift.org)
@@ -35,6 +35,7 @@ This gives your eye muscles a chance to relax and reduces the risk of eye strain
 ## ✨ Features
 
 ### Core Functionality
+
 - 🎯 **Menu Bar Integration** - Lightweight app that lives in your menu bar, never intrusive
 - ⏰ **Smart Timer System** - Customizable work/break intervals with intelligent pausing
 - 🌫️ **Screen Blur During Breaks** - Gentle enforcement to help you actually take breaks
@@ -43,6 +44,7 @@ This gives your eye muscles a chance to relax and reduces the risk of eye strain
 - 🎨 **Beautiful UI** - Clean, modern SwiftUI interface
 
 ### Customization
+
 - 🍅 **Pomodoro Mode** - Built-in 25/5 work/break cycles
 - 🎵 **Sound Effects** - Optional audio cues for breaks
 - 🎭 **Multiple Break Styles** - Blur screen, notification only, or guided eye exercises
@@ -57,11 +59,13 @@ This gives your eye muscles a chance to relax and reduces the risk of eye strain
 - ⏱️ **Unified Dashboard** (v2.2) - See all timer countdowns in real-time at a glance
 
 ### Insights & Analytics
+
 - 📊 **Daily Statistics** - Track your break history with beautiful charts
 - 🏆 **Streak Tracking** - See how many consecutive days you've maintained healthy habits
 - 💡 **Smart Insights** - Get personalized recommendations based on your usage
 
 ### Privacy & Accessibility
+
 - 🔒 **Privacy-First** - Zero data collection, everything stays on your Mac
 - ♿️ **Accessibility Support** - Full VoiceOver, Dynamic Type, and Reduced Motion support
 - 🌐 **No Internet Required** - Works completely offline
@@ -69,24 +73,28 @@ This gives your eye muscles a chance to relax and reduces the risk of eye strain
 ## 🎨 What's New in v2.3.0
 
 ### 📊 Menu Bar Timer Display (NEW!)
+
 - **Live Countdown** - See remaining time directly in the menu bar
 - **Dynamic State Icons** - Eye icons change based on timer state (active, paused, break)
 - **Monospaced Digits** - Clean, stable display that doesn't shift
 - **Smart Tooltips** - Hover for detailed status information
 
 ### 🪟 Enhanced Floating Break Window
+
 - **Improved Header** - Gradient icon badge with shadow effects
 - **Better Close Button** - Enhanced visibility with visible border
 - **Polished Skip Button** - Stronger border and shadow for clarity
 - **Visual Separation** - Increased divider visibility
 
 ### 🎨 Polished UI Throughout
+
 - **Gradient Styling** - Linear and angular gradients across all views
 - **Spring Animations** - Smooth, natural-feeling transitions
 - **Hover Effects** - Unified hover behavior on interactive elements
 - **Rounded Design** - Friendly, modern typography
 
 ### ⚙️ Refined Settings Views
+
 - **Hidden Scrollbar** - Cleaner About section appearance
 - **Compact Layout** - Optimized spacing throughout
 - **Consistent Headers** - New SectionHeaderView component
@@ -100,6 +108,7 @@ This gives your eye muscles a chance to relax and reduces the risk of eye strain
 ## 🎨 What's New in v2.1.0
 
 ### ⏰ Smart Schedule System (NEW!)
+
 - **Work Hours Management** - Set custom work hours (e.g., 9 AM - 5 PM)
 - **Active Days Selection** - Choose which days to receive reminders (Mon-Fri, weekends, custom)
 - **5 Quick Presets** - Standard Work, Flexible, Early Bird, Night Owl, 24/7
@@ -108,17 +117,20 @@ This gives your eye muscles a chance to relax and reduces the risk of eye strain
 - **Work-Life Balance** - All reminders (breaks, ambient, water) respect your schedule
 
 ### 🚀 Auto-Start Timer (NEW!)
+
 - **Automatic Start** - Timer begins automatically when app launches
 - **One-Click Toggle** - Enable/disable in General Settings
 - **Smart Integration** - Works perfectly with Launch at Login
 - **No Setup Required** - Just enable and forget!
 
 ### 🚀 Launch at Login (NEW!)
+
 - **One-Click Setup** - Toggle in Settings to start automatically on login
 - **SMAppService** - Modern macOS 13+ technology for reliable startup
 - **Easy Control** - Enable or disable anytime from General Settings
 
 ### 💧 Water Reminder System (NEW!)
+
 - **Blur Screen** - Full-screen immersive hydration reminders with beautiful animations
 - **Ambient Pop-up** - Gentle floating reminders at top of screen
 - **Smart Timing** - Choose from 30min to 2 hour intervals
@@ -133,8 +145,9 @@ This gives your eye muscles a chance to relax and reduces the risk of eye strain
 ---
 
 ### ⌨️ Enhanced Keyboard Shortcuts
+
 - **⌘⇧S** - Start timer
-- **⌘⇧X** - Stop timer  
+- **⌘⇧X** - Stop timer
 - **⌘⇧B** - Take break now (with Smart Schedule override)
 - **⌘⇧R** - Show ambient reminder (with Smart Schedule override)
 - **⌘⇧W** - Show water reminder (with Smart Schedule override)
@@ -142,6 +155,7 @@ This gives your eye muscles a chance to relax and reduces the risk of eye strain
 [See Full v2.3.0 Release Notes](docs/releases/RELEASE_NOTES_v2.3.0.md) | [v2.2.0 Release Notes](docs/releases/RELEASE_NOTES_v2.2.0.md) | [Water Reminder Guide](docs/WATER_REMINDER_FEATURE.md)
 
 ### Previous: v2.0.0 Theme Customization
+
 - **Default Theme** - Classic vibrant style
 - **Random Color** - 20 curated palettes, fresh colors each session
 - **Custom Theme** - Full control over all colors and effects
@@ -167,7 +181,7 @@ This gives your eye muscles a chance to relax and reduces the risk of eye strain
    ```
 3. **Open** the DMG file
 4. **Drag** `EyeBreak.app` to your `Applications` folder
-5. **Launch**: 
+5. **Launch**:
    ```bash
    open /Applications/EyeBreak.app
    ```
@@ -207,6 +221,7 @@ See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for detailed build instructions.
 ### Menu Bar Controls
 
 Click the eye icon to access:
+
 - **Start/Stop** - Begin or pause your break timer
 - **Take Break Now** - Trigger an immediate break
 - **Settings** - Customize your experience
@@ -223,31 +238,33 @@ Click the eye icon to access:
 
 Access **Settings** to customize:
 
-| Setting | Range | Default | Description |
-|---------|-------|---------|-------------|
-| Work Interval | 10-60 min | 20 min | Time between breaks |
-| Break Duration | 10-60 sec | 20 sec | Length of each break |
-| Pre-Break Warning | 0-60 sec | 30 sec | Warning before break starts |
-| Break Style | 3 options | Blur | Blur, notification, or exercise |
-| Session Type | 3 presets | 20-20-20 | Choose 20-20-20, Pomodoro, or Custom |
-| Smart Schedule | ON/OFF | OFF | Enable work hours management |
-| Work Hours | Custom | 9AM-5PM | Set your working schedule |
-| Auto-Start Timer | ON/OFF | ON | Start timer on app launch |
-| Launch at Login | ON/OFF | OFF | Start app when you log in |
-| Water Reminders | 30min-2hr | 1 hour | Hydration reminder interval |
+| Setting           | Range     | Default  | Description                          |
+| ----------------- | --------- | -------- | ------------------------------------ |
+| Work Interval     | 10-60 min | 20 min   | Time between breaks                  |
+| Break Duration    | 10-60 sec | 20 sec   | Length of each break                 |
+| Pre-Break Warning | 0-60 sec  | 30 sec   | Warning before break starts          |
+| Break Style       | 3 options | Blur     | Blur, notification, or exercise      |
+| Session Type      | 3 presets | 20-20-20 | Choose 20-20-20, Pomodoro, or Custom |
+| Smart Schedule    | ON/OFF    | OFF      | Enable work hours management         |
+| Work Hours        | Custom    | 9AM-5PM  | Set your working schedule            |
+| Auto-Start Timer  | ON/OFF    | ON       | Start timer on app launch            |
+| Launch at Login   | ON/OFF    | OFF      | Start app when you log in            |
+| Water Reminders   | 30min-2hr | 1 hour   | Hydration reminder interval          |
 
 ## 🔐 Permissions
 
 EyeBreak requires the following permissions:
 
 ### Screen Recording (Required for Blur Mode)
+
 1. Go to **System Settings** > **Privacy & Security** > **Screen Recording**
 2. Enable the checkbox next to **EyeBreak**
 3. Restart the app
 
-*If denied, the app automatically switches to "Notification Only" mode.*
+_If denied, the app automatically switches to "Notification Only" mode._
 
 ### Notifications (Recommended)
+
 - Allow notifications to receive break reminders
 - The app will request permission on first launch
 
@@ -340,14 +357,17 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 ### Common Issues
 
 **Screen blur not working?**
+
 - Grant Screen Recording permission in System Settings
 - Restart the app after granting permission
 
 **Notifications not appearing?**
+
 - Check System Settings > Notifications > EyeBreak
 - Enable "Allow Notifications"
 
 **Timer not pausing when idle?**
+
 - Enable idle detection in Settings
 - Adjust the idle threshold if needed
 
@@ -356,6 +376,7 @@ See [docs/FAQ.md](docs/FAQ.md) for more troubleshooting help.
 ## 🗺️ Roadmap
 
 ### Recently Completed ✅
+
 - [x] Smart Schedule with work hours management (v2.1.0)
 - [x] Auto-start timer (v2.1.0)
 - [x] Launch at login (v2.1.0)
@@ -365,6 +386,7 @@ See [docs/FAQ.md](docs/FAQ.md) for more troubleshooting help.
 - [x] Theme customization (v2.0.0)
 
 ### Upcoming Features
+
 - [ ] Multiple language support
 - [ ] Break exercise animations with guided movements
 - [ ] Weekly/monthly detailed reports
@@ -373,6 +395,7 @@ See [docs/FAQ.md](docs/FAQ.md) for more troubleshooting help.
 - [ ] Customizable ambient reminder messages
 
 ### Future Ideas
+
 - [ ] Team sync (optional, privacy-first)
 - [ ] Break reminders for calendar meetings
 - [ ] Integration with calendar apps
