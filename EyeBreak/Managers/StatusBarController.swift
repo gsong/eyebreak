@@ -222,14 +222,12 @@ class StatusBarController: NSObject, ObservableObject {
         
         // Check if settings window already exists
         var settingsWindowExists = false
-        for window in NSApp.windows {
-            if window.title == "EyeBreak Settings" {
-                // Window exists, just bring it to front
-                window.makeKeyAndOrderFront(nil)
-                NSApp.activate(ignoringOtherApps: true)
-                settingsWindowExists = true
-                break
-            }
+        for window in NSApp.windows where window.title == "EyeBreak Settings" {
+            // Window exists, just bring it to front
+            window.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            settingsWindowExists = true
+            break
         }
         
         // If no settings window exists, open a new one using the SwiftUI Window API

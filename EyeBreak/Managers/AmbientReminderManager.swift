@@ -320,7 +320,14 @@ extension AmbientReminderManager {
         let settings = AppSettings.shared
         let alert = NSAlert()
         alert.messageText = "Outside Work Hours"
-        alert.informativeText = "Your Smart Schedule is active and ambient reminders are currently paused.\n\nWork Hours: \(settings.timeString(from: settings.workHoursStart)) - \(settings.timeString(from: settings.workHoursEnd))\n\nWould you like to show a reminder anyway?"
+        alert.informativeText = """
+            Your Smart Schedule is active and ambient reminders are currently paused.
+
+            Work Hours: \(settings.timeString(from: settings.workHoursStart)) - \
+            \(settings.timeString(from: settings.workHoursEnd))
+
+            Would you like to show a reminder anyway?
+            """
         alert.alertStyle = .informational
         alert.icon = NSImage(systemSymbolName: "eye.circle", accessibilityDescription: "Ambient Reminder")
         
@@ -423,4 +430,3 @@ extension AmbientReminderManager {
         }
     }
 }
-

@@ -78,7 +78,7 @@ private struct WindowVisibilityReader: NSViewRepresentable {
                 NSWindow.willCloseNotification,
                 NSWindow.didBecomeKeyNotification,
                 NSWindow.didMiniaturizeNotification,
-                NSWindow.didDeminiaturizeNotification,
+                NSWindow.didDeminiaturizeNotification
             ] {
                 observers.append(
                     center.addObserver(forName: name, object: window, queue: .main) { [weak self] note in
