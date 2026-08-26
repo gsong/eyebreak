@@ -76,10 +76,8 @@ class IdleDetector {
             
             IOObjectRelease(service)
             
-            if let property = property?.takeRetainedValue() {
-                var idleNanos: Int64 = 0
-                CFNumberGetValue(property as! CFNumber, .sInt64Type, &idleNanos)
-                idleTime = TimeInterval(idleNanos) / TimeInterval(NSEC_PER_SEC)
+            if let idleNanos = property?.takeRetainedValue() as? NSNumber {
+                idleTime = TimeInterval(idleNanos.int64Value) / TimeInterval(NSEC_PER_SEC)
             }
         }
         
