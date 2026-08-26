@@ -27,16 +27,23 @@ class WaterReminderManager: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     // Preset water message templates (theme will be added at runtime)
-    private let waterMessages: [(icon: String, title: String, message: String)] = [
-        ("drop.fill", "Time for Water!", "Stay hydrated! Take a sip of water."),
-        ("waterbottle.fill", "Hydration Check", "Don't forget to drink some water!"),
-        ("drop.circle.fill", "Water Break", "Your body needs water. Take a quick sip!"),
-        ("figure.water.fitness", "Stay Hydrated", "Grab a glass of water and refresh yourself."),
-        ("drop.triangle.fill", "Quick Reminder", "Have you had water recently? Time to hydrate!"),
-        ("cup.and.saucer.fill", "Drink Up!", "Keep your energy up with some water."),
-        ("sparkles", "Hydration Time", "A sip of water helps you stay focused!"),
-        ("leaf.fill", "Wellness Check", "Take a moment to drink some water.")
-    ]    
+    private struct MessageTemplate {
+        let icon: String
+        let title: String
+        let message: String
+    }
+
+    private let waterMessages: [MessageTemplate] = [
+        MessageTemplate(icon: "drop.fill", title: "Time for Water!", message: "Stay hydrated! Take a sip of water."),
+        MessageTemplate(icon: "waterbottle.fill", title: "Hydration Check", message: "Don't forget to drink some water!"),
+        MessageTemplate(icon: "drop.circle.fill", title: "Water Break", message: "Your body needs water. Take a quick sip!"),
+        MessageTemplate(icon: "figure.water.fitness", title: "Stay Hydrated", message: "Grab a glass of water and refresh yourself."),
+        MessageTemplate(icon: "drop.triangle.fill", title: "Quick Reminder", message: "Have you had water recently? Time to hydrate!"),
+        MessageTemplate(icon: "cup.and.saucer.fill", title: "Drink Up!", message: "Keep your energy up with some water."),
+        MessageTemplate(icon: "sparkles", title: "Hydration Time", message: "A sip of water helps you stay focused!"),
+        MessageTemplate(icon: "leaf.fill", title: "Wellness Check", message: "Take a moment to drink some water.")
+    ]
+
     // MARK: - Initialization
     
     private init() {
@@ -617,7 +624,14 @@ extension WaterReminderManager {
         let settings = AppSettings.shared
         let alert = NSAlert()
         alert.messageText = "Outside Work Hours"
-        alert.informativeText = "Your Smart Schedule is active and water reminders are currently paused.\n\nWork Hours: \(settings.timeString(from: settings.workHoursStart)) - \(settings.timeString(from: settings.workHoursEnd))\n\nWould you like to show a reminder anyway?"
+        alert.informativeText = """
+            Your Smart Schedule is active and water reminders are currently paused.
+
+            Work Hours: \(settings.timeString(from: settings.workHoursStart)) - \
+            \(settings.timeString(from: settings.workHoursEnd))
+
+            Would you like to show a reminder anyway?
+            """
         alert.alertStyle = .informational
         alert.icon = NSImage(systemSymbolName: "drop.circle", accessibilityDescription: "Water Reminder")
         

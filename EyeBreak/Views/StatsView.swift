@@ -324,7 +324,7 @@ struct StatsView: View {
             .cornerRadius(4)
         }
         .chartXAxis {
-            AxisMarks(values: .stride(by: selectedTimeRange == .week ? .day : .day)) { value in
+            AxisMarks(values: .stride(by: selectedTimeRange == .week ? .day : .day)) { _ in
                 AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [4, 4]))
                     .foregroundStyle(Color.secondary.opacity(0.3))
                 AxisValueLabel(format: selectedTimeRange == .week ? .dateTime.day().month(.abbreviated) : .dateTime.day())
@@ -333,7 +333,7 @@ struct StatsView: View {
             }
         }
         .chartYAxis {
-            AxisMarks(position: .leading) { value in
+            AxisMarks(position: .leading) { _ in
                 AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [4, 4]))
                     .foregroundStyle(Color.secondary.opacity(0.3))
                 AxisValueLabel()

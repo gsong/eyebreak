@@ -1480,7 +1480,11 @@ struct AboutView: View {
                             .font(.system(size: 14, weight: .semibold))
                     }
 
-                    Text("EyeBreak helps you reduce digital eye strain by following the 20-20-20 rule: Every 20 minutes, look at something 20 feet away for 20 seconds. Built with privacy in mind—all your data stays on your Mac.")
+                    Text("""
+                        EyeBreak helps you reduce digital eye strain by following the 20-20-20 rule: \
+                        Every 20 minutes, look at something 20 feet away for 20 seconds. \
+                        Built with privacy in mind—all your data stays on your Mac.
+                        """)
                         .font(.system(size: 13))
                         .foregroundColor(.secondary)
                         .lineSpacing(3)
@@ -2310,7 +2314,7 @@ struct WaterIconOptionButton: View {
 
 struct SmartScheduleView: View {
     @EnvironmentObject var settings: AppSettings
-    @State private var selectedPreset: SchedulePreset? = nil
+    @State private var selectedPreset: SchedulePreset?
     
     enum SchedulePreset: String, CaseIterable {
         case standard = "Standard (9 AM - 5 PM)"

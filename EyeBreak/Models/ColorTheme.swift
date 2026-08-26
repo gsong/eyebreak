@@ -185,7 +185,7 @@ struct RandomColorPalette {
         ("#27AE60", "#F39C12"),  // Forest Green & Sunflower
         ("#16A085", "#E67E22"),  // Teal & Carrot
         ("#2ECC71", "#F1C40F"),  // Spring Green & Daffodil
-        ("#1ABC9C", "#E74C3C"),  // Turquoise & Alizarin
+        ("#1ABC9C", "#E74C3C")  // Turquoise & Alizarin
     ]
     
     static func generate() -> RandomColorPalette {
@@ -218,7 +218,7 @@ extension Color {
             .sRGB,
             red: Double(r) / 255,
             green: Double(g) / 255,
-            blue:  Double(b) / 255,
+            blue: Double(b) / 255,
             opacity: Double(a) / 255
         )
     }
