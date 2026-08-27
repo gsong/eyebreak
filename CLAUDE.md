@@ -30,8 +30,19 @@ app's preferences are keyed to `com.eyebreak.app`.
 
 Personal. This app ships to nobody. There is no DMG, no Homebrew cask, no
 appcast, and no Sparkle — the app never checks for an update, because there is
-nothing signed for it to find. Do not write end-user prose — no installation guides, no FAQ, no
-contributor docs. `README.md` is for us and our agents.
+nothing signed for it to find. Do not write end-user prose — no installation
+guides, no FAQ, no contributor docs. `README.md` is for us and our agents.
+
+## Releasing
+
+A release is a tag, a `CHANGELOG.md` section, a GitHub Release with **no
+assets**, and a freshly installed local app. Use the `release` skill rather than
+running the steps by hand — it tags before it builds, and it gates every push on
+a working build.
+
+Keep `[Unreleased]` current as you go. Writing entries at commit time is what
+keeps the release honest; v2.4.0 and v2.4.1 shipped with none because nobody
+did.
 
 ## Pull requests
 

@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+> v2.4.0 and v2.4.1 were tagged upstream without changelog entries. The gap is
+> known, not an omission, and is not reconstructed here.
+
 ## [Unreleased]
 
 ### Added
@@ -654,93 +657,9 @@ None! Zero external dependencies. Pure Swift and native frameworks only.
 - **Icons**: SF Symbols
 - **License**: MIT (commercial use allowed)
 
----
-
-## Roadmap
-
-### Planned Features (Future Versions)
-
-#### Version 1.1.0 (Potential)
-- [ ] Launch at login support
-- [ ] Custom break messages
-- [ ] More sound options
-- [ ] Export statistics to CSV
-- [ ] Custom app icon picker
-
-#### Version 1.2.0 (Potential)
-- [ ] iCloud sync for settings
-- [ ] Break exercise videos
-- [ ] Calendar integration
-- [ ] Multiple timer profiles
-- [ ] Custom themes
-
-#### Version 2.0.0 (Potential)
-- [ ] HealthKit integration
-- [ ] Focus mode support
-- [ ] Shortcuts app support
-- [ ] Widget support
-- [ ] Advanced statistics
-- [ ] Achievement system
-
-### Contributions Welcome!
-
-Want to help? Here are areas that need work:
-- More break styles
-- Additional languages
-- Better animations
-- More exercise instructions
-- Performance optimizations
-- Bug fixes
-
----
-
-## Version History
-
-### Version Numbering
-
-We use Semantic Versioning (SemVer):
-- **MAJOR** version for incompatible API changes
-- **MINOR** version for new functionality (backwards-compatible)
-- **PATCH** version for backwards-compatible bug fixes
-
-### Release Schedule
-
-- **Major releases**: When significant features are added
-- **Minor releases**: Monthly with new features
-- **Patch releases**: As needed for bug fixes
-
-### How to Update
-
-Since this is source code:
-1. Pull latest changes from repository
-2. Review CHANGELOG for breaking changes
-3. Rebuild in Xcode
-4. Test before deploying
-
----
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for details on:
-- Code of conduct
-- Development process
-- Submitting pull requests
-- Reporting bugs
-- Requesting features
-
----
-
-## Support
-
-- **Documentation**: See README.md, QUICKSTART.md, FAQ.md
-- **Issues**: Report on GitHub Issues
-- **Discussions**: GitHub Discussions
-- **Email**: [Your contact if you want]
-
----
-
-**Remember: Your eyes are precious. Take regular breaks!** 👁️✨
-
----
-
-*Last updated: December 6, 2025*
+[Unreleased]: https://github.com/gsong/eyebreak/compare/v2.4.1...HEAD
+[2.3.0]: https://github.com/gsong/eyebreak/compare/v2.2.0...v2.3.0
+[2.2.0]: https://github.com/gsong/eyebreak/compare/v2.1.0...v2.2.0
+[2.1.0]: https://github.com/gsong/eyebreak/compare/v2.0.0...v2.1.0
+[2.0.0]: https://github.com/gsong/eyebreak/compare/v1.0.0...v2.0.0
+[1.0.0]: https://github.com/gsong/eyebreak/releases/tag/v1.0.0
