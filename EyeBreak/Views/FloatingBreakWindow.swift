@@ -161,23 +161,28 @@ struct FloatingBreakContentView: View {
 
                 Spacer()
 
-                // Enhanced close button with better visibility
-                Button(action: isAwaitingDismissal ? handleDismiss : handleSkip) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(.secondary.opacity(0.8))
-                        .frame(width: 24, height: 24)
-                        .background(
-                            Circle()
-                                .fill(Color.secondary.opacity(isHovered ? 0.2 : 0.12))
-                        )
-                        .overlay(
-                            Circle()
-                                .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
-                        )
+                // Enhanced close button with better visibility. It goes away
+                // once the break is served: the completion state offers one
+                // control, and a close button next to "Back to Work" would ask
+                // the user which of two buttons ends the same wait.
+                if !isAwaitingDismissal {
+                    Button(action: handleSkip) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(.secondary.opacity(0.8))
+                            .frame(width: 24, height: 24)
+                            .background(
+                                Circle()
+                                    .fill(Color.secondary.opacity(isHovered ? 0.2 : 0.12))
+                            )
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                    .help("Close (or press ESC)")
                 }
-                .buttonStyle(.plain)
-                .help(isAwaitingDismissal ? "Back to work" : "Close (or press ESC)")
             }
             .padding(.horizontal, 20)
             .padding(.top, 16)

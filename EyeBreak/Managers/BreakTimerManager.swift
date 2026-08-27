@@ -29,6 +29,11 @@ class BreakTimerManager: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private var wasWorkingBeforePause = false
     private var isForcedBreak = false // Flag to bypass Smart Schedule during forced breaks
+    /// Whether the break now on screen will wait to be dismissed. Read once,
+    /// when the break goes up, because the keyboard watchdog is armed from the
+    /// same value: a setting toggled mid-break would otherwise leave the
+    /// watchdog allowing for one behavior and the timer doing the other.
+    private var breakAwaitsDismissal = false
     
     // MARK: - Initialization
     
@@ -287,22 +292,21 @@ class BreakTimerManager: ObservableObject {
     /// The break ran its length. Credit it, then either go straight back to work
     /// or hold the overlay until the user says they are back.
     ///
-    /// The guard is what keeps a break to one credit. The Floating Window style
-    /// runs a clock of its own alongside this one and both reach zero, so this is
-    /// called twice; the second call finds the state already moved on.
+    /// Called twice in the Floating Window style, which runs a clock of its own
+    /// alongside this one. `breakEndAction` is what keeps that to one credit.
     private func serveBreak() {
-        guard case .breaking = state else { return }
-        
-        guard settings.requireBreakDismissal else {
-            endBreak()
+        switch state.breakEndAction(awaitsDismissal: breakAwaitsDismissal) {
+        case .ignore:
             return
+        case .endNow:
+            endBreak()
+        case .awaitDismissal:
+            // Reset forced break flag
+            isForcedBreak = false
+            
+            creditBreak()
+            awaitDismissal()
         }
-        
-        // Reset forced break flag
-        isForcedBreak = false
-        
-        creditBreak()
-        awaitDismissal()
     }
     
     /// The break is over and work starts again now. Either it ran out with the
@@ -366,12 +370,17 @@ class BreakTimerManager: ObservableObject {
     }
     
     private func showBreakOverlay(duration: Int) {
+        // One read of the setting for this break, shared by the overlay, the
+        // keyboard watchdog and the end of the countdown. Toggling it mid-break
+        // applies to the next break rather than to this one.
+        breakAwaitsDismissal = settings.requireBreakDismissal
+        
         switch settings.breakStyle {
         case .blurScreen:
             ScreenBlurManager.shared.showBreakOverlay(
                 duration: duration,
                 style: .blur,
-                awaitsDismissal: settings.requireBreakDismissal
+                awaitsDismissal: breakAwaitsDismissal
             ) { [weak self] in
                 self?.skipBreak()
             }
@@ -379,7 +388,7 @@ class BreakTimerManager: ObservableObject {
             ScreenBlurManager.shared.showBreakOverlay(
                 duration: duration,
                 style: .exercise,
-                awaitsDismissal: settings.requireBreakDismissal
+                awaitsDismissal: breakAwaitsDismissal
             ) { [weak self] in
                 self?.skipBreak()
             }
@@ -388,7 +397,7 @@ class BreakTimerManager: ObservableObject {
             let window = FloatingBreakWindow()
             window.show(
                 duration: duration,
-                awaitsDismissal: settings.requireBreakDismissal,
+                awaitsDismissal: breakAwaitsDismissal,
                 onSkip: { [weak self] in
                     self?.skipBreak()
                 },
