@@ -28,8 +28,9 @@ app's preferences are keyed to `com.eyebreak.app`.
 
 ## Audience
 
-Personal. This app ships to nobody. There is no DMG, no Homebrew cask, and no
-appcast. Do not write end-user prose — no installation guides, no FAQ, no
+Personal. This app ships to nobody. There is no DMG, no Homebrew cask, no
+appcast, and no Sparkle — the app never checks for an update, because there is
+nothing signed for it to find. Do not write end-user prose — no installation guides, no FAQ, no
 contributor docs. `README.md` is for us and our agents.
 
 ## Pull requests

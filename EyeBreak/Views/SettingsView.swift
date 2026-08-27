@@ -1327,75 +1327,11 @@ struct BreakSettingsView: View {
     }
 }
 
-// MARK: - Update Check Card
-
-/// "Check for Updates" control shown in About.
-/// Sparkle handles the whole flow: one click downloads the new build, replaces
-/// EyeBreak in place, and relaunches it.
-struct UpdateCheckCard: View {
-    @ObservedObject var updateChecker: UpdateChecker
-
-    private var lastCheckedText: String {
-        guard let date = updateChecker.lastUpdateCheckDate else {
-            return "Not checked yet"
-        }
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .full
-        return "Last checked \(formatter.localizedString(for: date, relativeTo: Date()))"
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: "arrow.down.circle.fill")
-                    .foregroundStyle(.blue)
-                Text("Updates")
-                    .font(.system(size: 14, weight: .semibold))
-
-                Spacer()
-
-                Text(lastCheckedText)
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
-            }
-
-            Button {
-                updateChecker.checkForUpdates()
-            } label: {
-                Text("Check for Updates")
-            }
-            .disabled(!updateChecker.canCheckForUpdates)
-
-            Toggle(isOn: $updateChecker.automaticallyChecksForUpdates) {
-                Text("Check automatically")
-                    .font(.system(size: 12))
-            }
-            .toggleStyle(.switch)
-            .controlSize(.small)
-
-            Text("Updates install with one click — EyeBreak downloads the new version, replaces itself, and reopens. Every update is signature-verified before it is installed.")
-                .font(.system(size: 11))
-                .foregroundColor(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(14)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.blue.opacity(0.06))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.blue.opacity(0.15), lineWidth: 1)
-                )
-        )
-        .padding(.horizontal, 24)
-    }
-}
-
 // MARK: - Keyboard Shortcuts Permission Card
 
 /// Shows whether the global shortcuts can actually fire. Because EyeBreak is
-/// ad-hoc signed, macOS revokes this grant on every update, so users need a
-/// visible way to notice and restore it.
+/// ad-hoc signed, macOS revokes this grant every time the app is reinstalled,
+/// so there needs to be a visible way to notice and restore it.
 struct KeyboardShortcutsCard: View {
     @ObservedObject var permission: AccessibilityPermission
 
@@ -1416,7 +1352,7 @@ struct KeyboardShortcutsCard: View {
 
             if !permission.isTrusted {
                 Text("""
-                macOS resets this permission whenever EyeBreak updates, which stops \u{2318}\u{21E7}B \
+                macOS resets this permission whenever EyeBreak is reinstalled, which stops \u{2318}\u{21E7}B \
                 and the other shortcuts from working, and stops breaks from holding the keyboard. \
                 Timers and break reminders are unaffected.
                 """)
@@ -1446,7 +1382,6 @@ struct KeyboardShortcutsCard: View {
 
 struct AboutView: View {
     @EnvironmentObject var settings: AppSettings
-    @StateObject private var updateChecker = UpdateChecker.shared
     @StateObject private var accessibility = AccessibilityPermission.shared
     @State private var isHoveringGithub = false
     @State private var isHoveringIssue = false
@@ -1503,8 +1438,6 @@ struct AboutView: View {
                         .background(Color.secondary.opacity(0.1))
                         .cornerRadius(8)
                 }
-
-                UpdateCheckCard(updateChecker: updateChecker)
 
                 KeyboardShortcutsCard(permission: accessibility)
 
@@ -1570,7 +1503,7 @@ struct AboutView: View {
 
                 // Links
                 HStack(spacing: 16) {
-                    Link(destination: URL(string: "https://github.com/cheat2001/eyebreak")!) {
+                    Link(destination: URL(string: "https://github.com/gsong/eyebreak")!) {
                         HStack {
                             Image(systemName: "link")
                             Text("GitHub")
@@ -1592,7 +1525,7 @@ struct AboutView: View {
                     .onHover { isHoveringGithub = $0 }
                     .animation(.easeOut(duration: 0.15), value: isHoveringGithub)
 
-                    Link(destination: URL(string: "https://github.com/cheat2001/eyebreak/issues")!) {
+                    Link(destination: URL(string: "https://github.com/gsong/eyebreak/issues")!) {
                         HStack {
                             Image(systemName: "exclamationmark.bubble")
                             Text("Report Issue")
