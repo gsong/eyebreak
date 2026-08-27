@@ -108,10 +108,11 @@ build.log
 build_output.log
 build_optimizations.log
 
-# Distribution files  
-dist/
-release/
-Build/
+# Distribution output, at the repo root only. Unanchored, `release/` also
+# swallowed .claude/skills/release/.
+/dist/
+/release/
+/Build/
 
 # Internal documentation (not for public release)
 REFACTORING_SUMMARY.md

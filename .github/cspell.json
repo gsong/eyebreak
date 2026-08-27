@@ -51,7 +51,8 @@
     "armable",
     "gsong",
     "swiftlint",
-    "appcast"
+    "appcast",
+    "libexec"
   ],
   "ignoreWords": [],
   "ignorePaths": [
