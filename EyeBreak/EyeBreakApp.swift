@@ -124,100 +124,41 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return false
     }
 
+    /// The ⌘⇧ chords EyeBreak claims, keyed by the character the key produces
+    /// with the modifiers ignored. macOS reports these lowercase even with
+    /// Shift held.
+    private static let shortcutActions: [String: () -> Void] = [
+        "b": { BreakTimerManager.shared.takeBreakNow() },
+        "s": { BreakTimerManager.shared.start() },
+        "x": { BreakTimerManager.shared.stop() },
+        "r": { AmbientReminderManager.shared.showAmbientReminder() },
+        "w": { WaterReminderManager.shared.showWaterReminderNow() },
+        "o": { NSApp.sendAction(#selector(StatusBarController.openSettings), to: nil, from: nil) }
+    ]
+
+    /// The action this event triggers, or nil when the event is not one of ours.
+    private static func shortcutAction(for event: NSEvent) -> (() -> Void)? {
+        guard event.modifierFlags.contains([.command, .shift]),
+              let key = event.charactersIgnoringModifiers else { return nil }
+        return shortcutActions[key]
+    }
+
     private func setupGlobalKeyboardShortcuts() {
-        // Monitor for Command+Shift+B (Take Break Now)
-        let breakNowMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { event in
-            // Check for Command+Shift+B
-            if event.modifierFlags.contains([.command, .shift]) && event.charactersIgnoringModifiers == "b" {
-                DispatchQueue.main.async {
-                    BreakTimerManager.shared.takeBreakNow()
-                }
-            }
-            // Check for Command+Shift+S (Start Timer)
-            else if event.modifierFlags.contains([.command, .shift]) && event.charactersIgnoringModifiers == "s" {
-                DispatchQueue.main.async {
-                    BreakTimerManager.shared.start()
-                }
-            }
-            // Check for Command+Shift+X (Stop Timer)
-            else if event.modifierFlags.contains([.command, .shift]) && event.charactersIgnoringModifiers == "x" {
-                DispatchQueue.main.async {
-                    BreakTimerManager.shared.stop()
-                }
-            }
-            // Check for Command+Shift+R (Show Ambient Reminder)
-            else if event.modifierFlags.contains([.command, .shift]) && event.charactersIgnoringModifiers == "r" {
-                DispatchQueue.main.async {
-                    AmbientReminderManager.shared.showAmbientReminder()
-                }
-            }
-            // Check for Command+Shift+W (Show Water Reminder)
-            else if event.modifierFlags.contains([.command, .shift]) && event.charactersIgnoringModifiers == "w" {
-                DispatchQueue.main.async {
-                    WaterReminderManager.shared.showWaterReminderNow()
-                }
-            }
-            // Check for Command+Shift+O (Open Settings)
-            else if event.modifierFlags.contains([.command, .shift]) && event.charactersIgnoringModifiers == "o" {
-                DispatchQueue.main.async {
-                    NSApp.sendAction(#selector(StatusBarController.openSettings), to: nil, from: nil)
-                }
-            }
+        // Two monitors, because neither covers both cases. The global one sees
+        // the chord whichever app has focus but cannot consume the event. The
+        // local one runs only when EyeBreak has focus and returns nil, which
+        // stops the chord reaching the rest of the app.
+        let global = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { event in
+            guard let action = Self.shortcutAction(for: event) else { return }
+            DispatchQueue.main.async { action() }
         }
 
-        if let monitor = breakNowMonitor {
-            eventMonitors.append(monitor)
+        let local = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+            guard let action = Self.shortcutAction(for: event) else { return event }
+            DispatchQueue.main.async { action() }
+            return nil
         }
 
-        // Also add local monitor for when app is focused
-        let localMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-            // Check for Command+Shift+B
-            if event.modifierFlags.contains([.command, .shift]) && event.charactersIgnoringModifiers == "b" {
-                DispatchQueue.main.async {
-                    BreakTimerManager.shared.takeBreakNow()
-                }
-                return nil
-            }
-            // Check for Command+Shift+S
-            else if event.modifierFlags.contains([.command, .shift]) && event.charactersIgnoringModifiers == "s" {
-                DispatchQueue.main.async {
-                    BreakTimerManager.shared.start()
-                }
-                return nil
-            }
-            // Check for Command+Shift+X
-            else if event.modifierFlags.contains([.command, .shift]) && event.charactersIgnoringModifiers == "x" {
-                DispatchQueue.main.async {
-                    BreakTimerManager.shared.stop()
-                }
-                return nil
-            }
-            // Check for Command+Shift+R
-            else if event.modifierFlags.contains([.command, .shift]) && event.charactersIgnoringModifiers == "r" {
-                DispatchQueue.main.async {
-                    AmbientReminderManager.shared.showAmbientReminder()
-                }
-                return nil
-            }
-            // Check for Command+Shift+W (Water Reminder)
-            else if event.modifierFlags.contains([.command, .shift]) && event.charactersIgnoringModifiers == "w" {
-                DispatchQueue.main.async {
-                    WaterReminderManager.shared.showWaterReminderNow()
-                }
-                return nil
-            }
-            // Check for Command+Shift+O (Open Settings)
-            else if event.modifierFlags.contains([.command, .shift]) && event.charactersIgnoringModifiers == "o" {
-                DispatchQueue.main.async {
-                    NSApp.sendAction(#selector(StatusBarController.openSettings), to: nil, from: nil)
-                }
-                return nil
-            }
-            return event
-        }
-
-        if let monitor = localMonitor {
-            eventMonitors.append(monitor)
-        }
+        eventMonitors.append(contentsOf: [global, local].compactMap { $0 })
     }
 }

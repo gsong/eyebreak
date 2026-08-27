@@ -43,59 +43,22 @@ class StatusBarController: NSObject, ObservableObject {
     private func updateMenuBarText(for state: TimerState) {
         guard let button = statusItem?.button else { return }
 
-        // Get the icon
-        let icon: NSImage?
-        let iconName: String
-
-        switch state {
-        case .idle:
-            iconName = "eye"
-        case .working, .preBreak:
-            iconName = "eye.fill"
-        case .breaking:
-            iconName = "eye.slash.fill"
-        case .paused:
-            iconName = "pause.circle"
-        case .awaitingDismissal:
-            // The break is already banked, so the icon says done rather than
-            // resting. There is no eye symbol with a checkmark badge to use.
-            iconName = "checkmark.circle.fill"
-        }
-
-        icon = NSImage(systemSymbolName: iconName, accessibilityDescription: "EyeBreak")
+        let icon = NSImage(systemSymbolName: Self.iconName(for: state),
+                           accessibilityDescription: "EyeBreak")
         icon?.isTemplate = true
-
-        // Apply configuration for menu bar appropriate sizing
+        // Menu bar sizing. Without it the symbol renders at its natural size.
         let config = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium, scale: .small)
-        let configuredIcon = icon?.withSymbolConfiguration(config)
+        button.image = icon?.withSymbolConfiguration(config)
 
-        // Format the time text
-        let timeText: String
-        switch state {
-        case .idle:
-            timeText = ""
-        case .working(let seconds), .preBreak(let seconds):
-            timeText = formatTimeCompact(seconds)
-        case .breaking(let seconds):
-            timeText = formatTimeCompact(seconds)
-        case .paused(_, let seconds):
-            timeText = formatTimeCompact(seconds)
-        case .awaitingDismissal:
-            // Nothing is counting, so there is no number to show.
-            timeText = ""
-        }
-
-        // Update button
-        button.image = configuredIcon
-
+        let timeText = timeText(for: state)
         if timeText.isEmpty {
             button.imagePosition = .imageOnly
             button.title = ""
         } else {
             button.imagePosition = .imageLeading
             button.title = " \(timeText)"
-
-            // Style the title
+            // Monospaced digits, so the countdown does not shift the menu bar
+            // as it ticks.
             let attributes: [NSAttributedString.Key: Any] = [
                 .font: NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium),
                 .foregroundColor: NSColor.labelColor
@@ -103,8 +66,36 @@ class StatusBarController: NSObject, ObservableObject {
             button.attributedTitle = NSAttributedString(string: " \(timeText)", attributes: attributes)
         }
 
-        // Update tooltip
         button.toolTip = tooltipText(for: state)
+    }
+
+    private static func iconName(for state: TimerState) -> String {
+        switch state {
+        case .idle:
+            return "eye"
+        case .working, .preBreak:
+            return "eye.fill"
+        case .breaking:
+            return "eye.slash.fill"
+        case .paused:
+            return "pause.circle"
+        case .awaitingDismissal:
+            // The break is already banked, so the icon says done rather than
+            // resting. There is no eye symbol with a checkmark badge to use.
+            return "checkmark.circle.fill"
+        }
+    }
+
+    /// The countdown shown beside the icon. Empty when nothing is counting.
+    private func timeText(for state: TimerState) -> String {
+        switch state {
+        case .idle, .awaitingDismissal:
+            return ""
+        case .working(let seconds), .preBreak(let seconds), .breaking(let seconds):
+            return formatTimeCompact(seconds)
+        case .paused(_, let seconds):
+            return formatTimeCompact(seconds)
+        }
     }
 
     private func formatTimeCompact(_ seconds: Int) -> String {
@@ -136,92 +127,61 @@ class StatusBarController: NSObject, ObservableObject {
     }
 
     private func setupStatusBar() {
-
-        // Create status bar item - try VARIABLE length first
+        // Variable length, because the button grows a countdown beside the icon.
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        guard let item = statusItem, let button = item.button else { return }
 
-        guard let item = statusItem else {
-            return
-        }
+        configure(button)
+        item.isVisible = true
+        item.behavior = []                        // Empty means the user cannot remove it.
+        item.autosaveName = "EyeBreakStatusItem"  // Persist the position across launches.
+        item.menu = makeMenu()
+    }
 
-        guard let button = item.button else {
-            return
-        }
-
-        // Set clean, simple icon
+    private func configure(_ button: NSStatusBarButton) {
         if let icon = NSImage(systemSymbolName: "eye.fill", accessibilityDescription: "EyeBreak") {
             icon.isTemplate = true
-
-            // Apply configuration for menu bar appropriate sizing
+            // Menu bar sizing. Without it the symbol renders at its natural size.
             let config = NSImage.SymbolConfiguration(pointSize: 16, weight: .regular, scale: .small)
-            let configuredIcon = icon.withSymbolConfiguration(config)
-
-            button.image = configuredIcon
+            button.image = icon.withSymbolConfiguration(config)
             button.imagePosition = .imageOnly
         }
 
         button.toolTip = "EyeBreak - Eye Care Reminders"
         button.appearsDisabled = false
-
-        // Force button to be visible
         button.isHidden = false
+    }
 
-        // Make status item visible and persistent
-        item.isVisible = true
-        item.behavior = []  // Empty behavior = non-removable by user
-        item.autosaveName = "EyeBreakStatusItem" // Persist across launches
-
-        // Create menu
+    private func makeMenu() -> NSMenu {
         let menu = NSMenu()
         menu.autoenablesItems = true
 
-        // Settings
-        let settingsItem = NSMenuItem(title: "Open Settings...", action: #selector(openSettings), keyEquivalent: ",")
-        settingsItem.target = self
-        menu.addItem(settingsItem)
+        menu.addItem(item(title: "Open Settings...", action: #selector(openSettings), key: ","))
+        menu.addItem(.separator())
 
-        menu.addItem(NSMenuItem.separator())
+        menu.addItem(item(title: "Start Timer", action: #selector(startTimer), key: "s", chord: true))
+        menu.addItem(item(title: "Take Break Now", action: #selector(takeBreak), key: "b", chord: true))
+        menu.addItem(item(title: "Stop Timer", action: #selector(stopTimer), key: "x", chord: true))
+        menu.addItem(.separator())
 
-        // Timer controls
-        let startItem = NSMenuItem(title: "Start Timer", action: #selector(startTimer), keyEquivalent: "s")
-        startItem.keyEquivalentModifierMask = [.command, .shift]
-        startItem.target = self
-        menu.addItem(startItem)
+        menu.addItem(item(title: "Show Reminder", action: #selector(showReminder), key: "r", chord: true))
+        menu.addItem(.separator())
 
-        let breakItem = NSMenuItem(title: "Take Break Now", action: #selector(takeBreak), keyEquivalent: "b")
-        breakItem.keyEquivalentModifierMask = [.command, .shift]
-        breakItem.target = self
-        menu.addItem(breakItem)
+        menu.addItem(item(title: "Show Water Reminder", action: #selector(showWaterReminder), key: "w", chord: true))
+        menu.addItem(item(title: "Quit EyeBreak", action: #selector(quit), key: "q"))
 
-        let stopItem = NSMenuItem(title: "Stop Timer", action: #selector(stopTimer), keyEquivalent: "x")
-        stopItem.keyEquivalentModifierMask = [.command, .shift]
-        stopItem.target = self
-        menu.addItem(stopItem)
+        return menu
+    }
 
-        menu.addItem(NSMenuItem.separator())
-
-        // Reminder
-        let reminderItem = NSMenuItem(title: "Show Reminder", action: #selector(showReminder), keyEquivalent: "r")
-        reminderItem.keyEquivalentModifierMask = [.command, .shift]
-        reminderItem.target = self
-        menu.addItem(reminderItem)
-
-        menu.addItem(NSMenuItem.separator())
-
-        // Water Reminder
-        let waterReminderItem = NSMenuItem(title: "Show Water Reminder", action: #selector(showWaterReminder), keyEquivalent: "w")
-        waterReminderItem.keyEquivalentModifierMask = [.command, .shift]
-        waterReminderItem.target = self
-        menu.addItem(waterReminderItem)
-
-        // Quit
-        let quitItem = NSMenuItem(title: "Quit EyeBreak", action: #selector(quit), keyEquivalent: "q")
-        quitItem.target = self
-        menu.addItem(quitItem)
-
-        // Assign menu to status item
-        item.menu = menu
-
+    /// `chord: true` gives the item ⌘⇧ instead of the default ⌘, matching the
+    /// global shortcuts in AppDelegate.
+    private func item(title: String, action: Selector, key: String, chord: Bool = false) -> NSMenuItem {
+        let menuItem = NSMenuItem(title: title, action: action, keyEquivalent: key)
+        if chord {
+            menuItem.keyEquivalentModifierMask = [.command, .shift]
+        }
+        menuItem.target = self
+        return menuItem
     }
 
     @objc func openSettings() {
