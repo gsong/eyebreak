@@ -160,3 +160,11 @@ sparkle*.tar.xz
 
 ## Claude Code
 .claude/settings.local.json
+
+# Local-only working directories, kept out of the repo.
+#
+# .worktrees/ holds git worktrees created by the git-tools:worktree skill.
+# ai-swap/ holds specs and plans that stay on this machine; a hook also blocks
+# staging it.
+.worktrees/
+ai-swap/
