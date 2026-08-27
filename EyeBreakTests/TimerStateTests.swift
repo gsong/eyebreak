@@ -94,6 +94,34 @@ final class TimerStateTests: XCTestCase {
         XCTAssertEqual(TimerState.idle.displayText, "Ready to start")
     }
 
+    // MARK: - The end of a break
+    //
+    // Two clocks reach zero in the Floating Window style: the timer's and the
+    // panel's own. This is what keeps one break to one credit.
+
+    func testTheEndOfABreakGoesStraightBackToWorkByDefault() {
+        XCTAssertEqual(TimerState.breaking(remainingSeconds: 0).breakEndAction(awaitsDismissal: false),
+                       .endNow)
+    }
+
+    func testTheEndOfABreakWaitsWhenTheBreakWasStartedThatWay() {
+        XCTAssertEqual(TimerState.breaking(remainingSeconds: 0).breakEndAction(awaitsDismissal: true),
+                       .awaitDismissal)
+    }
+
+    func testASecondClockReachingZeroCreditsNothing() {
+        // The state has already moved on by the time the panel's clock arrives,
+        // so nothing here credits a second break or restarts work a second time.
+        for state in [TimerState.working(remainingSeconds: 1200),
+                      .awaitingDismissal,
+                      .idle,
+                      .paused(wasWorking: false, remainingSeconds: 5),
+                      .preBreak(remainingSeconds: 30)] {
+            XCTAssertEqual(state.breakEndAction(awaitsDismissal: true), .ignore)
+            XCTAssertEqual(state.breakEndAction(awaitsDismissal: false), .ignore)
+        }
+    }
+
     // MARK: - Equatable
 
     func testStatesDifferByAssociatedValue() {
