@@ -1,93 +1,45 @@
-# EyeBreak Build Scripts
+# scripts/
 
-This directory contains automation scripts for building, testing, and distributing EyeBreak.
+Three scripts. Nothing here builds a DMG, publishes a release, or talks to
+Homebrew — see [CLAUDE.md](../CLAUDE.md) for why.
 
-## Available Scripts
+Run every one of them from the project root.
 
-### 🔨 build_release.sh
+## create-cert.sh
 
-Builds a release version of EyeBreak and creates distribution packages.
-
-```bash
-./scripts/build_release.sh
-```
-
-**Creates:**
-
-- `Build/Export/EyeBreak.app` - The application bundle
-- `Build/EyeBreak-v1.0.0.dmg` - DMG installer for distribution
-- `Build/EyeBreak.zip` - Zip archive for Homebrew
-
-### 🧪 test_build.sh
-
-Runs a test build to verify the project compiles correctly.
+Creates the self-signed `EyeBreak Local Signing` certificate in your login
+keychain. Run it **once**, before the first `dev-install.sh`.
 
 ```bash
-./scripts/test_build.sh
+./scripts/create-cert.sh
 ```
 
-### 🧹 clean_build.sh
+macOS ties Accessibility and Screen Recording grants to the code signature. An
+ad-hoc signature changes on every build, so every rebuild would ask again. A
+stable certificate keeps the grants.
 
-Cleans all build artifacts and derived data.
+## dev-install.sh
+
+Builds EyeBreak and installs it to `/Applications` as your daily app. This is
+the only way EyeBreak gets installed.
 
 ```bash
-./scripts/clean_build.sh
+./scripts/dev-install.sh            # Release
+./scripts/dev-install.sh Debug      # Debug
 ```
 
-### 📦 build_dmg.sh
+It quits the running instance, stamps the version from the nearest git tag,
+re-signs with the local certificate, replaces `/Applications/EyeBreak.app`, and
+reopens it. A reachable tag is required, so `git fetch origin --tags` first if
+`git describe` finds nothing.
 
-Creates a DMG installer from an existing app bundle.
+## update_app_icon.sh
+
+Regenerates every size in `AppIcon.appiconset` from one source image. Needs
+`sips`, which ships with macOS.
 
 ```bash
-./scripts/build_dmg.sh
+./scripts/update_app_icon.sh path/to/icon.png
 ```
 
-### 🚀 run_app.sh
-
-Builds and runs the app for testing.
-
-```bash
-./scripts/run_app.sh
-```
-
-### ⚙️ setup.sh
-
-Initial setup script to verify project structure.
-
-```bash
-./scripts/setup.sh
-```
-
-### 🎨 generate_placeholder_icons.sh
-
-Generates placeholder app icons (for development).
-
-```bash
-./scripts/generate_placeholder_icons.sh
-```
-
-## Usage
-
-Make scripts executable (first time only):
-
-```bash
-chmod +x scripts/*.sh
-```
-
-Then run any script:
-
-```bash
-./scripts/[script-name].sh
-```
-
-## Requirements
-
-- macOS 14.0+
-- Xcode 15.0+
-- Xcode Command Line Tools
-
-## Notes
-
-- All scripts should be run from the project root directory
-- Scripts automatically handle code signing for development
-- For release builds, update version number in `build_release.sh`
+Use a square image, 1024×1024 or larger.

@@ -67,9 +67,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
   The 13.5% that remains is Settings re-rendering for the once-a-second countdown, which is real work rather than an animation
 
+### Removed
+
+#### Automatic Updates
+
+- **The Check for Updates card is gone from About** - Along with Sparkle itself. `Info.plist` pointed it at upstream's appcast, signed with upstream's EdDSA key, so a check could only ever offer upstream's DMG and replace your build with it. There was no matching private key on this side, so no signed update could ever have been published
+- **The app no longer reaches the network on launch** - Nothing schedules a background check, and the nested Sparkle XPC services are gone with it
+- **Reinstall with `scripts/dev-install.sh`** - That is the only way EyeBreak updates now
+
 ### Known Limitations
 
-- **Needs Accessibility permission** - macOS resets this grant every time EyeBreak updates. Without it, breaks still cover every display and still end on ⎋, but shortcuts in other apps keep working during a break. Settings and the README both say which state you are in
+- **Needs Accessibility permission** - macOS resets this grant every time EyeBreak is reinstalled. Without it, breaks still cover every display and still end on ⎋, but shortcuts in other apps keep working during a break. Settings and the README both say which state you are in
 - **Secure Event Input** - While a password field has focus, macOS delivers no keyboard event to any app, so a break cannot hold the keyboard for as long as that field is focused
 
 ## [2.3.0] - 2025-12-06

@@ -4,8 +4,9 @@ A macOS menu bar app that reduces digital eye strain by enforcing the 20-20-20 r
 every 20 minutes, look 20 feet away for 20 seconds.
 
 This repository is a personal project. It ships to nobody: no DMG, no Homebrew
-cask, no release asset. A release is a tag, a `CHANGELOG.md` section, and a
-locally installed build. See [CLAUDE.md](CLAUDE.md) for the reasoning.
+cask, no release asset, and no update check. A release is a tag, a
+`CHANGELOG.md` section, and a locally installed build. See
+[CLAUDE.md](CLAUDE.md) for the reasoning.
 
 ## Requirements
 

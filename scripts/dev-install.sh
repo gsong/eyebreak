@@ -1,10 +1,9 @@
 #!/bin/bash
 # Build EyeBreak from source and install it to /Applications as your daily app.
 #
-# This replaces the Homebrew cask install. Run it after each change you want to
-# live with. The bundle identifier is unchanged (com.eyebreak.app), so your
-# settings and statistics in ~/Library/Preferences/com.eyebreak.app.plist carry
-# straight over.
+# This is the only way EyeBreak gets installed. Run it after each change you
+# want to live with. The bundle identifier is com.eyebreak.app, so settings and
+# statistics in ~/Library/Preferences/com.eyebreak.app.plist carry across runs.
 #
 # Run scripts/create-cert.sh once before the first use.
 
@@ -47,37 +46,28 @@ xcodebuild -project "$ROOT/EyeBreak.xcodeproj" \
         exit 1
     }
 
-# Sparkle checks the public appcast once a day. A local build almost always
-# reports an older version than the published release, so Sparkle would offer to
-# "update" it and quietly replace your build with the shipped one. Turn the
-# automatic check off in the installed copy only; the source tree keeps it on.
-/usr/libexec/PlistBuddy -c "Set :SUEnableAutomaticChecks false" \
-    "$BUILT/Contents/Info.plist"
-
-# Stamp the version the same way a release does.
+# Stamp the version from the nearest git tag.
 #
-# The committed CFBundleShortVersionString is deliberately stale: release.yml
-# derives the real version from the git tag and stamps it at build time, without
-# committing the result. Local builds skip that workflow, so without this block
-# they report whatever the checked-in value happens to be (2.2.0 since v2.3.0).
+# The committed CFBundleShortVersionString is deliberately stale. This block
+# derives the real version at build time without committing the result, so
+# without it the app would report whatever the checked-in value happens to be
+# (2.2.0 since v2.3.0).
 #
-# The tag has to be reachable for this to work. If `git describe` finds nothing,
-# fetch tags from upstream:  git fetch upstream --tags
+# The tag has to be reachable. Tag before you build, so the stamped version
+# matches the tag you are releasing.
 TAG="$(git -C "$ROOT" describe --tags --abbrev=0 2>/dev/null || true)"
 if [ -z "$TAG" ]; then
     echo "No reachable git tag, so the version would be wrong." >&2
-    echo "Fetch them first:  git fetch upstream --tags" >&2
+    echo "Tag a version first, or fetch tags:  git fetch origin --tags" >&2
     exit 1
 fi
 
-BASE_VERSION="${TAG#v}"
-SHA="$(git -C "$ROOT" rev-parse --short HEAD)"
-SHORT_VERSION="$BASE_VERSION-dev.$SHA"
+SHORT_VERSION="${TAG#v}"
 
-# Same arithmetic as release.yml, so CFBundleVersion stays comparable with what
-# the appcast advertises. Sparkle compares this field, and a non-numeric value
-# makes a manual update check behave unpredictably.
-IFS='.' read -r MAJ MIN PAT <<< "${BASE_VERSION%%-*}"
+# CFBundleVersion has to be numeric and monotonic, so pack the semver into one
+# integer. Nothing reads it now that Sparkle is gone, but macOS still wants it
+# to increase.
+IFS='.' read -r MAJ MIN PAT <<< "${SHORT_VERSION%%-*}"
 BUILD=$(( 10#${MAJ:-0} * 10000 + 10#${MIN:-0} * 100 + 10#${PAT:-0} ))
 
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $SHORT_VERSION" \
@@ -85,15 +75,13 @@ BUILD=$(( 10#${MAJ:-0} * 10000 + 10#${MIN:-0} * 100 + 10#${PAT:-0} ))
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD" \
     "$BUILT/Contents/Info.plist"
 
-# xcodebuild already signed the app and the nested Sparkle framework, in the
-# order codesign requires. Editing Info.plist above invalidated the outer
-# signature, so re-sign the outer bundle only. Do not pass --deep: it would
-# re-sign the nested Sparkle XPC services out of order and break them.
+# xcodebuild already signed the app. Editing Info.plist above invalidated that
+# signature, so re-sign the bundle. There are no nested bundles left to order
+# around now that Sparkle is gone.
 #
-# No --options runtime. The shipped release runs without the hardened runtime,
-# and enabling it here would make the dev build behave differently from what
-# users get.
-echo "Re-signing the outer bundle with \"$IDENTITY\"..."
+# No --options runtime. Nothing here is notarized, and the hardened runtime
+# would only add ways for the ad-hoc signature to be rejected.
+echo "Re-signing with \"$IDENTITY\"..."
 codesign --force \
     --sign "$IDENTITY" \
     --entitlements "$ROOT/EyeBreak/EyeBreak.entitlements" \

@@ -18,11 +18,10 @@
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
-	<!-- Version is stamped at build time, not read from here. release.yml
-	     derives it from the git tag and overwrites both keys below without
-	     committing the result, so these values are stale by design. Editing
-	     them by hand changes nothing about a release. Local builds made with
-	     scripts/dev-install.sh stamp themselves the same way. -->
+	<!-- Version is stamped at build time, not read from here.
+	     scripts/dev-install.sh derives it from the git tag and overwrites both
+	     keys below without committing the result, so these values are stale by
+	     design. Editing them by hand changes nothing about a build. -->
 	<key>CFBundleShortVersionString</key>
 	<string>2.2.0</string>
 	<key>CFBundleVersion</key>
@@ -37,15 +36,6 @@
 	<false/>
 	<key>NSSupportsSuddenTermination</key>
 	<false/>
-	<!-- Sparkle: one-click automatic updates -->
-	<key>SUFeedURL</key>
-	<string>https://github.com/cheat2001/eyebreak/releases/latest/download/appcast.xml</string>
-	<key>SUPublicEDKey</key>
-	<string>Z7fgHTknajhMmlMUltgS5OMSosELhzt95wWaxHg73tc=</string>
-	<key>SUEnableAutomaticChecks</key>
-	<true/>
-	<key>SUScheduledCheckInterval</key>
-	<integer>86400</integer>
 	<key>NSAppleEventsUsageDescription</key>
 	<string>EyeBreak needs to detect user activity to pause the timer when you're away.</string>
 	<key>NSSystemExtensionUsageDescription</key>
