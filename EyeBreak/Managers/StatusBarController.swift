@@ -131,14 +131,14 @@ class StatusBarController: NSObject, ObservableObject {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         guard let item = statusItem, let button = item.button else { return }
 
-        configure(button)
+        configureStatusButton(button)
         item.isVisible = true
         item.behavior = []                        // Empty means the user cannot remove it.
         item.autosaveName = "EyeBreakStatusItem"  // Persist the position across launches.
         item.menu = makeMenu()
     }
 
-    private func configure(_ button: NSStatusBarButton) {
+    private func configureStatusButton(_ button: NSStatusBarButton) {
         if let icon = NSImage(systemSymbolName: "eye.fill", accessibilityDescription: "EyeBreak") {
             icon.isTemplate = true
             // Menu bar sizing. Without it the symbol renders at its natural size.
@@ -156,26 +156,26 @@ class StatusBarController: NSObject, ObservableObject {
         let menu = NSMenu()
         menu.autoenablesItems = true
 
-        menu.addItem(item(title: "Open Settings...", action: #selector(openSettings), key: ","))
+        menu.addItem(makeMenuItem(title: "Open Settings...", action: #selector(openSettings), key: ","))
         menu.addItem(.separator())
 
-        menu.addItem(item(title: "Start Timer", action: #selector(startTimer), key: "s", chord: true))
-        menu.addItem(item(title: "Take Break Now", action: #selector(takeBreak), key: "b", chord: true))
-        menu.addItem(item(title: "Stop Timer", action: #selector(stopTimer), key: "x", chord: true))
+        menu.addItem(makeMenuItem(title: "Start Timer", action: #selector(startTimer), key: "s", chord: true))
+        menu.addItem(makeMenuItem(title: "Take Break Now", action: #selector(takeBreak), key: "b", chord: true))
+        menu.addItem(makeMenuItem(title: "Stop Timer", action: #selector(stopTimer), key: "x", chord: true))
         menu.addItem(.separator())
 
-        menu.addItem(item(title: "Show Reminder", action: #selector(showReminder), key: "r", chord: true))
+        menu.addItem(makeMenuItem(title: "Show Reminder", action: #selector(showReminder), key: "r", chord: true))
         menu.addItem(.separator())
 
-        menu.addItem(item(title: "Show Water Reminder", action: #selector(showWaterReminder), key: "w", chord: true))
-        menu.addItem(item(title: "Quit EyeBreak", action: #selector(quit), key: "q"))
+        menu.addItem(makeMenuItem(title: "Show Water Reminder", action: #selector(showWaterReminder), key: "w", chord: true))
+        menu.addItem(makeMenuItem(title: "Quit EyeBreak", action: #selector(quit), key: "q"))
 
         return menu
     }
 
     /// `chord: true` gives the item ⌘⇧ instead of the default ⌘, matching the
     /// global shortcuts in AppDelegate.
-    private func item(title: String, action: Selector, key: String, chord: Bool = false) -> NSMenuItem {
+    private func makeMenuItem(title: String, action: Selector, key: String, chord: Bool = false) -> NSMenuItem {
         let menuItem = NSMenuItem(title: title, action: action, keyEquivalent: key)
         if chord {
             menuItem.keyEquivalentModifierMask = [.command, .shift]

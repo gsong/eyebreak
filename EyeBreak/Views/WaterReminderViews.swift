@@ -114,7 +114,7 @@ struct WaterBlurOverlayView: View {
     var body: some View {
         ZStack {
             // Blur background
-            VisualEffectBlur()
+            VisualEffectView()
                 .ignoresSafeArea()
 
             // Gradient overlay with theme colors
@@ -254,17 +254,4 @@ struct WaterBlurOverlayView: View {
 class WaterReminderWindow: NSWindow {
     override var canBecomeKey: Bool { return true }
     override var canBecomeMain: Bool { return true }
-}
-
-/// Helper view for creating blur effect background
-struct VisualEffectBlur: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.blendingMode = .behindWindow
-        view.state = .active
-        view.material = .hudWindow
-        return view
-    }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }

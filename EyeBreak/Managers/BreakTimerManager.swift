@@ -7,7 +7,6 @@
 
 import Foundation
 import Combine
-import AppKit
 
 /// Manages the core timer logic for work/break cycles
 class BreakTimerManager: ObservableObject {

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftUI
 
 // Break statistics: reading today's, recording a change, and resetting.
 

@@ -48,10 +48,7 @@ struct BreakOverlayView: View {
                 .ignoresSafeArea()
 
             // Background blur
-            VisualEffectView(
-                material: .hudWindow,
-                blendingMode: .behindWindow
-            )
+            VisualEffectView()
             .ignoresSafeArea()
             .opacity(0.8)
 
