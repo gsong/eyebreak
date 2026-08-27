@@ -14,10 +14,14 @@ enum TimerState: Equatable {
     case preBreak(remainingSeconds: Int) // Warning period before break
     case breaking(remainingSeconds: Int) // Break period
     case paused(wasWorking: Bool, remainingSeconds: Int) // Paused due to idle
+    case awaitingDismissal // Break served, waiting for the user to dismiss it
     
     var isActive: Bool {
         switch self {
-        case .idle, .paused:
+        case .idle, .paused, .awaitingDismissal:
+            // Nothing counts while a served break waits to be dismissed, and
+            // `pause()` guards on this, which is what makes sleep, screen lock
+            // and idle detection leave the waiting overlay where it is.
             return false
         case .working, .preBreak, .breaking:
             return true
@@ -36,6 +40,8 @@ enum TimerState: Equatable {
             return "Break time! \(seconds)s remaining"
         case .paused(_, let seconds):
             return "Paused - \(formatTime(seconds)) remaining"
+        case .awaitingDismissal:
+            return "Break complete \u{2014} dismiss to continue"
         }
     }
     

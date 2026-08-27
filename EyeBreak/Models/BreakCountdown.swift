@@ -6,11 +6,17 @@
 import Combine
 import Foundation
 
-/// The seconds left in a break.
+/// What the break overlay draws: the seconds left, and whether the break has
+/// been served and is waiting to be dismissed.
 ///
-/// One countdown drives the overlay on every screen. That is what keeps the
+/// One of these drives the overlay on every screen. That is what keeps the
 /// displays showing the same number, and what lets the overlay set be rebuilt
-/// when a display is attached or detached without restarting the break.
+/// when a display is attached or detached without restarting the break. The
+/// waiting phase rides here for the same reason: a rebuilt overlay has to come
+/// back in the phase the break is actually in.
+///
+/// It draws and nothing more. `BreakTimerManager.tick()` is the only thing that
+/// ends a break; reaching zero here ends nothing.
 final class BreakCountdown: ObservableObject {
 
     /// The length the break was started with. The progress ring needs it.
@@ -18,16 +24,19 @@ final class BreakCountdown: ObservableObject {
 
     @Published private(set) var remainingSeconds: Int
 
+    /// Whether the break has been served and the overlay is now waiting for the
+    /// user. `BreakTimerManager` decides it; this only carries it to the views.
+    @Published private(set) var isAwaitingDismissal = false
+
     /// How much of the break is still to run, 1 down to 0.
     var progress: Double {
         guard totalSeconds > 0 else { return 0 }
         return Double(remainingSeconds) / Double(totalSeconds)
     }
 
-    init(totalSeconds: Int, onFinish: @escaping () -> Void) {
+    init(totalSeconds: Int) {
         self.totalSeconds = max(0, totalSeconds)
         self.remainingSeconds = max(0, totalSeconds)
-        self.onFinish = onFinish
     }
 
     deinit {
@@ -44,8 +53,17 @@ final class BreakCountdown: ObservableObject {
         }
     }
 
-    /// Ends the count for good. Nothing fires afterwards, so a break that ended
-    /// early cannot also end on its own timer.
+    /// Swaps the overlay to its completion state and parks the count.
+    ///
+    /// The manager's clock and this one do not share a second boundary, so the
+    /// break can be served with a second or two still on display. Parking the
+    /// count stops it running on behind the completion state.
+    func awaitDismissal() {
+        stop()
+        isAwaitingDismissal = true
+    }
+
+    /// Ends the count for good.
     func stop() {
         isStopped = true
         timer?.invalidate()
@@ -54,22 +72,13 @@ final class BreakCountdown: ObservableObject {
 
     /// Records one elapsed second. `start` drives this; tests call it directly.
     func tick() {
-        guard !isStopped else { return }
-
-        // Zero stays on screen for a second, so the break ends on the tick after
-        // the count reaches zero rather than on the one that gets it there.
-        guard remainingSeconds > 0 else {
-            stop()
-            onFinish()
-            return
-        }
+        guard !isStopped, remainingSeconds > 0 else { return }
 
         remainingSeconds -= 1
     }
 
     // MARK: - Private
 
-    private let onFinish: () -> Void
     private var timer: Timer?
     private var isStopped = false
 }

@@ -15,6 +15,13 @@ final class TimerStateTests: XCTestCase {
         XCTAssertFalse(TimerState.paused(wasWorking: false, remainingSeconds: 0).isActive)
     }
 
+    func testAwaitingDismissalIsNotActive() {
+        // Nothing counts during the wait, and `pause()` guards on isActive, so
+        // the false is also what makes sleep, lock and idle leave the waiting
+        // overlay alone.
+        XCTAssertFalse(TimerState.awaitingDismissal.isActive)
+    }
+
     func testRunningStatesAreActive() {
         XCTAssertTrue(TimerState.working(remainingSeconds: 1200).isActive)
         XCTAssertTrue(TimerState.preBreak(remainingSeconds: 30).isActive)
@@ -63,6 +70,13 @@ final class TimerStateTests: XCTestCase {
                        "Paused - 5:00 remaining")
     }
 
+    func testAwaitingDismissalTellsTheUserWhatToDo() {
+        // The break is already credited by the time this shows, so the text has
+        // to name the one thing still outstanding.
+        XCTAssertEqual(TimerState.awaitingDismissal.displayText,
+                       "Break complete \u{2014} dismiss to continue")
+    }
+
     func testIdleText() {
         XCTAssertEqual(TimerState.idle.displayText, "Ready to start")
     }
@@ -78,5 +92,7 @@ final class TimerStateTests: XCTestCase {
                           TimerState.breaking(remainingSeconds: 10))
         XCTAssertNotEqual(TimerState.paused(wasWorking: true, remainingSeconds: 10),
                           TimerState.paused(wasWorking: false, remainingSeconds: 10))
+        XCTAssertEqual(TimerState.awaitingDismissal, TimerState.awaitingDismissal)
+        XCTAssertNotEqual(TimerState.awaitingDismissal, TimerState.breaking(remainingSeconds: 0))
     }
 }
