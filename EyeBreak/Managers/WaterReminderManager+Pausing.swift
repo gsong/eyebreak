@@ -7,8 +7,6 @@
 
 import SwiftUI
 import AppKit
-import UserNotifications
-import Combine
 
 // Everything that stops a reminder firing: the Smart Schedule override
 // and the screen-lock pause.

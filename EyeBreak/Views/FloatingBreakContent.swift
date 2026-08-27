@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import AppKit
 
 // What the floating panel shows during a break and once it is complete.
 

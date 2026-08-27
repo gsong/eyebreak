@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import UserNotifications
 
 // The three cards explaining 20 minutes, 20 feet, 20 seconds.
 

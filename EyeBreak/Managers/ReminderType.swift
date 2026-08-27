@@ -6,8 +6,6 @@
 //
 
 import SwiftUI
-import AppKit
-import Combine
 
 // The kinds of ambient reminder, and the copy and symbol each one shows.
 
