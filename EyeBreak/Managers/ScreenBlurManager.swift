@@ -44,14 +44,33 @@ class ScreenBlurManager {
     
     // MARK: - Public Methods
     
-    func showBreakOverlay(duration: Int, style: OverlayStyle, onSkip: @escaping () -> Void) {
+    /// - Parameter awaitsDismissal: Whether this break will wait to be dismissed
+    ///   once it has been served. All it does here is lengthen the keyboard
+    ///   watchdog, and the caller decides it: a break reads the setting, and the
+    ///   Settings preview never waits.
+    func showBreakOverlay(
+        duration: Int,
+        style: OverlayStyle,
+        awaitsDismissal: Bool,
+        onSkip: @escaping () -> Void
+    ) {
         
         // Optimize: Execute on main thread directly if already on main thread
         if Thread.isMainThread {
-            self.showOverlayOnMainThread(duration: duration, style: style, onSkip: onSkip)
+            self.showOverlayOnMainThread(
+                duration: duration,
+                style: style,
+                awaitsDismissal: awaitsDismissal,
+                onSkip: onSkip
+            )
         } else {
             DispatchQueue.main.async { [weak self] in
-                self?.showOverlayOnMainThread(duration: duration, style: style, onSkip: onSkip)
+                self?.showOverlayOnMainThread(
+                    duration: duration,
+                    style: style,
+                    awaitsDismissal: awaitsDismissal,
+                    onSkip: onSkip
+                )
             }
         }
     }
@@ -85,7 +104,12 @@ class ScreenBlurManager {
     
     // MARK: - Private Methods
     
-    private func showOverlayOnMainThread(duration: Int, style: OverlayStyle, onSkip: @escaping () -> Void) {
+    private func showOverlayOnMainThread(
+        duration: Int,
+        style: OverlayStyle,
+        awaitsDismissal: Bool,
+        onSkip: @escaping () -> Void
+    ) {
         // Generate a new random color theme for this break overlay (if using random color theme)
         AppSettings.shared.regenerateBreakOverlayRandomTheme()
         
@@ -142,7 +166,7 @@ class ScreenBlurManager {
         // once EyeBreak is frontmost.
         BreakInputTap.shared.start(
             breakDuration: TimeInterval(duration),
-            awaitsDismissal: AppSettings.shared.requireBreakDismissal
+            awaitsDismissal: awaitsDismissal
         ) { [weak self] in
             self?.skipHandler?()
         }

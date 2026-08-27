@@ -71,7 +71,7 @@ final class BreakInputTap {
     /// never again.
     func start(
         breakDuration: TimeInterval,
-        awaitsDismissal: Bool = false,
+        awaitsDismissal: Bool,
         onEndBreak: @escaping () -> Void
     ) {
         lock.lock()

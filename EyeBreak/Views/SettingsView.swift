@@ -1283,7 +1283,8 @@ struct BreakSettingsView: View {
             // Show 5-second preview of blur with proper cleanup
             ScreenBlurManager.shared.showBreakOverlay(
                 duration: 5,
-                style: .blur
+                style: .blur,
+                awaitsDismissal: false
             ) {
                 // When user clicks skip, hide the overlay
                 ScreenBlurManager.shared.hideOverlay()
@@ -1311,7 +1312,8 @@ struct BreakSettingsView: View {
             // Show 5-second preview of exercise with proper cleanup
             ScreenBlurManager.shared.showBreakOverlay(
                 duration: 5,
-                style: .exercise
+                style: .exercise,
+                awaitsDismissal: false
             ) {
                 // When user clicks skip, hide the overlay
                 ScreenBlurManager.shared.hideOverlay()
