@@ -78,8 +78,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This release focuses on visual refinements and professional polish throughout the entire application.
 
-**[Full Release Notes](docs/releases/RELEASE_NOTES_v2.3.0.md)**
-
 ### Added
 
 #### Menu Bar Timer Display (NEW!)
@@ -132,8 +130,6 @@ This release focuses on visual refinements and professional polish throughout th
 ### 🔒 Major Features: Screen Lock Detection & Unified Dashboard
 
 This release introduces intelligent screen lock detection that automatically pauses all timers when you're away, and a beautiful unified dashboard showing real-time countdowns for all active reminders.
-
-**[Full Release Notes](docs/releases/RELEASE_NOTES_v2.2.0.md)**
 
 ### Added
 
@@ -197,7 +193,7 @@ This release introduces intelligent screen lock detection that automatically pau
 
 This release introduces automatic startup functionality and a comprehensive hydration reminder system to promote convenience and holistic health during computer work.
 
-**[Full Release Notes](docs/releases/RELEASE_NOTES_v2.1.0.md)** | **[Water Reminder Guide](docs/WATER_REMINDER_FEATURE.md)**
+**[Water Reminder Guide](docs/WATER_REMINDER_FEATURE.md)**
 
 ### Added
 
@@ -321,8 +317,6 @@ This release introduces automatic startup functionality and a comprehensive hydr
 ### 🎨 Major Feature: Complete Theme Customization System
 
 This release introduces a comprehensive theme customization system, allowing users to personalize their eye break experience with colors that match their preferences and workflow.
-
-**[Full Release Notes](docs/releases/RELEASE_NOTES_v2.0.0.md)** | **[Quick Start Guide](QUICK_START.md)**
 
 ### Added
 
