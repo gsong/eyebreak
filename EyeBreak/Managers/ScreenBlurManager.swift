@@ -56,6 +56,21 @@ class ScreenBlurManager {
         }
     }
     
+    /// Swaps the overlay to its completion state and leaves it up.
+    ///
+    /// The keyboard tap stays installed, so the ways out of a break are still the
+    /// ways out of this. A break style with no overlay has nothing to swap, which
+    /// is what the guard inside the countdown covers.
+    func awaitBreakDismissal() {
+        if Thread.isMainThread {
+            self.countdown?.awaitDismissal()
+        } else {
+            DispatchQueue.main.async { [weak self] in
+                self?.countdown?.awaitDismissal()
+            }
+        }
+    }
+    
     func hideOverlay() {
         
         // Optimize: Execute on main thread directly if already on main thread
@@ -94,10 +109,10 @@ class ScreenBlurManager {
         }
         
         // One countdown for the whole break, not one per screen. N timers would
-        // drift apart, and a rebuild would restart the count.
-        let countdown = BreakCountdown(totalSeconds: duration) { [weak self] in
-            self?.skipHandler?()
-        }
+        // drift apart, and a rebuild would restart the count. It only draws:
+        // reaching zero here ends nothing, because `BreakTimerManager` owns that
+        // transition and two clocks racing for it was safe only by accident.
+        let countdown = BreakCountdown(totalSeconds: duration)
         self.countdown = countdown
         
         // Remember who had focus so the break can hand it back. Ignore EyeBreak

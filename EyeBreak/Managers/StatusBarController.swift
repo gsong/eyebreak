@@ -56,6 +56,10 @@ class StatusBarController: NSObject, ObservableObject {
             iconName = "eye.slash.fill"
         case .paused:
             iconName = "pause.circle"
+        case .awaitingDismissal:
+            // The break is already banked, so the icon says done rather than
+            // resting. There is no eye symbol with a checkmark badge to use.
+            iconName = "checkmark.circle.fill"
         }
 
         icon = NSImage(systemSymbolName: iconName, accessibilityDescription: "EyeBreak")
@@ -76,6 +80,9 @@ class StatusBarController: NSObject, ObservableObject {
             timeText = formatTimeCompact(seconds)
         case .paused(_, let seconds):
             timeText = formatTimeCompact(seconds)
+        case .awaitingDismissal:
+            // Nothing is counting, so there is no number to show.
+            timeText = ""
         }
 
         // Update button
@@ -123,6 +130,8 @@ class StatusBarController: NSObject, ObservableObject {
             return "On break - \(seconds) seconds remaining"
         case .paused:
             return "Timer paused"
+        case .awaitingDismissal:
+            return "Break complete - dismiss to continue"
         }
     }
     

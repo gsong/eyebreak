@@ -216,6 +216,8 @@ struct UnifiedCountdownCard: View {
             return "On break"
         case .paused:
             return "Paused"
+        case .awaitingDismissal:
+            return "Break complete"
         }
     }
     
@@ -227,6 +229,8 @@ struct UnifiedCountdownCard: View {
             return formatTime(seconds)
         case .paused(_, let seconds):
             return formatTime(seconds)
+        case .awaitingDismissal:
+            return "--:--"
         }
     }
     
@@ -1821,6 +1825,8 @@ struct TimerStatusBanner: View {
             return .green
         case .paused:
             return .yellow
+        case .awaitingDismissal:
+            return .green
         }
     }
     
@@ -1849,6 +1855,8 @@ struct TimerStatusBanner: View {
             return "Break time remaining:"
         case .paused:
             return "Paused"
+        case .awaitingDismissal:
+            return "Break complete:"
         }
     }
     
@@ -1860,7 +1868,7 @@ struct TimerStatusBanner: View {
             let minutes = remainingSeconds / 60
             let seconds = remainingSeconds % 60
             return String(format: "%02d:%02d", minutes, seconds)
-        case .paused:
+        case .paused, .awaitingDismissal:
             return "--:--"
         }
     }
@@ -1901,6 +1909,14 @@ struct TimerStatusBanner: View {
                     Label("Skip Break", systemImage: "forward.fill")
                 }
                 .buttonStyle(.bordered)
+                
+            case .awaitingDismissal:
+                Button {
+                    timerManager.dismissBreak()
+                } label: {
+                    Label("Back to Work", systemImage: "checkmark.circle.fill")
+                }
+                .buttonStyle(.borderedProminent)
                 
             case .paused:
                 Button {

@@ -68,8 +68,13 @@ class BreakTimerManager: ObservableObject {
     
     /// Trigger an immediate break
     func takeBreakNow() {
-        // Don't start a new break if already breaking
+        // Don't start a new break if a break is already on screen. A served one
+        // waiting to be dismissed counts: it is still the last break, and
+        // starting another on top of it would credit two for one rest.
         if case .breaking = state {
+            return
+        }
+        if case .awaitingDismissal = state {
             return
         }
         
@@ -92,8 +97,11 @@ class BreakTimerManager: ObservableObject {
     
     /// Force a break even if outside work hours (from alert "Take Break Anyway")
     func forceBreakNow() {
-        // Don't start a new break if already breaking
+        // Don't start a new break if a break is already on screen — see takeBreakNow.
         if case .breaking = state {
+            return
+        }
+        if case .awaitingDismissal = state {
             return
         }
         
@@ -113,6 +121,15 @@ class BreakTimerManager: ObservableObject {
     
     /// Skip the current break (discouraged!)
     func skipBreak() {
+        // Once the break has been served there is nothing left to skip. Every
+        // way out of the overlay arrives here — bare ESC from the keyboard tap,
+        // ESC from the overlay's own monitor, the panic chord, and the button —
+        // so the waiting state answers all four with a dismissal.
+        if case .awaitingDismissal = state {
+            dismissBreak()
+            return
+        }
+        
         guard case .breaking = state else {
             // Stop or Pause during a break leaves the breaking state behind but
             // not the overlay. The overlay holds keyboard focus now, so leaving
@@ -128,6 +145,25 @@ class BreakTimerManager: ObservableObject {
         if settings.soundEnabled {
             SoundManager.shared.playSound(.skip)
         }
+    }
+    
+    /// End the wait after a served break and go back to work.
+    ///
+    /// The next work interval is a full one. The break was credited when it was
+    /// served, so the minutes spent waiting were the user's, not the timer's, and
+    /// stats are not touched again here.
+    func dismissBreak() {
+        // Whichever style put the break on screen, this takes it back down —
+        // before the state is checked, and even if Stop has already moved the
+        // timer on. The Floating Window panel does not close itself on the way
+        // here, and a panel whose only button had stopped working would have no
+        // way to close at all.
+        ScreenBlurManager.shared.hideOverlay()
+        FloatingBreakWindow.shared?.hide()
+        
+        guard case .awaitingDismissal = state else { return }
+        
+        startNextWorkInterval()
     }
     
     /// Pause the timer
@@ -149,11 +185,10 @@ class BreakTimerManager: ObservableObject {
         state = .paused(wasWorking: wasWorking, remainingSeconds: remainingSeconds)
         wasWorkingBeforePause = wasWorking
         
-        // A paused break has to lose its overlay. The overlay counts down on a
-        // clock of its own, so left on screen it runs to zero and ends a break
-        // the manager still thinks is paused. `resume()` would then put the
-        // state back into `.breaking` with nothing on screen, and the invisible
-        // break would be credited as completed.
+        // A paused break has to lose its overlay. Nothing behind it is counting
+        // any more, and an overlay left up holds the keyboard until its watchdog
+        // gives it back. `resume()` puts the overlay back for what is left of
+        // the break.
         if !wasWorking && usesScreenOverlay {
             ScreenBlurManager.shared.hideOverlay()
         }
@@ -231,7 +266,7 @@ class BreakTimerManager: ObservableObject {
             
         case .breaking:
             if remainingSeconds <= 0 {
-                endBreak()
+                serveBreak()
             } else {
                 state = .breaking(remainingSeconds: remainingSeconds)
             }
@@ -262,24 +297,73 @@ class BreakTimerManager: ObservableObject {
         NotificationManager.shared.sendBreakStartNotification()
     }
     
+    /// The break ran its length. Credit it, then either go straight back to work
+    /// or hold the overlay until the user says they are back.
+    ///
+    /// The guard is what keeps a break to one credit. The Floating Window style
+    /// runs a clock of its own alongside this one and both reach zero, so this is
+    /// called twice; the second call finds the state already moved on.
+    private func serveBreak() {
+        guard case .breaking = state else { return }
+        
+        guard settings.requireBreakDismissal else {
+            endBreak()
+            return
+        }
+        
+        // Reset forced break flag
+        isForcedBreak = false
+        
+        creditBreak()
+        awaitDismissal()
+    }
+    
+    /// The break is over and work starts again now. Either it ran out with the
+    /// wait turned off, or the user skipped it — a skip is already a deliberate
+    /// act, so it does not ask for a second one.
     private func endBreak() {
         // Reset forced break flag
         isForcedBreak = false
         
-        // Update statistics
-        settings.updateStats(breaksCompleted: 1, breakTime: settings.breakDurationSeconds)
+        creditBreak()
         
         ScreenBlurManager.shared.hideOverlay()
         
-        // Start next work session
-        remainingSeconds = settings.workIntervalSeconds
-        state = .working(remainingSeconds: remainingSeconds)
+        startNextWorkInterval()
+    }
+    
+    /// Records the break as taken. This is the moment the rest was served, which
+    /// is not the moment the user comes back to the machine.
+    private func creditBreak() {
+        settings.updateStats(breaksCompleted: 1, breakTime: settings.breakDurationSeconds)
         
         if settings.soundEnabled {
             SoundManager.shared.playSound(.breakEnd)
         }
         
         NotificationManager.shared.sendBreakCompleteNotification()
+    }
+    
+    /// Holds the overlay on screen with nothing counting behind it. No timer runs
+    /// during the wait, which is also what keeps sleep, screen lock and idle
+    /// detection from touching it: they all go through `pause()`, and `pause()`
+    /// guards on `state.isActive`.
+    private func awaitDismissal() {
+        timer?.invalidate()
+        timer = nil
+        state = .awaitingDismissal
+        
+        ScreenBlurManager.shared.awaitBreakDismissal()
+    }
+    
+    private func startNextWorkInterval() {
+        remainingSeconds = settings.workIntervalSeconds
+        state = .working(remainingSeconds: remainingSeconds)
+        
+        // The break's own timer is still running on the path straight back to
+        // work, and `awaitDismissal` invalidated it on the other. Starting it
+        // here covers both; `startTimer` invalidates whatever it replaces.
+        startTimer()
     }
     
     /// Whether the break style puts a full-screen overlay up. The Floating
@@ -319,7 +403,7 @@ class BreakTimerManager: ObservableObject {
                     self?.skipBreak()
                 },
                 onComplete: { [weak self] in
-                    self?.endBreak()
+                    self?.serveBreak()
                 }
             )
         }

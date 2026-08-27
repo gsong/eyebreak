@@ -96,6 +96,7 @@ struct MenuBarView: View {
         case .preBreak: return "Break soon"
         case .breaking: return "On break"
         case .paused: return "Paused"
+        case .awaitingDismissal: return "Break complete"
         }
     }
     
@@ -352,6 +353,31 @@ struct MenuBarView: View {
                     }
                     .professionalButtonStyle(color: .green)
                 }
+            } else if case .awaitingDismissal = timerManager.state {
+                // The overlay sits in front of this in normal use, so the button
+                // is here as a way back if the overlay never appeared.
+                Button(action: timerManager.dismissBreak) {
+                    HStack {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.title3)
+                        Text("Back to Work")
+                            .fontWeight(.semibold)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
+                    .background(
+                        LinearGradient(
+                            colors: [.green, .green.opacity(0.8)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
+                    .shadow(color: .green.opacity(0.3), radius: 8, x: 0, y: 4)
+                }
+                .professionalButtonStyle(color: .green)
+                
             } else if case .paused = timerManager.state {
                 Button(action: timerManager.resume) {
                     HStack {
