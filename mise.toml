@@ -5,8 +5,8 @@
 minimum_release_age = "7d"
 
 [tools]
-# Formats the Markdown, YAML, and JSON in this repo. Not the Swift, and never
-# the website — see .prettierignore.
+# Formats the Markdown, YAML, and JSON in this repo. Not the Swift — see
+# .prettierignore.
 "npm:prettier" = "3.9.6"
 # Swift linter, configured by .swiftlint.yml. CI installs it from here, so a
 # run lints with the same version you get locally.

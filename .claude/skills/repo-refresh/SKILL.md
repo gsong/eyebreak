@@ -9,8 +9,7 @@ Run all repo maintenance tasks in sequence with per-step commits and a final PR.
 
 ## Scope
 
-This skill covers the macOS app and its CI only. **Do not touch `website/`.** Its npm
-dependencies are out of scope and are not part of a refresh.
+This skill covers the macOS app and its CI only.
 
 ## Pre-flight: Branch Setup
 
@@ -23,9 +22,6 @@ dependencies are out of scope and are not part of a refresh.
    git checkout -b <branch-name> origin/main
    ```
 3. If using the current branch, proceed as-is
-
-`origin` is `gsong/eyebreak`. `upstream` is `cheat2001/eyebreak`, the repo this one forks.
-Never branch from, push to, or open a PR against `upstream`.
 
 ## Steps
 
@@ -206,8 +202,7 @@ Two findings recur in this repo and need judgment, not a reflex fix:
 
 - **`excessive-permissions`** — a workflow with no `permissions:` block gets the default write
   token. Check which workflows still lack one rather than assuming; each refresh narrows the set.
-  `release.yml` genuinely needs `contents: write` to publish a release. Most others need only
-  `contents: read`.
+  Nothing here publishes, so `contents: read` is the right answer for every workflow.
 - **`template-injection`** — check whether the interpolated value is attacker-controlled before
   rewriting a `run:` step. A tag name the maintainer pushes is not the same risk as a PR title.
 
@@ -249,7 +244,7 @@ After all steps complete:
    git push -u origin <branch-name>
    ```
 
-2. Create a PR **targeting `gsong/eyebreak`**, never `upstream`:
+2. Create the PR:
 
    ```bash
    gh pr create --repo gsong/eyebreak --base main --title "chore: repo refresh" --body "$(cat <<'EOF'
@@ -272,7 +267,6 @@ After all steps complete:
 ## Constraints
 
 - Do NOT run or launch the app
-- Do NOT touch `website/`
 - Each step gets its own commit
 - Steps run sequentially (each can affect the next)
 - Use `git push --force-with-lease` if the branch already exists on origin

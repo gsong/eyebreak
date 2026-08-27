@@ -100,8 +100,7 @@ jobs:
 
       # The old form could not fail: `find -exec test -x` exits 0 whether or not
       # anything matched, so a script that lost its execute bit passed silently.
-      # docs/PUBLISHING.md invokes these as ./scripts/foo.sh, so a missing bit is
-      # a real break.
+      # These are invoked as ./scripts/foo.sh, so a missing bit is a real break.
       - name: Check script permissions
         run: |
           not_executable="$(find scripts -name '*.sh' -type f ! -perm -u+x)"

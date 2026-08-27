@@ -48,7 +48,10 @@
     "miniaturizable",
     "autoenables",
     "autorepeat",
-    "armable"
+    "armable",
+    "gsong",
+    "swiftlint",
+    "appcast"
   ],
   "ignoreWords": [],
   "ignorePaths": [
