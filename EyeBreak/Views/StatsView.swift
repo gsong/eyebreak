@@ -43,9 +43,9 @@ struct StatsView: View {
                 insightsSection
 
                 // Reset Button
-                Button(action: {
+                Button {
                     settings.resetStats()
-                }) {
+                } label: {
                     HStack {
                         Image(systemName: "trash.fill")
                         Text("Reset Statistics")

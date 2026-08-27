@@ -455,9 +455,9 @@ struct GeneralSettingsView: View {
             }
 
             Section {
-                Button(action: {
+                Button {
                     settings.resetToDefaults()
-                }) {
+                } label: {
                     HStack {
                         Image(systemName: "arrow.counterclockwise")
                         Text("Reset to Defaults")
@@ -745,11 +745,11 @@ struct BreakSettingsView: View {
                         }
 
                         // Enhanced test button
-                        Button(action: {
+                        Button {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                                 AmbientReminderManager.shared.showAmbientReminder()
                             }
-                        }) {
+                        } label: {
                             HStack {
                                 Image(systemName: "sparkles")
                                 Text("Show Reminder Now")
@@ -1022,11 +1022,11 @@ struct BreakSettingsView: View {
                         )
 
                         // Test button
-                        Button(action: {
+                        Button {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                                 WaterReminderManager.shared.showWaterReminderNow()
                             }
-                        }) {
+                        } label: {
                             HStack {
                                 Image(systemName: "drop.fill")
                                 Text("Show Water Reminder Now")
@@ -2333,9 +2333,9 @@ struct SmartScheduleView: View {
 
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
                         ForEach(SchedulePreset.allCases, id: \.self) { preset in
-                            Button(action: {
+                            Button {
                                 applyPreset(preset)
-                            }) {
+                            } label: {
                                 HStack {
                                     Image(systemName: preset == selectedPreset ? "checkmark.circle.fill" : "circle")
                                         .foregroundColor(preset == selectedPreset ? .blue : .secondary)

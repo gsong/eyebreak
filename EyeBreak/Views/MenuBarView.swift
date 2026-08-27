@@ -277,11 +277,11 @@ struct MenuBarView: View {
     private var controlsSection: some View {
         VStack(spacing: 12) {
             if timerManager.state == .idle {
-                Button(action: {
+                Button {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                         timerManager.start()
                     }
-                }) {
+                } label: {
                     HStack {
                         Image(systemName: "play.circle.fill")
                             .font(.title3)
@@ -306,11 +306,11 @@ struct MenuBarView: View {
 
             } else if timerManager.state.isActive {
                 HStack(spacing: 8) {
-                    Button(action: {
+                    Button {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                             timerManager.stop()
                         }
-                    }) {
+                    } label: {
                         HStack {
                             Image(systemName: "stop.circle.fill")
                             Text("Stop")
@@ -328,11 +328,11 @@ struct MenuBarView: View {
                     }
                     .professionalButtonStyle(color: .red, isOutlined: true)
 
-                    Button(action: {
+                    Button {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                             timerManager.takeBreakNow()
                         }
-                    }) {
+                    } label: {
                         HStack {
                             Image(systemName: "eye.slash.circle.fill")
                             Text("Break Now")
@@ -435,7 +435,7 @@ struct MenuBarView: View {
 
     private var bottomActionsSection: some View {
         VStack(spacing: 0) {
-            Button(action: { openWindow(id: "settings") }) {
+            Button { openWindow(id: "settings") } label: {
                 HStack {
                     Label("Settings", systemImage: "gear")
                     Spacer()
@@ -449,7 +449,7 @@ struct MenuBarView: View {
 
             Divider()
 
-            Button(action: { NSApplication.shared.terminate(nil) }) {
+            Button { NSApplication.shared.terminate(nil) } label: {
                 HStack {
                     Label("Quit EyeBreak", systemImage: "xmark.circle")
                     Spacer()
