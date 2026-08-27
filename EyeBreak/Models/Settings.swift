@@ -22,9 +22,8 @@ class AppSettings: ObservableObject {
     @AppStorage("preBreakWarningSeconds") var preBreakWarningSeconds: Int = 30
     @AppStorage("breakStyle") private var breakStyleRaw: String = BreakStyle.blurScreen.rawValue
     // Whether a served break waits for the user to dismiss it before the work
-    // timer restarts. Off here; the Settings toggle and the shipping default
-    // arrive with the rest of the feature.
-    @AppStorage("requireBreakDismissal") var requireBreakDismissal: Bool = false
+    // timer restarts. On, because a break nobody was present for is not a break.
+    @AppStorage("requireBreakDismissal") var requireBreakDismissal: Bool = true
     @AppStorage("soundEnabled") var soundEnabled: Bool = true
     @AppStorage("sessionType") private var sessionTypeRaw: String = SessionType.standard.rawValue
     @AppStorage("idleDetectionEnabled") var idleDetectionEnabled: Bool = true

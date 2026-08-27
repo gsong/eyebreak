@@ -92,6 +92,10 @@ Pomodoro is a time management technique: 25 minutes of work followed by a 5-minu
 
 Yes, press ESC or click the Skip Break button on the overlay. However, we don't recommend it—your eyes need the rest!
 
+### Why does the break screen stay up after the countdown ends?
+
+Because it is waiting for you. The break is counted the moment the countdown ends, but your next work interval does not start until you say you are back. Press ESC or click **Back to Work** to dismiss it. Turn it off with **Wait for me to dismiss the break** in Settings > Break Style, and breaks will end themselves as soon as the countdown does.
+
 ### Does the timer pause when I'm away?
 
 Yes! If idle detection is enabled (default), the timer automatically pauses after 5 minutes of no activity and resumes when you return.

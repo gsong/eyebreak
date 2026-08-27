@@ -54,6 +54,7 @@ When the timer ends:
 - Follow the on-screen instructions
 - Rest your eyes for 20 seconds
 - Press **ESC** if you need to skip (not recommended!)
+- When the countdown ends, the screen waits for you — press **ESC** or click **Back to Work** to start your next interval
 
 ## ⚙️ Basic Settings
 
