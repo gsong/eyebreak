@@ -90,9 +90,9 @@ struct ThemeSettingsCard: View {
 
     private var customEditorSection: some View {
         VStack(spacing: 0) {
-            Button(action: {
+            Button {
                 showingCustomEditor.toggle()
-            }) {
+            } label: {
                 HStack {
                     Image(systemName: "paintbrush.fill")
                     Text(showingCustomEditor ? "Hide Customization" : "Customize Colors")
@@ -280,10 +280,10 @@ struct CustomThemeEditor: View {
             // Reset button
             HStack {
                 Spacer()
-                Button(action: {
+                Button {
                     theme = .customTheme
                     onThemeChange()
-                }) {
+                } label: {
                     HStack {
                         Image(systemName: "arrow.counterclockwise")
                         Text("Reset to Default")
@@ -408,10 +408,10 @@ struct QuickPresetsView: View {
 
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))], spacing: 12) {
                 ForEach(presets, id: \.name) { preset in
-                    Button(action: {
+                    Button {
                         customTheme = preset.theme
                         onThemeChange()
-                    }) {
+                    } label: {
                         VStack(spacing: 8) {
                             Circle()
                                 .fill(preset.theme.backgroundGradient())

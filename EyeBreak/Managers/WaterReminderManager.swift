@@ -519,7 +519,7 @@ struct WaterBlurOverlayView: View {
                 .padding(.horizontal, 60)
 
                 // Gentle dismiss button - no countdown, user chooses when to dismiss
-                Button(action: {
+                Button {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                         scale = 0.5
                         opacity = 0
@@ -527,7 +527,7 @@ struct WaterBlurOverlayView: View {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         onDismiss()
                     }
-                }) {
+                } label: {
                     HStack(spacing: 10) {
                         Image(systemName: "hand.tap.fill")
                             .font(.system(size: 18))

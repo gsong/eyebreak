@@ -117,11 +117,11 @@ struct AmbientReminderView: View {
                 }
 
                 // Refined close button
-                Button(action: {
+                Button {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                         onDismiss()
                     }
-                }) {
+                } label: {
                     ZStack {
                         Circle()
                             .fill(currentTheme.backgroundColor.opacity(0.2))
