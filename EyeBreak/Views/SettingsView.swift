@@ -587,7 +587,8 @@ struct BreakSettingsView: View {
                     Blur Screen and Eye Exercise hold the keyboard for the length of the break, so \
                     shortcuts in other apps stay quiet. Press \u{238B} to end a break early. \
                     \u{2303}\u{2325}\u{2318}\u{238B} releases the keyboard and ends the break if \
-                    anything goes wrong, and \u{2318}\u{2325}\u{238B} still opens Force Quit.
+                    anything goes wrong. \u{2318}\u{2325}\u{238B} still reaches Force Quit, but it \
+                    opens behind the overlay.
                     """)
                         .font(.caption)
                 } else {

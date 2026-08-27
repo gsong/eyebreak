@@ -68,8 +68,16 @@ enum BreakInputPolicy {
             // Reaches the key overlay window, where the skip monitor ends the break.
             return .pass
         case [.maskCommand, .maskAlternate]:
-            // Force Quit. The user's last resort before a power cycle, so it
-            // passes even though it also lets them force-quit an app mid-break.
+            // Force Quit. It passes even though it also lets the user force-quit
+            // an app mid-break.
+            //
+            // Passing it is not the same as it working. Tested during a break:
+            // the panel does open, but it opens below an overlay that sits at
+            // the maximum window level, and the arrow keys and Return that would
+            // drive it are consumed here like everything else. So it is a way
+            // out only once the overlay is gone. Treat the panic chord and the
+            // watchdog as the outs that actually work, and keep this one because
+            // consuming it could only make things worse.
             return .pass
         case [.maskControl, .maskAlternate, .maskCommand]:
             // The panic chord. Checked twice over before it was chosen: it is in

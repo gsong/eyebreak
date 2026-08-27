@@ -160,7 +160,8 @@ quiet until it ends. Three keys still get through:
 
 - **⎋** - End the break early
 - **⌃⌥⌘⎋** - Release the keyboard and end the break, if anything goes wrong
-- **⌘⌥⎋** - Force Quit, unchanged
+- **⌘⌥⎋** - Force Quit, which is passed through but opens behind the overlay, so
+  it is only usable once the break has ended
 
 Holding the keyboard needs Accessibility permission. macOS resets that grant on
 every EyeBreak update, so if breaks stop holding the keyboard after an update,
