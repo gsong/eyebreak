@@ -140,7 +140,10 @@ class ScreenBlurManager {
         // whether or not the activation above was granted: the tap sees the key
         // whichever app has focus, where the local monitor below sees it only
         // once EyeBreak is frontmost.
-        BreakInputTap.shared.start(breakDuration: TimeInterval(duration)) { [weak self] in
+        BreakInputTap.shared.start(
+            breakDuration: TimeInterval(duration),
+            awaitsDismissal: AppSettings.shared.requireBreakDismissal
+        ) { [weak self] in
             self?.skipHandler?()
         }
 
