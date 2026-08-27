@@ -43,6 +43,21 @@
 		A20000014 /* BreakInputPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000100 /* BreakInputPolicy.swift */; };
 		A20000009 /* BreakInputPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000008 /* BreakInputPolicyTests.swift */; };
 		A20000007 /* BreakCountdownTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000006 /* BreakCountdownTests.swift */; };
+		8BF73246C7384D65C7FB538F /* ReminderType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4DD990800F60CB974EB399 /* ReminderType.swift */; };
+		B2275D936ECAB48734F93D53 /* WaterReminderViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B56DB9A6379E9C3C282B110 /* WaterReminderViews.swift */; };
+		0FA06A6CB0A9C83FCF426FD9 /* WaterMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BA14D6B8020FD343ABF8DF /* WaterMessage.swift */; };
+		55D4652195A03C1D36211785 /* WaterReminderManager+Pausing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D3C869A776923107000D26 /* WaterReminderManager+Pausing.swift */; };
+		1E25122978258ECDAE8473D5 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1111B6FE9F816B497AC899D3 /* SoundManager.swift */; };
+		DA35B4CFD82C9E4B6C2945BF /* BreakOverlayWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E20054B505D04DEEAFCBEC /* BreakOverlayWindow.swift */; };
+		6F184F9B9BD2D67A49F51365 /* OnboardingFeaturesPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2942B760E64DE29A8B383E28 /* OnboardingFeaturesPage.swift */; };
+		CD584129871000F2A8C7BB59 /* OnboardingPermissionsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0FAC5DBCDB50A2E532A615 /* OnboardingPermissionsPage.swift */; };
+		BC8101DFBB1D3746A38A3FC6 /* OnboardingRuleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4138A7D36EBA939E7D25F3D3 /* OnboardingRuleCard.swift */; };
+		97B6705C596B5A145BE6721B /* QuickPresetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F84F7A22B8F5C9DCB1394350 /* QuickPresetsView.swift */; };
+		3902FD331CE625006ECFC7F6 /* ColorPickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD44D6BCB136B4190685DD8 /* ColorPickerRow.swift */; };
+		7553FAA25EA8BEB18671997C /* StatsComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC190A6B7A3FAB18607700D /* StatsComponents.swift */; };
+		ACC1A608EDB0933D1457D33C /* MenuBarComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3238854CB0DD19082D6F3F16 /* MenuBarComponents.swift */; };
+		30C95D47D6F717E6E3425919 /* AnimatedEyeExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAE8FF5D847207D650A5E2C /* AnimatedEyeExerciseView.swift */; };
+		48EDB25663976CFCEF5D28D6 /* FloatingWindowBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5C763DDF553E5405440886 /* FloatingWindowBlurView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -81,6 +96,21 @@
 		A20000006 /* BreakCountdownTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakCountdownTests.swift; sourceTree = "<group>"; };
 		A20000008 /* BreakInputPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakInputPolicyTests.swift; sourceTree = "<group>"; };
 		A2FFFFFF1 /* EyeBreakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EyeBreakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A4DD990800F60CB974EB399 /* ReminderType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderType.swift; sourceTree = "<group>"; };
+		5B56DB9A6379E9C3C282B110 /* WaterReminderViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterReminderViews.swift; sourceTree = "<group>"; };
+		86BA14D6B8020FD343ABF8DF /* WaterMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterMessage.swift; sourceTree = "<group>"; };
+		17D3C869A776923107000D26 /* WaterReminderManager+Pausing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaterReminderManager+Pausing.swift"; sourceTree = "<group>"; };
+		1111B6FE9F816B497AC899D3 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
+		31E20054B505D04DEEAFCBEC /* BreakOverlayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayWindow.swift; sourceTree = "<group>"; };
+		2942B760E64DE29A8B383E28 /* OnboardingFeaturesPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFeaturesPage.swift; sourceTree = "<group>"; };
+		ED0FAC5DBCDB50A2E532A615 /* OnboardingPermissionsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPermissionsPage.swift; sourceTree = "<group>"; };
+		4138A7D36EBA939E7D25F3D3 /* OnboardingRuleCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingRuleCard.swift; sourceTree = "<group>"; };
+		F84F7A22B8F5C9DCB1394350 /* QuickPresetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickPresetsView.swift; sourceTree = "<group>"; };
+		2FD44D6BCB136B4190685DD8 /* ColorPickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerRow.swift; sourceTree = "<group>"; };
+		1BC190A6B7A3FAB18607700D /* StatsComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsComponents.swift; sourceTree = "<group>"; };
+		3238854CB0DD19082D6F3F16 /* MenuBarComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarComponents.swift; sourceTree = "<group>"; };
+		4FAE8FF5D847207D650A5E2C /* AnimatedEyeExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedEyeExerciseView.swift; sourceTree = "<group>"; };
+		0D5C763DDF553E5405440886 /* FloatingWindowBlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingWindowBlurView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +138,12 @@
 		A10000030 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				31E20054B505D04DEEAFCBEC /* BreakOverlayWindow.swift */,
+				1111B6FE9F816B497AC899D3 /* SoundManager.swift */,
+				17D3C869A776923107000D26 /* WaterReminderManager+Pausing.swift */,
+				86BA14D6B8020FD343ABF8DF /* WaterMessage.swift */,
+				5B56DB9A6379E9C3C282B110 /* WaterReminderViews.swift */,
+				3A4DD990800F60CB974EB399 /* ReminderType.swift */,
 				99EB42262EACA748003A7CDA /* LaunchAtLoginManager.swift */,
 				997554F72EA3776C00D0AEE1 /* WaterReminderManager.swift */,
 				99BD678A2E92516200D6FF8C /* StatusBarController.swift */,
@@ -126,6 +162,15 @@
 		A10000040 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				0D5C763DDF553E5405440886 /* FloatingWindowBlurView.swift */,
+				4FAE8FF5D847207D650A5E2C /* AnimatedEyeExerciseView.swift */,
+				3238854CB0DD19082D6F3F16 /* MenuBarComponents.swift */,
+				1BC190A6B7A3FAB18607700D /* StatsComponents.swift */,
+				2FD44D6BCB136B4190685DD8 /* ColorPickerRow.swift */,
+				F84F7A22B8F5C9DCB1394350 /* QuickPresetsView.swift */,
+				4138A7D36EBA939E7D25F3D3 /* OnboardingRuleCard.swift */,
+				ED0FAC5DBCDB50A2E532A615 /* OnboardingPermissionsPage.swift */,
+				2942B760E64DE29A8B383E28 /* OnboardingFeaturesPage.swift */,
 				99A7D5132E9EA7AB00466080 /* FloatingBreakWindow.swift */,
 				A1000000E /* MenuBarView.swift */,
 				A10000010 /* SettingsView.swift */,
@@ -279,6 +324,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				48EDB25663976CFCEF5D28D6 /* FloatingWindowBlurView.swift in Sources */,
+				30C95D47D6F717E6E3425919 /* AnimatedEyeExerciseView.swift in Sources */,
+				ACC1A608EDB0933D1457D33C /* MenuBarComponents.swift in Sources */,
+				7553FAA25EA8BEB18671997C /* StatsComponents.swift in Sources */,
+				3902FD331CE625006ECFC7F6 /* ColorPickerRow.swift in Sources */,
+				97B6705C596B5A145BE6721B /* QuickPresetsView.swift in Sources */,
+				BC8101DFBB1D3746A38A3FC6 /* OnboardingRuleCard.swift in Sources */,
+				CD584129871000F2A8C7BB59 /* OnboardingPermissionsPage.swift in Sources */,
+				6F184F9B9BD2D67A49F51365 /* OnboardingFeaturesPage.swift in Sources */,
+				DA35B4CFD82C9E4B6C2945BF /* BreakOverlayWindow.swift in Sources */,
+				1E25122978258ECDAE8473D5 /* SoundManager.swift in Sources */,
+				55D4652195A03C1D36211785 /* WaterReminderManager+Pausing.swift in Sources */,
+				0FA06A6CB0A9C83FCF426FD9 /* WaterMessage.swift in Sources */,
+				B2275D936ECAB48734F93D53 /* WaterReminderViews.swift in Sources */,
+				8BF73246C7384D65C7FB538F /* ReminderType.swift in Sources */,
 				A10000001 /* EyeBreakApp.swift in Sources */,
 				A10000003 /* TimerState.swift in Sources */,
 				A10000005 /* Settings.swift in Sources */,

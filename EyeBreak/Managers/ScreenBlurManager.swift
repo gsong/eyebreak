@@ -404,57 +404,6 @@ class ScreenBlurManager {
 
 // MARK: - Custom Content View
 
-/// Hosting view that takes the click which activates EyeBreak instead of
-/// swallowing it. Without this the first click on the overlay only brings the
-/// app forward, and a skip needs two clicks.
-private final class FirstMouseHostingView<Content: View>: NSHostingView<Content> {
-    override func acceptsFirstMouse(for event: NSEvent?) -> Bool {
-        return true
-    }
-}
-
 // MARK: - Custom Window Class
 
-/// Custom NSWindow that can become key window even when borderless
-class BreakOverlayWindow: NSWindow {
-    override var canBecomeKey: Bool {
-        return true
-    }
-
-    override var canBecomeMain: Bool {
-        return true
-    }
-}
-
 // MARK: - Sound Manager
-
-class SoundManager {
-
-    static let shared = SoundManager()
-
-    enum SoundType {
-        case start
-        case breakStart
-        case breakEnd
-        case skip
-    }
-
-    private init() {}
-
-    func playSound(_ type: SoundType) {
-        let soundName: NSSound.Name
-
-        switch type {
-        case .start:
-            soundName = .init("Blow")
-        case .breakStart:
-            soundName = .init("Glass")
-        case .breakEnd:
-            soundName = .init("Purr")
-        case .skip:
-            soundName = .init("Tink")
-        }
-
-        NSSound(named: soundName)?.play()
-    }
-}
