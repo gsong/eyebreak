@@ -101,11 +101,7 @@ struct UnifiedCountdownCard: View {
     @EnvironmentObject var settings: AppSettings
     @ObservedObject var ambientManager = AmbientReminderManager.shared
     @ObservedObject var waterManager = WaterReminderManager.shared
-    @State private var pulseAnimation = false
-    @State private var currentTime = Date()
-    
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    
+
     var body: some View {
         VStack(spacing: 20) {
             // Header with icon
@@ -130,7 +126,6 @@ struct UnifiedCountdownCard: View {
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .symbolEffect(.pulse.byLayer, options: .repeating)
                 }
                 
                 VStack(alignment: .leading, spacing: 2) {
@@ -201,9 +196,6 @@ struct UnifiedCountdownCard: View {
                         )
                 )
         )
-        .onReceive(timer) { _ in
-            currentTime = Date()
-        }
     }
     
     // MARK: - Eye Break Computed Properties
@@ -746,7 +738,6 @@ struct BreakSettingsView: View {
                         }) {
                             HStack {
                                 Image(systemName: "sparkles")
-                                    .symbolEffect(.pulse)
                                 Text("Show Reminder Now")
                                     .fontWeight(.semibold)
                             }
@@ -1024,7 +1015,6 @@ struct BreakSettingsView: View {
                         }) {
                             HStack {
                                 Image(systemName: "drop.fill")
-                                    .symbolEffect(.pulse)
                                 Text("Show Water Reminder Now")
                                     .fontWeight(.semibold)
                             }

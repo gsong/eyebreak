@@ -37,6 +37,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Plugging a display in mid-break covers it** - Unplugging one does not end the break, and neither rebuilds the overlay from the start: the time left carries over
 - **VoiceOver lands on one overlay** - The screen you were working on, rather than every screen racing to claim it
 
+#### Settings No Longer Burns CPU While Idle
+
+- **An open Settings window is free again** - It used to cost about a third of a core with nothing on screen moving. The Active Timers card ran a symbol animation with no end condition, plus a once-a-second ticker that updated a value nothing read. Measured with the timer idle on the General tab: 37% of a core before, 0.0% after
+- **The two "Show ... Now" buttons on the Breaks tab no longer animate forever** - Same class of bug: a symbol effect with no end condition
+
 ### Known Limitations
 
 - **Needs Accessibility permission** - macOS resets this grant every time EyeBreak updates. Without it, breaks still cover every display and still end on ⎋, but shortcuts in other apps keep working during a break. Settings and the README both say which state you are in
