@@ -40,7 +40,15 @@
     "MVVM",
     "Stretchly",
     "refcon",
-    "unretained"
+    "unretained",
+    "lookaway",
+    "deinit",
+    "xmark",
+    "nonactivating",
+    "miniaturizable",
+    "autoenables",
+    "autorepeat",
+    "armable"
   ],
   "ignoreWords": [],
   "ignorePaths": [
