@@ -18,6 +18,18 @@ class ScreenBlurManager {
     /// The app that was frontmost when the break started. The overlay activates
     /// EyeBreak to take keyboard focus, so it has to hand focus back on the way out.
     private var previousFrontmostApp: NSRunningApplication?
+    /// The one clock behind every screen's overlay.
+    private var countdown: BreakCountdown?
+    /// The style and the skip closure of the break in progress. A rebuild needs
+    /// both, and only `showBreakOverlay` is given them.
+    private var overlayStyle: OverlayStyle = .blur
+    private var skipHandler: (() -> Void)?
+    /// The screen frames the current windows cover. macOS posts a screen change
+    /// for things that leave the layout alone, so this is what says whether a
+    /// rebuild is worth the flicker.
+    private var coveredFrames: [CGRect] = []
+    private var screenChangeObserver: NSObjectProtocol?
+    private var escapeMonitor: Any?
     private let windowQueue = DispatchQueue(label: "com.eyebreak.window", qos: .userInteractive)
     
     enum OverlayStyle {
@@ -41,74 +53,6 @@ class ScreenBlurManager {
         }
     }
     
-    private func showOverlayOnMainThread(duration: Int, style: OverlayStyle, onSkip: @escaping () -> Void) {
-        // Generate a new random color theme for this break overlay (if using random color theme)
-        AppSettings.shared.regenerateBreakOverlayRandomTheme()
-        
-        // Close existing windows
-        for window in self.overlayWindows {
-            window.orderOut(nil)
-        }
-        self.overlayWindows.removeAll()
-        self.hostingViews.removeAll()
-        
-        
-        // Get the screen with mouse cursor (the active screen user is on)
-        let mouseLocation = NSEvent.mouseLocation
-        let activeScreen = NSScreen.screens.first(where: { NSMouseInRect(mouseLocation, $0.frame, false) }) ?? NSScreen.main ?? NSScreen.screens[0]
-        
-        
-        // Create overlay ONLY for the active screen where user is working
-        let window = self.createOverlayWindow(for: activeScreen)
-        
-        // CRITICAL: Force window frame to the active screen
-        window.setFrame(activeScreen.frame, display: true, animate: false)
-        
-        // Create the beautiful SwiftUI overlay view
-        let overlayView = BreakOverlayView(
-            duration: duration,
-            style: style,
-            onSkip: {
-                // Ensure onSkip is called on main thread safely
-                if Thread.isMainThread {
-                    onSkip()
-                } else {
-                    DispatchQueue.main.async {
-                        onSkip()
-                    }
-                }
-            }
-        )
-        
-        let hostingView = FirstMouseHostingView(rootView: overlayView)
-        hostingView.frame = activeScreen.frame
-        
-        window.contentView = hostingView
-        
-        // Remember who had focus so the break can hand it back. Ignore EyeBreak
-        // itself, or a preview started from Settings would make us the app we
-        // return to.
-        let frontmost = NSWorkspace.shared.frontmostApplication
-        if frontmost?.processIdentifier != ProcessInfo.processInfo.processIdentifier {
-            self.previousFrontmostApp = frontmost
-        }
-        
-        // The overlay has to be modal. ESC runs off a local event monitor, which
-        // only sees events macOS already routed to EyeBreak, and macOS routes
-        // keys to the frontmost app. So the app activates and the window takes
-        // key status. The window joins all Spaces, so EyeBreak always has a
-        // window on the current one, which is what keeps activation from
-        // switching Spaces.
-        NSApp.activate()
-        window.orderFrontRegardless()
-        window.makeKey()
-        
-        
-        self.overlayWindows.append(window)
-        self.hostingViews.append(hostingView)
-        
-    }
-    
     func hideOverlay() {
         
         // Optimize: Execute on main thread directly if already on main thread
@@ -121,22 +65,68 @@ class ScreenBlurManager {
         }
     }
     
+    // MARK: - Private Methods
+    
+    private func showOverlayOnMainThread(duration: Int, style: OverlayStyle, onSkip: @escaping () -> Void) {
+        // Generate a new random color theme for this break overlay (if using random color theme)
+        AppSettings.shared.regenerateBreakOverlayRandomTheme()
+        
+        // Clear anything a previous break left behind.
+        self.closeOverlayWindows()
+        self.countdown?.stop()
+        
+        self.overlayStyle = style
+        self.skipHandler = {
+            // Ensure onSkip is called on main thread safely
+            if Thread.isMainThread {
+                onSkip()
+            } else {
+                DispatchQueue.main.async {
+                    onSkip()
+                }
+            }
+        }
+        
+        // One countdown for the whole break, not one per screen. N timers would
+        // drift apart, and a rebuild would restart the count.
+        let countdown = BreakCountdown(totalSeconds: duration) { [weak self] in
+            self?.skipHandler?()
+        }
+        self.countdown = countdown
+        
+        // Remember who had focus so the break can hand it back. Ignore EyeBreak
+        // itself, or a preview started from Settings would make us the app we
+        // return to.
+        let frontmost = NSWorkspace.shared.frontmostApplication
+        if frontmost?.processIdentifier != ProcessInfo.processInfo.processIdentifier {
+            self.previousFrontmostApp = frontmost
+        }
+        
+        self.buildOverlayWindows()
+        
+        // The overlay has to be modal. ESC runs off a local event monitor, which
+        // only sees events macOS already routed to EyeBreak, and macOS routes
+        // keys to the frontmost app. So the app activates and a window takes
+        // key status. The windows join all Spaces, so EyeBreak always has one on
+        // the current Space, which is what keeps activation from switching Spaces.
+        NSApp.activate()
+        self.windowUnderPointer()?.makeKey()
+        
+        countdown.start()
+        self.startObservingScreenChanges()
+        self.startMonitoringEscape()
+    }
+    
     private func hideOverlayOnMainThread() {
         
-        // First, remove content views to break retain cycles
-        for window in self.overlayWindows {
-            window.contentView = nil
-            window.orderOut(nil)
-        }
+        self.stopObservingScreenChanges()
+        self.stopMonitoringEscape()
         
-        // Then close windows
-        for window in self.overlayWindows {
-            window.close()
-        }
+        self.countdown?.stop()
+        self.countdown = nil
+        self.skipHandler = nil
         
-        // Clear arrays
-        self.overlayWindows.removeAll()
-        self.hostingViews.removeAll()
+        self.closeOverlayWindows()
         
         // Give focus back to whatever the break interrupted. Every way out of a
         // break — timer expiry, ESC, the Skip button, and Stop or Pause from the
@@ -150,7 +140,72 @@ class ScreenBlurManager {
         }
     }
     
-    // MARK: - Private Methods
+    // MARK: - Overlay Windows
+    
+    /// Covers every attached screen. A break that covers one of three displays
+    /// is not modal: the other two stay visible and stay clickable.
+    private func buildOverlayWindows() {
+        guard let countdown = self.countdown, let onSkip = self.skipHandler else { return }
+        
+        let screens = NSScreen.screens
+        
+        for screen in screens {
+            let window = self.createOverlayWindow(for: screen)
+            
+            // CRITICAL: Force window frame to this screen
+            window.setFrame(screen.frame, display: true, animate: false)
+            
+            // Every screen shows the full break. The user may be looking at any
+            // of them, and "the active screen" stops meaning anything once the
+            // overlay holds focus.
+            let overlayView = BreakOverlayView(
+                countdown: countdown,
+                style: self.overlayStyle,
+                onSkip: onSkip
+            )
+            
+            let hostingView = FirstMouseHostingView(rootView: overlayView)
+            hostingView.frame = CGRect(origin: .zero, size: screen.frame.size)
+            
+            window.contentView = hostingView
+            window.orderFrontRegardless()
+            
+            self.overlayWindows.append(window)
+            self.hostingViews.append(hostingView)
+        }
+        
+        self.coveredFrames = screens.map(\.frame)
+    }
+    
+    private func closeOverlayWindows() {
+        self.close(self.overlayWindows)
+        
+        // Clear arrays
+        self.overlayWindows.removeAll()
+        self.hostingViews.removeAll()
+        self.coveredFrames.removeAll()
+    }
+    
+    private func close(_ windows: [NSWindow]) {
+        // First, remove content views to break retain cycles
+        for window in windows {
+            window.contentView = nil
+            window.orderOut(nil)
+        }
+        
+        // Then close windows
+        for window in windows {
+            window.close()
+        }
+    }
+    
+    /// The overlay on the screen holding the pointer. Only one window can be
+    /// key, and that is the screen the user was working on.
+    private func windowUnderPointer() -> NSWindow? {
+        let mouseLocation = NSEvent.mouseLocation
+        let match = self.overlayWindows.first { NSMouseInRect(mouseLocation, $0.frame, false) }
+        return match ?? self.overlayWindows.first
+    }
     
     private func createOverlayWindow(for screen: NSScreen) -> NSWindow {
         let window = BreakOverlayWindow(
@@ -176,6 +231,66 @@ class ScreenBlurManager {
         window.canHide = false
         
         return window
+    }
+    
+    // MARK: - Display Changes
+    
+    private func startObservingScreenChanges() {
+        guard self.screenChangeObserver == nil else { return }
+        
+        self.screenChangeObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.didChangeScreenParametersNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.rebuildOverlayWindowsIfScreensChanged()
+        }
+    }
+    
+    private func stopObservingScreenChanges() {
+        guard let observer = self.screenChangeObserver else { return }
+        NotificationCenter.default.removeObserver(observer)
+        self.screenChangeObserver = nil
+    }
+    
+    /// Rebuilds the overlay for the screens attached right now. A display added
+    /// mid-break must not stay an uncovered hole, and removing one must not end
+    /// the break. The countdown is left alone, so the remaining time carries over.
+    private func rebuildOverlayWindowsIfScreensChanged() {
+        guard self.countdown != nil else { return }
+        guard NSScreen.screens.map(\.frame) != self.coveredFrames else { return }
+        
+        // Build the replacements before dropping the old windows. An overlay
+        // that goes to zero windows, even for an instant, hands focus back to
+        // whatever is underneath and stops being modal.
+        let stale = self.overlayWindows
+        self.overlayWindows.removeAll()
+        self.hostingViews.removeAll()
+        
+        self.buildOverlayWindows()
+        self.windowUnderPointer()?.makeKey()
+        
+        self.close(stale)
+    }
+    
+    // MARK: - Escape Key
+    
+    /// One ESC monitor for the whole overlay set. It used to live in the SwiftUI
+    /// view, which with a view per screen would install one monitor per display.
+    private func startMonitoringEscape() {
+        guard self.escapeMonitor == nil else { return }
+        
+        self.escapeMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard event.keyCode == 53 else { return event }  // ESC key
+            self?.skipHandler?()
+            return nil  // Consume the event
+        }
+    }
+    
+    private func stopMonitoringEscape() {
+        guard let monitor = self.escapeMonitor else { return }
+        NSEvent.removeMonitor(monitor)
+        self.escapeMonitor = nil
     }
 }
 

@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct BreakOverlayView: View {
-    let duration: Int
+    /// The clock for the whole break, shared with the overlay on every other
+    /// screen. The view owns no timer of its own; N views counting separately
+    /// would drift, and rebuilding the set on a display change would restart them.
+    @ObservedObject var countdown: BreakCountdown
     let style: ScreenBlurManager.OverlayStyle
     let onSkip: () -> Void
     
-    @State private var remainingSeconds: Int
-    @State private var timer: Timer?
     @State private var opacity: Double = 0
     @State private var scale: CGFloat = 0.8
-    @State private var eventMonitor: Any?
     @AccessibilityFocusState private var isMessageFocused: Bool
     
     // Get the color theme from settings
@@ -26,11 +26,10 @@ struct BreakOverlayView: View {
         settings.breakOverlayTheme
     }
     
-    init(duration: Int, style: ScreenBlurManager.OverlayStyle, onSkip: @escaping () -> Void) {
-        self.duration = duration
+    init(countdown: BreakCountdown, style: ScreenBlurManager.OverlayStyle, onSkip: @escaping () -> Void) {
+        self.countdown = countdown
         self.style = style
         self.onSkip = onSkip
-        _remainingSeconds = State(initialValue: duration)
     }
     
     var body: some View {
@@ -76,26 +75,7 @@ struct BreakOverlayView: View {
         }
         .onAppear {
             startAnimation()
-            startTimer()
             isMessageFocused = true
-            
-            // ESC monitoring. A local monitor only sees events macOS already
-            // routed to EyeBreak, so this depends on the overlay window being key.
-            eventMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-                if event.keyCode == 53 { // ESC key
-                    skip()
-                    return nil // Consume the event
-                }
-                return event
-            }
-        }
-        .onDisappear {
-            stopTimer()
-            // Remove event monitor to prevent leaks
-            if let monitor = eventMonitor {
-                NSEvent.removeMonitor(monitor)
-                eventMonitor = nil
-            }
         }
     }
     
@@ -181,7 +161,10 @@ struct BreakOverlayView: View {
     // MARK: - Eye Exercise Content
     
     private var eyeExerciseContent: some View {
-        AnimatedEyeExerciseView(remainingSeconds: $remainingSeconds, totalDuration: duration)
+        AnimatedEyeExerciseView(
+            remainingSeconds: countdown.remainingSeconds,
+            totalDuration: countdown.totalSeconds
+        )
     }
     
     // MARK: - Timer Display
@@ -237,7 +220,7 @@ struct BreakOverlayView: View {
             
             // Countdown text with enhanced styling
             VStack(spacing: 4) {
-                Text("\(remainingSeconds)")
+                Text("\(countdown.remainingSeconds)")
                     .font(.system(size: 52, weight: .bold, design: .rounded))
                     .foregroundStyle(currentTheme.textGradient())
                     .shadow(color: currentTheme.accentColor.opacity(0.5), radius: 10)
@@ -257,8 +240,8 @@ struct BreakOverlayView: View {
                     .frame(width: 4, height: 4)
                     .offset(y: -70)
                     .rotationEffect(.degrees(Double(index) * 45))
-                    .rotationEffect(.degrees(Double(remainingSeconds) * 6))
-                    .animation(.linear(duration: 2).repeatForever(autoreverses: false), value: remainingSeconds)
+                    .rotationEffect(.degrees(Double(countdown.remainingSeconds) * 6))
+                    .animation(.linear(duration: 2).repeatForever(autoreverses: false), value: countdown.remainingSeconds)
             }
         }
         .frame(width: 140, height: 140)
@@ -307,7 +290,7 @@ struct BreakOverlayView: View {
     // MARK: - Computed Properties
     
     private var progress: CGFloat {
-        CGFloat(remainingSeconds) / CGFloat(duration)
+        CGFloat(countdown.progress)
     }
     
     // MARK: - Methods
@@ -324,38 +307,28 @@ struct BreakOverlayView: View {
             scale = 1
         }
     }
-    
-    private func startTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            if remainingSeconds > 0 {
-                remainingSeconds -= 1
-            } else {
-                stopTimer()
-                onSkip()
-            }
-        }
-    }
-    
-    private func stopTimer() {
-        timer?.invalidate()
-        timer = nil
-    }
+
 }
 
 // MARK: - Animated Eye Exercise View
 
 struct AnimatedEyeExerciseView: View {
-    @Binding var remainingSeconds: Int
+    let remainingSeconds: Int
     let totalDuration: Int
     
-    @State private var currentDirection: ExerciseDirection = .center
-    @State private var exercisePhase: Int = 0
-    @State private var dotOffset: CGFloat = 0
-    @State private var exerciseTimer: Timer?
     @ObservedObject private var settings = AppSettings.shared
     
     private var currentTheme: ColorTheme {
         settings.breakOverlayTheme
+    }
+    
+    /// Where to look, worked out from the clock rather than from a timer of this
+    /// view's own. Every screen runs this view, so a timer each would put the
+    /// displays on different directions, and a rebuild would restart the pattern.
+    private var currentDirection: ExerciseDirection {
+        let interval = max(1, settings.exerciseIntervalSeconds)
+        let elapsed = max(0, totalDuration - remainingSeconds)
+        return exercisePattern[(elapsed / interval) % exercisePattern.count]
     }
     
     enum ExerciseDirection: String {
@@ -486,21 +459,6 @@ struct AnimatedEyeExerciseView: View {
                 .padding(.vertical, 12)
                 .background(currentTheme.backgroundColor.opacity(0.25))
                 .cornerRadius(12)
-        }
-        .onAppear {
-            startExerciseSequence()
-        }
-        .onDisappear {
-            exerciseTimer?.invalidate()
-        }
-    }
-    
-    private func startExerciseSequence() {
-        // Change direction based on user's configured interval
-        let interval = TimeInterval(settings.exerciseIntervalSeconds)
-        exerciseTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
-            exercisePhase = (exercisePhase + 1) % exercisePattern.count
-            currentDirection = exercisePattern[exercisePhase]
         }
     }
 }
