@@ -399,11 +399,15 @@ class BreakTimerManager: ObservableObject {
             let window = FloatingBreakWindow()
             window.show(
                 duration: duration,
+                waitsForDismissal: settings.requireBreakDismissal,
                 onSkip: { [weak self] in
                     self?.skipBreak()
                 },
                 onComplete: { [weak self] in
                     self?.serveBreak()
+                },
+                onDismiss: { [weak self] in
+                    self?.dismissBreak()
                 }
             )
         }
