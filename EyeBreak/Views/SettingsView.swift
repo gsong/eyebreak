@@ -1653,23 +1653,16 @@ struct FeatureRow: View {
 struct TimerStatusBanner: View {
     @EnvironmentObject var timerManager: BreakTimerManager
     @EnvironmentObject var settings: AppSettings
-    @State private var pulseAnimation = false
-    
+
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 24) {
-                // Enhanced status indicator with animation
+                // Status indicator
                 ZStack {
-                    // Outer pulse
+                    // Outer halo
                     Circle()
                         .fill(statusColor.opacity(0.2))
                         .frame(width: 40, height: 40)
-                        .scaleEffect(pulseAnimation && timerManager.state.isActive ? 1.3 : 1.0)
-                        .animation(
-                            timerManager.state.isActive ?
-                            .easeInOut(duration: 1.5).repeatForever(autoreverses: true) : .default,
-                            value: pulseAnimation
-                        )
                     
                     // Middle ring
                     Circle()
@@ -1695,7 +1688,6 @@ struct TimerStatusBanner: View {
                         .frame(width: 12, height: 12)
                         .shadow(color: statusColor.opacity(0.5), radius: 4)
                 }
-                .onAppear { pulseAnimation = true }
                 
                 // Enhanced timer display
                 HStack(spacing: 12) {
@@ -1738,7 +1730,6 @@ struct TimerStatusBanner: View {
                                     endPoint: .bottomTrailing
                                 )
                             )
-                            .symbolEffect(.pulse.byLayer, options: .repeating)
                     }
                 }
                 
