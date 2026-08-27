@@ -20,12 +20,12 @@ struct BreakOverlayView: View {
 
     @State private var opacity: Double = 0
     @State private var scale: CGFloat = 0.8
-    @AccessibilityFocusState private var isMessageFocused: Bool
+    @AccessibilityFocusState var isMessageFocused: Bool
 
     // Get the color theme from settings
     @ObservedObject private var settings = AppSettings.shared
 
-    private var currentTheme: ColorTheme {
+    var currentTheme: ColorTheme {
         settings.breakOverlayTheme
     }
 
@@ -108,311 +108,24 @@ struct BreakOverlayView: View {
 
     // MARK: - Completion Content
 
-    /// What a served break looks like while it waits. No countdown, because
-    /// nothing is counting, and one control, because there is one thing to do.
-    private var completionContent: some View {
-        VStack(spacing: 32) {
-            ZStack {
-                Circle()
-                    .stroke(
-                        LinearGradient(
-                            colors: [
-                                currentTheme.accentColor.opacity(0.3),
-                                currentTheme.accentColor.opacity(0.2)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 2
-                    )
-                    .frame(width: 140, height: 140)
-                    .opacity(0.4)
-
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 80))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [
-                                currentTheme.accentColor,
-                                currentTheme.accentColor.opacity(0.8),
-                                currentTheme.backgroundColor
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .shadow(color: currentTheme.accentColor.opacity(0.5), radius: 20)
-            }
-
-            Text("Break Complete")
-                .font(.system(size: 48, weight: .bold, design: .rounded))
-                .foregroundStyle(currentTheme.textGradient())
-                .shadow(color: currentTheme.accentColor.opacity(0.3), radius: 10)
-                .shadow(color: Color.black.opacity(0.3), radius: 10)
-                .accessibilityFocused($isMessageFocused)
-
-            Text("Your next work interval starts when you dismiss this")
-                .font(.system(size: 20, weight: .medium, design: .rounded))
-                .foregroundColor(currentTheme.textColor.opacity(currentTheme.textOpacity))
-                .multilineTextAlignment(.center)
-                .shadow(color: Color.black.opacity(0.3), radius: 5)
-        }
-    }
-
     // MARK: - Standard Break Content
-
-    private var standardBreakContent: some View {
-        VStack(spacing: 32) {
-            // Optimized: Simplified icon with minimal animation
-            ZStack {
-                // Single outer glow ring
-                Circle()
-                    .stroke(
-                        LinearGradient(
-                            colors: [
-                                currentTheme.accentColor.opacity(0.3),
-                                currentTheme.accentColor.opacity(0.2)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 2
-                    )
-                    .frame(width: 140, height: 140)
-                    .opacity(0.4)
-
-                // Main icon with gradient (no animation)
-                Image(systemName: "eye.slash.fill")
-                    .font(.system(size: 80))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [
-                                currentTheme.accentColor,
-                                currentTheme.accentColor.opacity(0.8),
-                                currentTheme.backgroundColor
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .shadow(color: currentTheme.accentColor.opacity(0.5), radius: 20)
-            }
-
-            // Title with gradient
-            Text("Time for a Break")
-                .font(.system(size: 48, weight: .bold, design: .rounded))
-                .foregroundStyle(currentTheme.textGradient())
-                .shadow(color: currentTheme.accentColor.opacity(0.3), radius: 10)
-                .shadow(color: Color.black.opacity(0.3), radius: 10)
-                .accessibilityFocused($isMessageFocused)
-
-            // Instruction with subtle animation
-            VStack(spacing: 12) {
-                HStack(spacing: 12) {
-                    Image(systemName: "arrow.left.and.right")
-                        .font(.title2)
-                        .foregroundColor(currentTheme.accentColor)
-
-                    Text("Look at something 20 feet away")
-                        .font(.system(size: 24, weight: .medium, design: .rounded))
-                        .foregroundColor(currentTheme.textColor.opacity(currentTheme.textOpacity))
-                }
-
-                HStack(spacing: 8) {
-                    Image(systemName: "sparkles")
-                        .font(.caption)
-                        .foregroundColor(currentTheme.accentColor.opacity(0.8))
-                    Text("Give your eyes a rest")
-                        .font(.callout)
-                        .foregroundColor(currentTheme.secondaryTextColor.opacity(currentTheme.secondaryTextOpacity))
-                    Image(systemName: "sparkles")
-                        .font(.caption)
-                        .foregroundColor(currentTheme.accentColor.opacity(0.8))
-                }
-            }
-            .multilineTextAlignment(.center)
-            .shadow(color: Color.black.opacity(0.3), radius: 5)
-
-            // Enhanced timer display
-            timerDisplay
-        }
-    }
 
     // MARK: - Eye Exercise Content
 
-    private var eyeExerciseContent: some View {
-        AnimatedEyeExerciseView(
-            remainingSeconds: countdown.remainingSeconds,
-            totalDuration: countdown.totalSeconds
-        )
-    }
-
     // MARK: - Timer Display
-
-    private var timerDisplay: some View {
-        ZStack {
-            // Outer decorative ring
-            Circle()
-                .stroke(
-                    LinearGradient(
-                        colors: [
-                            currentTheme.accentColor.opacity(0.3),
-                            currentTheme.backgroundColor.opacity(0.3),
-                            currentTheme.accentColor.opacity(0.3)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 2
-                )
-                .frame(width: 140, height: 140)
-
-            // Background circle with glow
-            Circle()
-                .fill(currentTheme.backgroundColor.opacity(0.1))
-                .frame(width: 130, height: 130)
-                .overlay(
-                    Circle()
-                        .stroke(currentTheme.textColor.opacity(0.2), lineWidth: 8)
-                )
-                .shadow(color: currentTheme.accentColor.opacity(0.3), radius: 20)
-
-            // Progress circle with beautiful animated gradient
-            Circle()
-                .trim(from: 0, to: progress)
-                .stroke(
-                    AngularGradient(
-                        colors: [
-                            currentTheme.accentColor,
-                            currentTheme.backgroundColor,
-                            currentTheme.accentColor.opacity(0.8),
-                            currentTheme.backgroundColor.opacity(0.8),
-                            currentTheme.accentColor
-                        ],
-                        center: .center
-                    ),
-                    style: StrokeStyle(lineWidth: 8, lineCap: .round)
-                )
-                .frame(width: 130, height: 130)
-                .rotationEffect(.degrees(-90))
-                .shadow(color: currentTheme.accentColor.opacity(0.5), radius: 10)
-                .animation(.linear(duration: 1), value: progress)
-
-            // Countdown text with enhanced styling
-            VStack(spacing: 4) {
-                Text("\(countdown.remainingSeconds)")
-                    .font(.system(size: 52, weight: .bold, design: .rounded))
-                    .foregroundStyle(currentTheme.textGradient())
-                    .shadow(color: currentTheme.accentColor.opacity(0.5), radius: 10)
-                    .contentTransition(.numericText())
-
-                Text("seconds")
-                    .font(.caption)
-                    .foregroundColor(currentTheme.secondaryTextColor.opacity(currentTheme.secondaryTextOpacity))
-                    .textCase(.uppercase)
-                    .tracking(2)
-            }
-
-            // Rotating accent dots
-            ForEach(0..<8) { index in
-                Circle()
-                    .fill(currentTheme.accentColor.opacity(0.6))
-                    .frame(width: 4, height: 4)
-                    .offset(y: -70)
-                    .rotationEffect(.degrees(Double(index) * 45))
-                    .rotationEffect(.degrees(Double(countdown.remainingSeconds) * 6))
-                    .animation(.linear(duration: 2).repeatForever(autoreverses: false), value: countdown.remainingSeconds)
-            }
-        }
-        .frame(width: 140, height: 140)
-    }
 
     // MARK: - Dismiss Hint
 
-    /// The one control a served break offers. It ends the wait; it does not skip
-    /// anything, because there is nothing left to skip.
-    private var dismissHint: some View {
-        VStack(spacing: 12) {
-            Button(action: endBreak) {
-                HStack(spacing: 8) {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 12))
-                    Text("Back to Work")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
-                }
-                .foregroundColor(currentTheme.accentColor)
-                .padding(.vertical, 10)
-                .padding(.horizontal, 24)
-                .background(
-                    Capsule()
-                        .fill(currentTheme.accentColor.opacity(0.12))
-                )
-                .overlay(
-                    Capsule()
-                        .stroke(currentTheme.accentColor.opacity(0.4), lineWidth: 1.5)
-                )
-            }
-            .buttonStyle(.plain)
-            .help("Start your next work interval")
-
-            Text("Press ESC or click Back to Work to continue")
-                .font(.system(size: 14, design: .rounded))
-                .foregroundColor(currentTheme.secondaryTextColor.opacity(currentTheme.secondaryTextOpacity * 0.8))
-        }
-    }
-
     // MARK: - Skip Hint
 
-    private var skipHint: some View {
-        VStack(spacing: 12) {
-            // The overlay used to skip on a tap anywhere, which was safe only
-            // because the first click was eaten by app activation. Now that the
-            // first click lands, a stray one would end the break, so skipping
-            // needs a deliberate target.
-            Button(action: endBreak) {
-                HStack(spacing: 8) {
-                    Image(systemName: "forward.fill")
-                        .font(.system(size: 12))
-                    Text("Skip Break")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
-                }
-                .foregroundColor(currentTheme.accentColor)
-                .padding(.vertical, 10)
-                .padding(.horizontal, 24)
-                .background(
-                    Capsule()
-                        .fill(currentTheme.accentColor.opacity(0.12))
-                )
-                .overlay(
-                    Capsule()
-                        .stroke(currentTheme.accentColor.opacity(0.4), lineWidth: 1.5)
-                )
-            }
-            .buttonStyle(.plain)
-            .help("Skip this break")
-
-            Text("Press ESC or click Skip Break to skip")
-                .font(.system(size: 14, design: .rounded))
-                .foregroundColor(currentTheme.secondaryTextColor.opacity(currentTheme.secondaryTextOpacity * 0.8))
-
-            Text("(Not recommended—your eyes need this!)")
-                .font(.system(size: 12, design: .rounded))
-                .foregroundColor(currentTheme.secondaryTextColor.opacity(currentTheme.secondaryTextOpacity * 0.6))
-        }
-    }
-
     // MARK: - Computed Properties
-
-    private var progress: CGFloat {
-        CGFloat(countdown.progress)
-    }
 
     // MARK: - Methods
 
     /// The one way out the overlay offers, and the only thing either hint's
     /// button does. `BreakTimerManager` reads the state to decide what it means:
     /// skip a running break, dismiss a served one.
-    private func endBreak() {
+    func endBreak() {
         DispatchQueue.main.async {
             onSkip()
         }

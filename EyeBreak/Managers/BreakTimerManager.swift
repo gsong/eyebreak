@@ -23,17 +23,17 @@ class BreakTimerManager: ObservableObject {
 
     // MARK: - Private Properties
 
-    private var timer: Timer?
-    private var remainingSeconds: Int = 0
-    private var idleDetector: IdleDetector?
-    private var cancellables = Set<AnyCancellable>()
+    var timer: Timer?
+    var remainingSeconds: Int = 0
+    var idleDetector: IdleDetector?
+    var cancellables = Set<AnyCancellable>()
     private var wasWorkingBeforePause = false
-    private var isForcedBreak = false // Flag to bypass Smart Schedule during forced breaks
+    var isForcedBreak = false // Flag to bypass Smart Schedule during forced breaks
     /// Whether the break now on screen will wait to be dismissed. Read once,
     /// when the break goes up, because the keyboard watchdog is armed from the
     /// same value: a setting toggled mid-break would otherwise leave the
     /// watchdog allowing for one behavior and the timer doing the other.
-    private var breakAwaitsDismissal = false
+    var breakAwaitsDismissal = false
 
     // MARK: - Initialization
 
@@ -206,7 +206,7 @@ class BreakTimerManager: ObservableObject {
 
     // MARK: - Private Methods
 
-    private func startTimer() {
+    func startTimer() {
         timer?.invalidate()
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
@@ -268,259 +268,10 @@ class BreakTimerManager: ObservableObject {
         }
     }
 
-    private func startBreak() {
-        // Check if Smart Schedule allows breaks now
-        if settings.smartScheduleEnabled && !settings.shouldShowBreaksNow {
-            // Skip to next work session instead of showing break
-            remainingSeconds = settings.workIntervalSeconds
-            state = .working(remainingSeconds: remainingSeconds)
-            return
-        }
-
-        remainingSeconds = settings.breakDurationSeconds
-        state = .breaking(remainingSeconds: remainingSeconds)
-
-        showBreakOverlay(duration: remainingSeconds)
-
-        if settings.soundEnabled {
-            SoundManager.shared.playSound(.breakStart)
-        }
-
-        NotificationManager.shared.sendBreakStartNotification()
-    }
-
-    /// The break ran its length. Credit it, then either go straight back to work
-    /// or hold the overlay until the user says they are back.
-    ///
-    /// Called twice in the Floating Window style, which runs a clock of its own
-    /// alongside this one. `breakEndAction` is what keeps that to one credit.
-    private func serveBreak() {
-        switch state.breakEndAction(awaitsDismissal: breakAwaitsDismissal) {
-        case .ignore:
-            return
-        case .endNow:
-            endBreak()
-        case .awaitDismissal:
-            // Reset forced break flag
-            isForcedBreak = false
-
-            creditBreak()
-            awaitDismissal()
-        }
-    }
-
-    /// The break is over and work starts again now. Either it ran out with the
-    /// wait turned off, or the user skipped it — a skip is already a deliberate
-    /// act, so it does not ask for a second one.
-    private func endBreak() {
-        // Reset forced break flag
-        isForcedBreak = false
-
-        creditBreak()
-
-        ScreenBlurManager.shared.hideOverlay()
-
-        startNextWorkInterval()
-    }
-
-    /// Records the break as taken. This is the moment the rest was served, which
-    /// is not the moment the user comes back to the machine.
-    private func creditBreak() {
-        settings.updateStats(breaksCompleted: 1, breakTime: settings.breakDurationSeconds)
-
-        if settings.soundEnabled {
-            SoundManager.shared.playSound(.breakEnd)
-        }
-
-        NotificationManager.shared.sendBreakCompleteNotification()
-    }
-
-    /// Holds the overlay on screen with nothing counting behind it. No timer runs
-    /// during the wait, which is also what keeps sleep, screen lock and idle
-    /// detection from touching it: they all go through `pause()`, and `pause()`
-    /// guards on `state.isActive`.
-    private func awaitDismissal() {
-        timer?.invalidate()
-        timer = nil
-        state = .awaitingDismissal
-
-        ScreenBlurManager.shared.awaitBreakDismissal()
-    }
-
-    private func startNextWorkInterval() {
-        remainingSeconds = settings.workIntervalSeconds
-        state = .working(remainingSeconds: remainingSeconds)
-
-        // The break's own timer is still running on the path straight back to
-        // work, and `awaitDismissal` invalidated it on the other. Starting it
-        // here covers both; `startTimer` invalidates whatever it replaces.
-        startTimer()
-    }
-
-    /// Whether the break style puts a full-screen overlay up. The Floating
-    /// Window style does not, and it runs its own timer, so pausing must leave
-    /// it alone.
-    private var usesScreenOverlay: Bool {
-        switch settings.breakStyle {
-        case .blurScreen, .eyeExercise:
-            return true
-        case .notificationOnly:
-            return false
-        }
-    }
-
-    private func showBreakOverlay(duration: Int) {
-        // One read of the setting for this break, shared by the overlay, the
-        // keyboard watchdog and the end of the countdown. Toggling it mid-break
-        // applies to the next break rather than to this one.
-        breakAwaitsDismissal = settings.requireBreakDismissal
-
-        switch settings.breakStyle {
-        case .blurScreen:
-            ScreenBlurManager.shared.showBreakOverlay(
-                duration: duration,
-                style: .blur,
-                awaitsDismissal: breakAwaitsDismissal
-            ) { [weak self] in
-                self?.skipBreak()
-            }
-        case .eyeExercise:
-            ScreenBlurManager.shared.showBreakOverlay(
-                duration: duration,
-                style: .exercise,
-                awaitsDismissal: breakAwaitsDismissal
-            ) { [weak self] in
-                self?.skipBreak()
-            }
-        case .notificationOnly:
-            // Show floating window instead of notification only
-            let window = FloatingBreakWindow()
-            window.show(
-                duration: duration,
-                awaitsDismissal: breakAwaitsDismissal,
-                onSkip: { [weak self] in
-                    self?.skipBreak()
-                },
-                onComplete: { [weak self] in
-                    self?.serveBreak()
-                },
-                onDismiss: { [weak self] in
-                    self?.dismissBreak()
-                }
-            )
-        }
-    }
-
     // MARK: - Idle Detection Setup
-
-    private func setupIdleDetection() {
-        idleDetector = IdleDetector(threshold: TimeInterval(settings.idleThresholdSeconds))
-
-        idleDetector?.onIdleStateChanged = { [weak self] isIdle in
-            guard let self = self else { return }
-
-            if isIdle && self.state.isActive {
-                // User went idle, pause timer
-                self.pause()
-                NotificationManager.shared.sendIdlePausedNotification()
-            } else if !isIdle, case .paused = self.state {
-                // User returned, resume timer
-                self.resume()
-            }
-        }
-    }
 
     // MARK: - Screen Lock and Sleep Handling
 
-    /// Sets up system notifications to automatically pause/resume timer during sleep and screen lock
-    private func setupWorkspaceNotifications() {
-        // Mac sleep events
-        NotificationCenter.default.publisher(for: NSWorkspace.willSleepNotification)
-            .sink { [weak self] _ in
-                self?.pause()
-            }
-            .store(in: &cancellables)
-
-        NotificationCenter.default.publisher(for: NSWorkspace.didWakeNotification)
-            .sink { [weak self] _ in
-                if case .paused = self?.state {
-                    self?.resume()
-                }
-            }
-            .store(in: &cancellables)
-
-        // Screen lock events
-        let notificationCenter = DistributedNotificationCenter.default()
-
-        notificationCenter.addObserver(
-            forName: NSNotification.Name("com.apple.screenIsLocked"),
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            self?.pause()
-        }
-
-        notificationCenter.addObserver(
-            forName: NSNotification.Name("com.apple.screenIsUnlocked"),
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            if case .paused = self?.state {
-                self?.resume()
-            }
-        }
-
-        // Screen saver events (treated same as screen lock)
-        notificationCenter.addObserver(
-            forName: NSNotification.Name("com.apple.screensaver.didstart"),
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            self?.pause()
-        }
-
-        notificationCenter.addObserver(
-            forName: NSNotification.Name("com.apple.screensaver.didstop"),
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            if case .paused = self?.state {
-                self?.resume()
-            }
-        }
-    }
-
     // MARK: - Smart Schedule Alert
 
-    private func showOutsideWorkHoursAlert() {
-        let alert = NSAlert()
-        alert.messageText = "Outside Work Hours"
-        alert.informativeText = """
-            Your Smart Schedule is active and breaks are currently paused.
-
-            Work Hours: \(settings.timeString(from: settings.workHoursStart)) - \
-            \(settings.timeString(from: settings.workHoursEnd))
-
-            Would you like to take a break anyway or adjust your schedule?
-            """
-        alert.alertStyle = .informational
-        alert.icon = NSImage(systemSymbolName: "clock.badge.exclamationmark", accessibilityDescription: "Schedule")
-
-        alert.addButton(withTitle: "Take Break Anyway")
-        alert.addButton(withTitle: "Open Settings")
-        alert.addButton(withTitle: "Cancel")
-
-        let response = alert.runModal()
-
-        switch response {
-        case .alertFirstButtonReturn:
-            // Take break anyway - use forceBreakNow method
-            forceBreakNow()
-        case .alertSecondButtonReturn:
-            // Open settings
-            NotificationCenter.default.post(name: NSNotification.Name("OpenSettings"), object: nil)
-        default:
-            break
-        }
-    }
 }

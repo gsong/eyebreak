@@ -63,17 +63,17 @@ class AppSettings: ObservableObject {
     }()
 
     // Color Theme Settings
-    @AppStorage("ambientReminderThemeType") private var ambientReminderThemeTypeRaw: String = ColorThemeType.defaultTheme.rawValue
-    @AppStorage("ambientReminderCustomTheme") private var ambientReminderCustomThemeData: Data?
-    @AppStorage("breakOverlayThemeType") private var breakOverlayThemeTypeRaw: String = ColorThemeType.defaultTheme.rawValue
-    @AppStorage("breakOverlayCustomTheme") private var breakOverlayCustomThemeData: Data?
-    @AppStorage("waterReminderThemeType") private var waterReminderThemeTypeRaw: String = ColorThemeType.defaultTheme.rawValue
-    @AppStorage("waterReminderCustomTheme") private var waterReminderCustomThemeData: Data?
+    @AppStorage("ambientReminderThemeType") var ambientReminderThemeTypeRaw: String = ColorThemeType.defaultTheme.rawValue
+    @AppStorage("ambientReminderCustomTheme") var ambientReminderCustomThemeData: Data?
+    @AppStorage("breakOverlayThemeType") var breakOverlayThemeTypeRaw: String = ColorThemeType.defaultTheme.rawValue
+    @AppStorage("breakOverlayCustomTheme") var breakOverlayCustomThemeData: Data?
+    @AppStorage("waterReminderThemeType") var waterReminderThemeTypeRaw: String = ColorThemeType.defaultTheme.rawValue
+    @AppStorage("waterReminderCustomTheme") var waterReminderCustomThemeData: Data?
 
     // Cached random themes (regenerated each time a new overlay/reminder appears)
-    private var cachedAmbientReminderRandomTheme: ColorTheme?
-    private var cachedBreakOverlayRandomTheme: ColorTheme?
-    private var cachedWaterReminderRandomTheme: ColorTheme?
+    var cachedAmbientReminderRandomTheme: ColorTheme?
+    var cachedBreakOverlayRandomTheme: ColorTheme?
+    var cachedWaterReminderRandomTheme: ColorTheme?
 
     // MARK: - Computed Properties
 
@@ -170,212 +170,11 @@ class AppSettings: ObservableObject {
 
     // MARK: - Color Theme Computed Properties
 
-    /// Theme type for ambient reminders
-    var ambientReminderThemeType: ColorThemeType {
-        get { ColorThemeType(rawValue: ambientReminderThemeTypeRaw) ?? .defaultTheme }
-        set { ambientReminderThemeTypeRaw = newValue.rawValue }
-    }
-
-    /// Get the active theme for ambient reminders
-    var ambientReminderTheme: ColorTheme {
-        get {
-            switch ambientReminderThemeType {
-            case .defaultTheme:
-                return .defaultTheme
-            case .randomColor:
-                // Return cached theme if available, otherwise generate new one
-                if let cached = cachedAmbientReminderRandomTheme {
-                    return cached
-                }
-                let newTheme = ColorTheme.randomColorTheme()
-                cachedAmbientReminderRandomTheme = newTheme
-                return newTheme
-            case .custom:
-                if let data = ambientReminderCustomThemeData,
-                   let theme = try? JSONDecoder().decode(ColorTheme.self, from: data) {
-                    return theme
-                }
-                return .customTheme
-            }
-        }
-        set {
-            if newValue.themeType == .custom,
-               let data = try? JSONEncoder().encode(newValue) {
-                ambientReminderCustomThemeData = data
-            }
-        }
-    }
-
-    /// Generate a new random theme for ambient reminders
-    func regenerateAmbientReminderRandomTheme() {
-        if ambientReminderThemeType == .randomColor {
-            cachedAmbientReminderRandomTheme = ColorTheme.randomColorTheme()
-            objectWillChange.send()
-        }
-    }
-
-    /// Theme type for break overlay
-    var breakOverlayThemeType: ColorThemeType {
-        get { ColorThemeType(rawValue: breakOverlayThemeTypeRaw) ?? .defaultTheme }
-        set { breakOverlayThemeTypeRaw = newValue.rawValue }
-    }
-
-    /// Get the active theme for break overlay
-    var breakOverlayTheme: ColorTheme {
-        get {
-            switch breakOverlayThemeType {
-            case .defaultTheme:
-                return .defaultTheme
-            case .randomColor:
-                // Return cached theme if available, otherwise generate new one
-                if let cached = cachedBreakOverlayRandomTheme {
-                    return cached
-                }
-                let newTheme = ColorTheme.randomColorTheme()
-                cachedBreakOverlayRandomTheme = newTheme
-                return newTheme
-            case .custom:
-                if let data = breakOverlayCustomThemeData,
-                   let theme = try? JSONDecoder().decode(ColorTheme.self, from: data) {
-                    return theme
-                }
-                return .customTheme
-            }
-        }
-        set {
-            if newValue.themeType == .custom,
-               let data = try? JSONEncoder().encode(newValue) {
-                breakOverlayCustomThemeData = data
-            }
-        }
-    }
-
-    /// Generate a new random theme for break overlay
-    func regenerateBreakOverlayRandomTheme() {
-        if breakOverlayThemeType == .randomColor {
-            cachedBreakOverlayRandomTheme = ColorTheme.randomColorTheme()
-            objectWillChange.send()
-        }
-    }
-
     // MARK: - Water Reminder Theme Properties
-
-    /// Theme type for water reminders
-    var waterReminderThemeType: ColorThemeType {
-        get { ColorThemeType(rawValue: waterReminderThemeTypeRaw) ?? .defaultTheme }
-        set { waterReminderThemeTypeRaw = newValue.rawValue }
-    }
-
-    /// Get the active theme for water reminders
-    var waterReminderTheme: ColorTheme {
-        get {
-            switch waterReminderThemeType {
-            case .defaultTheme:
-                // Water-themed blue/cyan gradient
-                return ColorTheme(
-                    themeType: .defaultTheme,
-                    backgroundColorHex: "#4D99CC",  // Ocean blue
-                    backgroundOpacity: 0.75,
-                    textColorHex: "#FFFFFF",
-                    textOpacity: 0.95,
-                    secondaryTextColorHex: "#FFFFFF",
-                    secondaryTextOpacity: 0.75,
-                    accentColorHex: "#66CCFF",  // Light cyan
-                    accentOpacity: 0.85,
-                    glassBlurRadius: 1.0,
-                    glassHighlightOpacity: 0.25
-                )
-            case .randomColor:
-                // Return cached theme if available, otherwise generate new one
-                if let cached = cachedWaterReminderRandomTheme {
-                    return cached
-                }
-                let newTheme = ColorTheme.randomColorTheme()
-                cachedWaterReminderRandomTheme = newTheme
-                return newTheme
-            case .custom:
-                if let data = waterReminderCustomThemeData,
-                   let theme = try? JSONDecoder().decode(ColorTheme.self, from: data) {
-                    return theme
-                }
-                return .customTheme
-            }
-        }
-        set {
-            if newValue.themeType == .custom,
-               let data = try? JSONEncoder().encode(newValue) {
-                waterReminderCustomThemeData = data
-            }
-        }
-    }
-
-    /// Generate a new random theme for water reminders
-    func regenerateWaterReminderRandomTheme() {
-        if waterReminderThemeType == .randomColor {
-            cachedWaterReminderRandomTheme = ColorTheme.randomColorTheme()
-            objectWillChange.send()
-        }
-    }
 
     // MARK: - Statistics Management
 
-    private let statsKey = "breakStatistics"
-
-    func getTodayStats() -> BreakStats {
-        let allStats = getAllStats()
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-
-        if let todayStats = allStats.first(where: { calendar.isDate($0.date, inSameDayAs: today) }) {
-            return todayStats
-        } else {
-            return BreakStats(date: today)
-        }
-    }
-
-    func updateStats(breaksCompleted: Int = 0, breaksSkipped: Int = 0, breakTime: Int = 0) {
-        var allStats = getAllStats()
-        var todayStats = getTodayStats()
-
-        todayStats.breaksCompleted += breaksCompleted
-        todayStats.breaksSkipped += breaksSkipped
-        todayStats.totalBreakTime += breakTime
-
-        // Remove old entry for today if exists
-        let calendar = Calendar.current
-        allStats.removeAll { calendar.isDate($0.date, inSameDayAs: todayStats.date) }
-
-        // Add updated stats
-        allStats.append(todayStats)
-
-        // Keep only last 30 days
-        allStats.sort { $0.date > $1.date }
-        if allStats.count > 30 {
-            allStats = Array(allStats.prefix(30))
-        }
-
-        saveStats(allStats)
-        objectWillChange.send()
-    }
-
-    func getAllStats() -> [BreakStats] {
-        guard let data = UserDefaults.standard.data(forKey: statsKey),
-              let stats = try? JSONDecoder().decode([BreakStats].self, from: data) else {
-            return []
-        }
-        return stats
-    }
-
-    private func saveStats(_ stats: [BreakStats]) {
-        if let data = try? JSONEncoder().encode(stats) {
-            UserDefaults.standard.set(data, forKey: statsKey)
-        }
-    }
-
-    func resetStats() {
-        UserDefaults.standard.removeObject(forKey: statsKey)
-        objectWillChange.send()
-    }
+    let statsKey = "breakStatistics"
 
     // MARK: - Helper Methods
 
