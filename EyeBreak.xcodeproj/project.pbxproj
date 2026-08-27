@@ -57,7 +57,6 @@
 		7553FAA25EA8BEB18671997C /* StatsComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC190A6B7A3FAB18607700D /* StatsComponents.swift */; };
 		ACC1A608EDB0933D1457D33C /* MenuBarComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3238854CB0DD19082D6F3F16 /* MenuBarComponents.swift */; };
 		30C95D47D6F717E6E3425919 /* AnimatedEyeExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAE8FF5D847207D650A5E2C /* AnimatedEyeExerciseView.swift */; };
-		48EDB25663976CFCEF5D28D6 /* FloatingWindowBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5C763DDF553E5405440886 /* FloatingWindowBlurView.swift */; };
 		3DA6CC3F2380D8BBF465981E /* StatsInsightsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8D1D0F4AC45D42AD82BB51 /* StatsInsightsSection.swift */; };
 		E4132E77AFEACC62B676EA55 /* StatsChartSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5580CB6C2F04A4DD0D5F85B /* StatsChartSection.swift */; };
 		E147E481AA0C15CAB3AD95A4 /* MenuBarStatusSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5D0908FEF773853E59F78D /* MenuBarStatusSection.swift */; };
@@ -82,6 +81,7 @@
 		92EEE9B391DD06F8B5C2FAB1 /* BreakSettingsWaterSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4603881EBB0BE43E31F7964 /* BreakSettingsWaterSection.swift */; };
 		F897CB0D1A95264C76D9D69C /* BreakSettingsAppearanceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304592FDB20DEA3FFEA217E5 /* BreakSettingsAppearanceSection.swift */; };
 		30276BAFC88B604B51044572 /* BreakSettingsStylePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2174A190C94E5FF17E2BAC3A /* BreakSettingsStylePreview.swift */; };
+		A46807A81CD8CD0D299CAB6E /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0D07EE568D00A62BEA5BB1 /* VisualEffectView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -134,7 +134,6 @@
 		1BC190A6B7A3FAB18607700D /* StatsComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsComponents.swift; sourceTree = "<group>"; };
 		3238854CB0DD19082D6F3F16 /* MenuBarComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarComponents.swift; sourceTree = "<group>"; };
 		4FAE8FF5D847207D650A5E2C /* AnimatedEyeExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedEyeExerciseView.swift; sourceTree = "<group>"; };
-		0D5C763DDF553E5405440886 /* FloatingWindowBlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingWindowBlurView.swift; sourceTree = "<group>"; };
 		DA8D1D0F4AC45D42AD82BB51 /* StatsInsightsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsInsightsSection.swift; sourceTree = "<group>"; };
 		D5580CB6C2F04A4DD0D5F85B /* StatsChartSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsChartSection.swift; sourceTree = "<group>"; };
 		9A5D0908FEF773853E59F78D /* MenuBarStatusSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarStatusSection.swift; sourceTree = "<group>"; };
@@ -159,6 +158,7 @@
 		C4603881EBB0BE43E31F7964 /* BreakSettingsWaterSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakSettingsWaterSection.swift; sourceTree = "<group>"; };
 		304592FDB20DEA3FFEA217E5 /* BreakSettingsAppearanceSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakSettingsAppearanceSection.swift; sourceTree = "<group>"; };
 		2174A190C94E5FF17E2BAC3A /* BreakSettingsStylePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakSettingsStylePreview.swift; sourceTree = "<group>"; };
+		2C0D07EE568D00A62BEA5BB1 /* VisualEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,6 +175,8 @@
 		A10000020 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				3A4DD990800F60CB974EB399 /* ReminderType.swift */,
+				86BA14D6B8020FD343ABF8DF /* WaterMessage.swift */,
 				B65217B2F84779429440937F /* AppSettings+Statistics.swift */,
 				9EB9FFA02D21C54F0E5FCBF8 /* AppSettings+Themes.swift */,
 				A10000002 /* TimerState.swift */,
@@ -194,9 +196,6 @@
 				31E20054B505D04DEEAFCBEC /* BreakOverlayWindow.swift */,
 				1111B6FE9F816B497AC899D3 /* SoundManager.swift */,
 				17D3C869A776923107000D26 /* WaterReminderManager+Pausing.swift */,
-				86BA14D6B8020FD343ABF8DF /* WaterMessage.swift */,
-				5B56DB9A6379E9C3C282B110 /* WaterReminderViews.swift */,
-				3A4DD990800F60CB974EB399 /* ReminderType.swift */,
 				99EB42262EACA748003A7CDA /* LaunchAtLoginManager.swift */,
 				997554F72EA3776C00D0AEE1 /* WaterReminderManager.swift */,
 				99BD678A2E92516200D6FF8C /* StatusBarController.swift */,
@@ -215,6 +214,8 @@
 		A10000040 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				2C0D07EE568D00A62BEA5BB1 /* VisualEffectView.swift */,
+				5B56DB9A6379E9C3C282B110 /* WaterReminderViews.swift */,
 				2174A190C94E5FF17E2BAC3A /* BreakSettingsStylePreview.swift */,
 				304592FDB20DEA3FFEA217E5 /* BreakSettingsAppearanceSection.swift */,
 				C4603881EBB0BE43E31F7964 /* BreakSettingsWaterSection.swift */,
@@ -234,7 +235,6 @@
 				9A5D0908FEF773853E59F78D /* MenuBarStatusSection.swift */,
 				D5580CB6C2F04A4DD0D5F85B /* StatsChartSection.swift */,
 				DA8D1D0F4AC45D42AD82BB51 /* StatsInsightsSection.swift */,
-				0D5C763DDF553E5405440886 /* FloatingWindowBlurView.swift */,
 				4FAE8FF5D847207D650A5E2C /* AnimatedEyeExerciseView.swift */,
 				3238854CB0DD19082D6F3F16 /* MenuBarComponents.swift */,
 				1BC190A6B7A3FAB18607700D /* StatsComponents.swift */,
@@ -396,6 +396,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A46807A81CD8CD0D299CAB6E /* VisualEffectView.swift in Sources */,
 				30276BAFC88B604B51044572 /* BreakSettingsStylePreview.swift in Sources */,
 				F897CB0D1A95264C76D9D69C /* BreakSettingsAppearanceSection.swift in Sources */,
 				92EEE9B391DD06F8B5C2FAB1 /* BreakSettingsWaterSection.swift in Sources */,
@@ -420,7 +421,6 @@
 				E147E481AA0C15CAB3AD95A4 /* MenuBarStatusSection.swift in Sources */,
 				E4132E77AFEACC62B676EA55 /* StatsChartSection.swift in Sources */,
 				3DA6CC3F2380D8BBF465981E /* StatsInsightsSection.swift in Sources */,
-				48EDB25663976CFCEF5D28D6 /* FloatingWindowBlurView.swift in Sources */,
 				30C95D47D6F717E6E3425919 /* AnimatedEyeExerciseView.swift in Sources */,
 				ACC1A608EDB0933D1457D33C /* MenuBarComponents.swift in Sources */,
 				7553FAA25EA8BEB18671997C /* StatsComponents.swift in Sources */,

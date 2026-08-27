@@ -7,7 +7,6 @@
 
 import SwiftUI
 import AppKit
-import UserNotifications
 import Combine
 
 /// Manages water drinking reminders to encourage hydration during work

@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Charts
 
 // The small views and data types the statistics dashboard is assembled from.
 

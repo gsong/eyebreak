@@ -206,7 +206,7 @@ struct FloatingBreakContentView: View {
         .background(
             ZStack {
                 // Background with blur effect
-                FloatingWindowBlurView(material: .hudWindow, blendingMode: .behindWindow)
+                VisualEffectView()
 
                 // Subtle border for definition
                 RoundedRectangle(cornerRadius: 16, style: .continuous)

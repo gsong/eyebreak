@@ -5,7 +5,6 @@
 //  Created on October 18, 2025.
 //
 
-import SwiftUI
 import AppKit
 
 // Everything that stops a reminder firing: the Smart Schedule override

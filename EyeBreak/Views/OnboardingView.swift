@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import UserNotifications
 
 struct OnboardingView: View {
     @Binding var isPresented: Bool

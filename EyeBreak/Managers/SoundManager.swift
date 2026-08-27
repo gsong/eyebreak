@@ -6,7 +6,6 @@
 //
 
 import AppKit
-import SwiftUI
 
 // Break sound effects. Unrelated to the blur overlay it used to share a file with.
 
