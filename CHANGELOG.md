@@ -18,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Stop or Pause during a break takes the overlay down** - It used to stay on screen while the timer had already moved on, which now would trap you behind a screen that ignores both ESC and Skip
 - **Pausing a break no longer loses it** - Smart Schedule and the idle detector both pause during a break, and a long enough break trips the idle threshold on its own. The overlay kept its own clock, so the break ended behind the scenes and the rest of it was spent looking at your desktop — and it was still credited as completed
 
+#### Every Display Is Covered
+
+- **The break covers all your screens** - It used to cover only the one holding the pointer, leaving every other display visible and clickable. A break that covers one of three displays is not a break
+- **Every screen shows the same countdown** - One clock drives them all, so they cannot drift apart, and the eye exercise points the same way on each
+- **Plugging a display in mid-break covers it** - Unplugging one does not end the break, and neither rebuilds the overlay from the start: the time left carries over
+- **VoiceOver lands on one overlay** - The screen you were working on, rather than every screen racing to claim it
+
 ## [2.3.0] - 2025-12-06
 
 ### 🎨 Professional UI Polish Update
