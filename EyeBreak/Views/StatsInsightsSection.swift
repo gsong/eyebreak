@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Charts
 
 // The insights panel and the analysis behind it.
 

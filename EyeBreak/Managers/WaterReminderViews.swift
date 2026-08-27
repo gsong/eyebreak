@@ -7,8 +7,6 @@
 
 import SwiftUI
 import AppKit
-import UserNotifications
-import Combine
 
 // The SwiftUI surfaces a water reminder appears in, and the window hosting the full-screen one.
 

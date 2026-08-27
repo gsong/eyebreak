@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import UserNotifications
 
 // The onboarding page listing what EyeBreak does, and the row it repeats.
 
