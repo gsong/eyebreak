@@ -37,11 +37,22 @@ class FloatingBreakWindow: NSWindow {
         }
     }
     
-    func show(duration: Int, onSkip: @escaping () -> Void, onComplete: @escaping () -> Void) {
+    /// - Parameters:
+    ///   - waitsForDismissal: Whether the panel holds a completion state at zero
+    ///     instead of closing. `onDismiss` is reached only when it does.
+    func show(
+        duration: Int,
+        waitsForDismissal: Bool = false,
+        onSkip: @escaping () -> Void,
+        onComplete: @escaping () -> Void,
+        onDismiss: @escaping () -> Void = {}
+    ) {
         let contentView = FloatingBreakContentView(
             duration: duration,
+            waitsForDismissal: waitsForDismissal,
             onSkip: onSkip,
             onComplete: onComplete,
+            onDismiss: onDismiss,
             window: self
         )
         
@@ -80,19 +91,32 @@ class FloatingBreakWindow: NSWindow {
 
 struct FloatingBreakContentView: View {
     let duration: Int
+    /// Whether zero swaps this panel to a completion state instead of closing it.
+    let waitsForDismissal: Bool
     let onSkip: () -> Void
     let onComplete: () -> Void
+    let onDismiss: () -> Void
     weak var window: FloatingBreakWindow?
     
     @State private var remainingSeconds: Int
     @State private var timer: Timer?
     @State private var progress: Double = 1.0
     @State private var isHovered: Bool = false
+    @State private var isAwaitingDismissal: Bool = false
     
-    init(duration: Int, onSkip: @escaping () -> Void, onComplete: @escaping () -> Void, window: FloatingBreakWindow?) {
+    init(
+        duration: Int,
+        waitsForDismissal: Bool,
+        onSkip: @escaping () -> Void,
+        onComplete: @escaping () -> Void,
+        onDismiss: @escaping () -> Void,
+        window: FloatingBreakWindow?
+    ) {
         self.duration = duration
+        self.waitsForDismissal = waitsForDismissal
         self.onSkip = onSkip
         self.onComplete = onComplete
+        self.onDismiss = onDismiss
         self.window = window
         self._remainingSeconds = State(initialValue: duration)
     }
@@ -138,7 +162,7 @@ struct FloatingBreakContentView: View {
                 Spacer()
 
                 // Enhanced close button with better visibility
-                Button(action: handleSkip) {
+                Button(action: isAwaitingDismissal ? handleDismiss : handleSkip) {
                     Image(systemName: "xmark")
                         .font(.system(size: 10, weight: .bold))
                         .foregroundColor(.secondary.opacity(0.8))
@@ -153,7 +177,7 @@ struct FloatingBreakContentView: View {
                         )
                 }
                 .buttonStyle(.plain)
-                .help("Close (or press ESC)")
+                .help(isAwaitingDismissal ? "Back to work" : "Close (or press ESC)")
             }
             .padding(.horizontal, 20)
             .padding(.top, 16)
@@ -163,87 +187,12 @@ struct FloatingBreakContentView: View {
                 .opacity(0.4)
 
             // Main content with better spacing
-            VStack(spacing: 20) {
-                VStack(spacing: 8) {
-                    Text("Take a Break")
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [.primary, .primary.opacity(0.8)],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-
-                    Text("Look 20 feet away for 20 seconds")
-                        .font(.system(size: 13))
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
+            Group {
+                if isAwaitingDismissal {
+                    completionContent
+                } else {
+                    breakContent
                 }
-                .padding(.top, 8)
-
-                // Circular progress timer with enhanced styling
-                ZStack {
-                    // Background ring
-                    Circle()
-                        .stroke(Color.blue.opacity(0.1), lineWidth: 8)
-                        .frame(width: 110, height: 110)
-
-                    // Progress ring with gradient
-                    Circle()
-                        .trim(from: 0, to: progress)
-                        .stroke(
-                            AngularGradient(
-                                colors: [.blue, .cyan, .blue],
-                                center: .center
-                            ),
-                            style: StrokeStyle(lineWidth: 8, lineCap: .round)
-                        )
-                        .frame(width: 110, height: 110)
-                        .rotationEffect(.degrees(-90))
-                        .animation(.linear(duration: 1), value: progress)
-                        .shadow(color: .blue.opacity(0.3), radius: 4)
-
-                    VStack(spacing: 2) {
-                        Text("\(remainingSeconds)")
-                            .font(.system(size: 40, weight: .bold, design: .rounded))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [.blue, .cyan],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                            .contentTransition(.numericText())
-                        Text("seconds")
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundColor(.secondary)
-                    }
-                }
-
-                // Enhanced skip button with clear outline style
-                Button(action: handleSkip) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "forward.fill")
-                            .font(.system(size: 11))
-                        Text("Skip Break")
-                            .font(.system(size: 13, weight: .semibold))
-                    }
-                    .foregroundColor(.blue)
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 24)
-                    .background(
-                        Capsule()
-                            .fill(Color.blue.opacity(0.12))
-                    )
-                    .overlay(
-                        Capsule()
-                            .stroke(Color.blue.opacity(0.4), lineWidth: 1.5)
-                    )
-                    .shadow(color: .blue.opacity(0.15), radius: 4, x: 0, y: 2)
-                }
-                .buttonStyle(.plain)
-                .help("Skip this break")
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 24)
@@ -268,6 +217,155 @@ struct FloatingBreakContentView: View {
         }
     }
     
+    // MARK: - Break Content
+    
+    private var breakContent: some View {
+        VStack(spacing: 20) {
+            VStack(spacing: 8) {
+                Text("Take a Break")
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.primary, .primary.opacity(0.8)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+
+                Text("Look 20 feet away for 20 seconds")
+                    .font(.system(size: 13))
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.top, 8)
+
+            // Circular progress timer with enhanced styling
+            ZStack {
+                // Background ring
+                Circle()
+                    .stroke(Color.blue.opacity(0.1), lineWidth: 8)
+                    .frame(width: 110, height: 110)
+
+                // Progress ring with gradient
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(
+                        AngularGradient(
+                            colors: [.blue, .cyan, .blue],
+                            center: .center
+                        ),
+                        style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                    )
+                    .frame(width: 110, height: 110)
+                    .rotationEffect(.degrees(-90))
+                    .animation(.linear(duration: 1), value: progress)
+                    .shadow(color: .blue.opacity(0.3), radius: 4)
+
+                VStack(spacing: 2) {
+                    Text("\(remainingSeconds)")
+                        .font(.system(size: 40, weight: .bold, design: .rounded))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.blue, .cyan],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .contentTransition(.numericText())
+                    Text("seconds")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            // Enhanced skip button with clear outline style
+            Button(action: handleSkip) {
+                HStack(spacing: 6) {
+                    Image(systemName: "forward.fill")
+                        .font(.system(size: 11))
+                    Text("Skip Break")
+                        .font(.system(size: 13, weight: .semibold))
+                }
+                .foregroundColor(.blue)
+                .padding(.vertical, 10)
+                .padding(.horizontal, 24)
+                .background(
+                    Capsule()
+                        .fill(Color.blue.opacity(0.12))
+                )
+                .overlay(
+                    Capsule()
+                        .stroke(Color.blue.opacity(0.4), lineWidth: 1.5)
+                )
+                .shadow(color: .blue.opacity(0.15), radius: 4, x: 0, y: 2)
+            }
+            .buttonStyle(.plain)
+            .help("Skip this break")
+        }
+    }
+    
+    // MARK: - Completion Content
+    
+    /// What the panel shows once the break has been served. This style installs
+    /// no keyboard tap and the panel cannot become key, so a click is the only
+    /// way out of it.
+    private var completionContent: some View {
+        VStack(spacing: 20) {
+            VStack(spacing: 8) {
+                Text("Break Complete")
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.primary, .primary.opacity(0.8)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                
+                Text("Your next work interval starts when you dismiss this")
+                    .font(.system(size: 13))
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.top, 8)
+            
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 72))
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [.blue, .cyan],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .shadow(color: .blue.opacity(0.3), radius: 8)
+                .frame(height: 110)
+            
+            Button(action: handleDismiss) {
+                HStack(spacing: 6) {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 11))
+                    Text("Back to Work")
+                        .font(.system(size: 13, weight: .semibold))
+                }
+                .foregroundColor(.blue)
+                .padding(.vertical, 10)
+                .padding(.horizontal, 24)
+                .background(
+                    Capsule()
+                        .fill(Color.blue.opacity(0.12))
+                )
+                .overlay(
+                    Capsule()
+                        .stroke(Color.blue.opacity(0.4), lineWidth: 1.5)
+                )
+                .shadow(color: .blue.opacity(0.15), radius: 4, x: 0, y: 2)
+            }
+            .buttonStyle(.plain)
+            .help("Start your next work interval")
+        }
+    }
+    
     private func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             if remainingSeconds > 0 {
@@ -275,7 +373,14 @@ struct FloatingBreakContentView: View {
                 progress = Double(remainingSeconds) / Double(duration)
             } else {
                 stopTimer()
-                window?.hide()
+                
+                // `onComplete` is what credits the break, at zero, whether or
+                // not the panel then waits. Only the closing differs.
+                if waitsForDismissal {
+                    isAwaitingDismissal = true
+                } else {
+                    window?.hide()
+                }
                 onComplete()
             }
         }
@@ -290,6 +395,13 @@ struct FloatingBreakContentView: View {
         stopTimer()
         window?.hide()
         onSkip()
+    }
+    
+    /// Ends the wait. `BreakTimerManager` closes the panel on its way through, so
+    /// a dismissal from the popover instead of from here reaches the same place.
+    private func handleDismiss() {
+        stopTimer()
+        onDismiss()
     }
 }
 
