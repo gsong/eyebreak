@@ -69,7 +69,7 @@ xcodebuild -project EyeBreak.xcodeproj -scheme EyeBreak -configuration Release b
 - `⌘⇧B` - Take break now
 - `⌘⇧X` - Stop timer
 - `⌘⇧R` - Show ambient reminder
-- `ESC` - Skip current break
+- `ESC` - Skip the current break, or dismiss one that has finished and is waiting for you
 
 ## 🆘 Troubleshooting
 

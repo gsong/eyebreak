@@ -248,7 +248,8 @@ Click the eye icon to access:
 - Your screen will blur and show a break overlay
 - Follow the on-screen instructions to rest your eyes
 - Press **ESC** or click **Skip Break** to end early (not recommended!)
-- The break automatically ends after the configured duration
+- When the countdown ends, the break is counted and the screen waits for you — press **ESC** or click **Back to Work** to start your next work interval
+- Turn off **Wait for me to dismiss the break** in Settings > Break Style and the break ends itself instead
 
 ### Customization
 

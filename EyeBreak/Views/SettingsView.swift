@@ -550,6 +550,17 @@ struct BreakSettingsView: View {
                         }
                     }
 
+                    VStack(alignment: .leading, spacing: 6) {
+                        Toggle("Wait for me to dismiss the break", isOn: $settings.requireBreakDismissal)
+                            .toggleStyle(.switch)
+                        
+                        Text("The break is counted when it ends, but the screen stays up and your next work interval does not start until you dismiss it.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    
                     Button(action: previewBreakStyle) {
                         HStack {
                             Image(systemName: "play.circle.fill")

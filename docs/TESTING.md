@@ -23,6 +23,7 @@
 - [x] Motivational break messages
 - [x] Progress circle countdown
 - [x] Early break exit (ESC or Skip Break button)
+- [x] Break waits for dismissal once it is served (ESC or Back to Work)
 - [x] Auto-resume after break
 - [x] Success notification after break
 
@@ -106,6 +107,27 @@
 - [ ] Skip Break button exits break early
 - [ ] A click elsewhere on the overlay does not exit the break
 - [ ] Success notification appears after break
+
+### Waiting for Dismissal
+
+With **Wait for me to dismiss the break** on, which is the default.
+
+- [ ] The overlay stays up when the countdown reaches zero, on every display
+- [ ] It shows a checkmark, "Break Complete", and one "Back to Work" button
+- [ ] The break is counted once, at zero — the stats do not move again on dismissal
+- [ ] ESC dismisses it
+- [ ] The "Back to Work" button dismisses it
+- [ ] The panic chord (⌃⌥⌘⎋) dismisses it
+- [ ] The next work interval is a full one, however long the wait was
+- [ ] Attaching or detaching a display during the wait keeps the completion state
+- [ ] Sleeping the Mac and waking it leaves the overlay waiting
+- [ ] Locking the screen and unlocking it leaves the overlay waiting
+- [ ] Leaving the machine idle past the idle threshold leaves the overlay waiting
+- [ ] The keyboard comes back on its own after break length + 2 min + 10 s, and the overlay keeps waiting for a click
+- [ ] The menu bar drops the countdown and shows a checkmark
+- [ ] The popover offers one "Back to Work" button
+- [ ] Floating Window style: the panel waits, and only a click dismisses it
+- [ ] Turning the setting off restores the old behavior — the break ends itself
 
 ### Settings
 

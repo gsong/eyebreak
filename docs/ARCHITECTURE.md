@@ -150,14 +150,20 @@ func checkIdleTime() {
 #### TimerState
 
 ```swift
-enum TimerState: String {
+enum TimerState: Equatable {
     case idle
-    case working
-    case preBreak
-    case onBreak
-    case paused
+    case working(remainingSeconds: Int)
+    case preBreak(remainingSeconds: Int)
+    case breaking(remainingSeconds: Int)
+    case paused(wasWorking: Bool, remainingSeconds: Int)
+    case awaitingDismissal
 }
 ```
+
+`awaitingDismissal` is a break that has been served and is waiting for the user
+to dismiss it. It reports `isActive == false`, because nothing is counting during
+the wait — and because `pause()` guards on `isActive`, which is what makes sleep,
+screen lock and idle detection leave the waiting overlay where it is.
 
 #### Settings
 

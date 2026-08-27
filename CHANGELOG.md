@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+#### Breaks Wait for You
+
+- **A break no longer ends itself** - The countdown reaches zero, the break is counted, and the screen stays up. Your next work interval starts when you dismiss it, so a break you were not present for cannot pass as one you took
+- **A completion state, not the break screen with a new button** - A checkmark replaces the countdown, the title reads "Break Complete", and one button reads "Back to Work"
+- **⎋, the button, or ⌃⌥⌘⎋ dismisses it** - The keyboard stays held until you do
+- **The next interval is a full one** - However long you waited, and the break is counted once, when it ended, not when you came back
+- **Sleep, screen lock and going idle leave it alone** - The break is already banked; there is nothing left for them to pause
+- **The watchdog covers the wait** - It releases the keyboard on its own after the break plus 2 minutes plus 10 seconds, and the overlay keeps waiting for a click
+- **All three break styles wait** - The Floating Window panel waits too, and a click is the only way out of that one
+- **Turn it off with "Wait for me to dismiss the break"** - In Settings > Break Style. Off, breaks end themselves exactly as they used to
+
 #### Breaks Hold the Keyboard
 
 - **Blur Screen and Eye Exercise now hold the keyboard** - For the length of the break, ⌘Tab, ⌘Q, ⌘H and the global hotkeys other apps have registered no longer reach past the overlay. EyeBreak's own shortcuts are held too, since starting a second break during one means nothing
@@ -19,6 +30,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **A watchdog releases the keyboard regardless** - It is set when the break starts, for the break's length plus 10 seconds, and reads no break state, so it fires even if something else has gone wrong
 
 ### Fixed
+
+#### Floating Window Breaks Counted Twice
+
+- **One break, one credit** - The Floating Window style ran a clock of its own alongside the timer's, and both ended the break. Every break in that style banked two completions and two lots of break time, and restarted the work interval a second into it
 
 #### The Break Overlay Is Modal Again
 
