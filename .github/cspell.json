@@ -18,7 +18,19 @@
     "entitlements",
     "IOKit",
     "VoiceOver",
-    "Sonoma"
+    "Sonoma",
+    "frontmost",
+    "borderless",
+    "autoreverses",
+    "exclamationmark",
+    "didstart",
+    "didstop",
+    "Tink",
+    "LSUI",
+    "sandboxed",
+    "xattr",
+    "MVVM",
+    "Stretchly"
   ],
   "ignoreWords": [],
   "ignorePaths": [
