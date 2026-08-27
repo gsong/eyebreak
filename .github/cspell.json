@@ -30,7 +30,9 @@
     "sandboxed",
     "xattr",
     "MVVM",
-    "Stretchly"
+    "Stretchly",
+    "refcon",
+    "unretained"
   ],
   "ignoreWords": [],
   "ignorePaths": [

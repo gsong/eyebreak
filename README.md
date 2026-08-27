@@ -152,6 +152,21 @@ This gives your eye muscles a chance to relax and reduces the risk of eye strain
 - **⌘⇧R** - Show ambient reminder (with Smart Schedule override)
 - **⌘⇧W** - Show water reminder (with Smart Schedule override)
 
+#### During a break
+
+Blur Screen and Eye Exercise cover every display and hold the keyboard for the
+length of the break, so shortcuts in other apps — and EyeBreak's own — stay
+quiet until it ends. Three keys still get through:
+
+- **⎋** - End the break early
+- **⌃⌥⌘⎋** - Release the keyboard and end the break, if anything goes wrong
+- **⌘⌥⎋** - Force Quit, unchanged
+
+Holding the keyboard needs Accessibility permission. macOS resets that grant on
+every EyeBreak update, so if breaks stop holding the keyboard after an update,
+re-enable EyeBreak under Accessibility. Breaks still cover every display and
+still end on **⎋** either way.
+
 [See Full v2.3.0 Release Notes](docs/releases/RELEASE_NOTES_v2.3.0.md) | [v2.2.0 Release Notes](docs/releases/RELEASE_NOTES_v2.2.0.md) | [Water Reminder Guide](docs/WATER_REMINDER_FEATURE.md)
 
 ### Previous: v2.0.0 Theme Customization

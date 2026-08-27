@@ -494,6 +494,9 @@ struct GeneralSettingsView: View {
 
 struct BreakSettingsView: View {
     @EnvironmentObject var settings: AppSettings
+    /// Whether a break can hold the keyboard at all. macOS drops this grant on
+    /// every update, so the answer changes under the user without warning.
+    @StateObject private var accessibility = AccessibilityPermission.shared
 
     var body: some View {
         Form {
@@ -574,6 +577,28 @@ struct BreakSettingsView: View {
                 }
             } header: {
                 SectionHeaderView(title: "Break Style", icon: "sparkles.rectangle.stack.fill", color: .purple)
+            } footer: {
+                // The panic chord has to be written down somewhere a user can
+                // find it, because the moment they need it is the moment the
+                // keyboard is doing something they did not expect. The claim is
+                // gated on the grant, which is missing after every update.
+                if accessibility.isTrusted {
+                    Text("""
+                    Blur Screen and Eye Exercise hold the keyboard for the length of the break, so \
+                    shortcuts in other apps stay quiet. Press \u{238B} to end a break early. \
+                    \u{2303}\u{2325}\u{2318}\u{238B} releases the keyboard and ends the break if \
+                    anything goes wrong, and \u{2318}\u{2325}\u{238B} still opens Force Quit.
+                    """)
+                        .font(.caption)
+                } else {
+                    Text("""
+                    Blur Screen and Eye Exercise cover every display, and \u{238B} ends a break \
+                    early. Holding the keyboard as well needs Accessibility permission, which \
+                    macOS resets on every update — see Keyboard Shortcuts under About. Until \
+                    then, shortcuts in other apps still work during a break.
+                    """)
+                        .font(.caption)
+                }
             }
 
             // MARK: - Eye Exercise Section
@@ -1382,7 +1407,11 @@ struct KeyboardShortcutsCard: View {
             }
 
             if !permission.isTrusted {
-                Text("macOS resets this permission whenever EyeBreak updates, which stops \u{2318}\u{21E7}B and the other shortcuts from working. Timers and break reminders are unaffected.")
+                Text("""
+                macOS resets this permission whenever EyeBreak updates, which stops \u{2318}\u{21E7}B \
+                and the other shortcuts from working, and stops breaks from holding the keyboard. \
+                Timers and break reminders are unaffected.
+                """)
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)

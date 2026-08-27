@@ -74,9 +74,12 @@ class ScreenBlurManager {
         // Generate a new random color theme for this break overlay (if using random color theme)
         AppSettings.shared.regenerateBreakOverlayRandomTheme()
         
-        // Clear anything a previous break left behind.
+        // Clear anything a previous break left behind, the keyboard tap included.
+        // Starting a break inside a break must not leave the last one's watchdog
+        // holding the only teardown.
         self.closeOverlayWindows()
         self.countdown?.stop()
+        BreakInputTap.shared.stop()
         
         self.overlayStyle = style
         self.skipHandler = {
@@ -114,14 +117,26 @@ class ScreenBlurManager {
         // the current Space, which is what keeps activation from switching Spaces.
         NSApp.activate()
         self.keyOverlayWindow?.makeKey()
-        
+
+        // Covering every screen and holding focus still leaves macOS routing
+        // Cmd-Tab, Cmd-Q and every registered global hotkey past the overlay.
+        // The tap is what closes that, and the panic chord ends the break the
+        // same way ESC and the Skip button do.
+        BreakInputTap.shared.start(breakDuration: TimeInterval(duration)) { [weak self] in
+            self?.skipHandler?()
+        }
+
         countdown.start()
         self.startObservingScreenChanges()
         self.startMonitoringEscape()
     }
     
     private func hideOverlayOnMainThread() {
-        
+
+        // First, ahead of the window teardown. Every exit path from a break ends
+        // up here, and the keyboard should come back on the earliest of them.
+        BreakInputTap.shared.stop()
+
         self.stopObservingScreenChanges()
         self.stopMonitoringEscape()
         
@@ -299,7 +314,13 @@ class ScreenBlurManager {
         guard self.escapeMonitor == nil else { return }
         
         self.escapeMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            guard event.keyCode == 53 else { return event }  // ESC key
+            // Bare ESC only. The keyboard tap passes two Escape chords on
+            // purpose — Force Quit and the panic chord — and matching the key
+            // code alone would quietly turn both of them into a skip.
+            guard BreakInputPolicy.isBreakEndingEscape(
+                keyCode: Int64(event.keyCode),
+                modifiers: Self.eventFlags(of: event.modifierFlags)
+            ) else { return event }
             
             // Deferred, like the Skip button. Skipping removes this monitor and
             // closes the key window, and doing either inside AppKit's dispatch
@@ -312,6 +333,18 @@ class ScreenBlurManager {
         }
     }
     
+    /// The modifiers of an AppKit event, in the terms the tap's rules are written
+    /// in. One definition of "bare ESC" serves the monitor and the tap; only the
+    /// event types differ.
+    private static func eventFlags(of modifiers: NSEvent.ModifierFlags) -> CGEventFlags {
+        var flags: CGEventFlags = []
+        if modifiers.contains(.command) { flags.insert(.maskCommand) }
+        if modifiers.contains(.option) { flags.insert(.maskAlternate) }
+        if modifiers.contains(.control) { flags.insert(.maskControl) }
+        if modifiers.contains(.shift) { flags.insert(.maskShift) }
+        return flags
+    }
+
     private func stopMonitoringEscape() {
         guard let monitor = self.escapeMonitor else { return }
         NSEvent.removeMonitor(monitor)

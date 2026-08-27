@@ -32,6 +32,8 @@
 		A1000001F /* AmbientReminderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001E /* AmbientReminderView.swift */; };
 		A10000023 /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000021 /* ColorTheme.swift */; };
 		A10000026 /* BreakCountdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000025 /* BreakCountdown.swift */; };
+		A10000101 /* BreakInputPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000100 /* BreakInputPolicy.swift */; };
+		A10000103 /* BreakInputTap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000102 /* BreakInputTap.swift */; };
 		A10000024 /* ColorThemeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000022 /* ColorThemeSettingsView.swift */; };
 		A20000001 /* TimerStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000 /* TimerStateTests.swift */; };
 		A20000003 /* PersistedValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000002 /* PersistedValueTests.swift */; };
@@ -40,6 +42,8 @@
 		A20000011 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000004 /* Settings.swift */; };
 		A20000012 /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000021 /* ColorTheme.swift */; };
 		A20000013 /* BreakCountdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000025 /* BreakCountdown.swift */; };
+		A20000014 /* BreakInputPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000100 /* BreakInputPolicy.swift */; };
+		A20000009 /* BreakInputPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000008 /* BreakInputPolicyTests.swift */; };
 		A20000007 /* BreakCountdownTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000006 /* BreakCountdownTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -70,12 +74,15 @@
 		A1000001E /* AmbientReminderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmbientReminderView.swift; sourceTree = "<group>"; };
 		A10000021 /* ColorTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTheme.swift; sourceTree = "<group>"; };
 		A10000025 /* BreakCountdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakCountdown.swift; sourceTree = "<group>"; };
+		A10000100 /* BreakInputPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakInputPolicy.swift; sourceTree = "<group>"; };
+		A10000102 /* BreakInputTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakInputTap.swift; sourceTree = "<group>"; };
 		A10000022 /* ColorThemeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorThemeSettingsView.swift; sourceTree = "<group>"; };
 		A1FFFFFF1 /* EyeBreak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EyeBreak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A20000000 /* TimerStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerStateTests.swift; sourceTree = "<group>"; };
 		A20000002 /* PersistedValueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistedValueTests.swift; sourceTree = "<group>"; };
 		A20000004 /* SettingsHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelperTests.swift; sourceTree = "<group>"; };
 		A20000006 /* BreakCountdownTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakCountdownTests.swift; sourceTree = "<group>"; };
+		A20000008 /* BreakInputPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakInputPolicyTests.swift; sourceTree = "<group>"; };
 		A2FFFFFF1 /* EyeBreakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EyeBreakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -114,6 +121,8 @@
 				A1000000C /* ScreenBlurManager.swift */,
 				A10000070 /* UpdateChecker.swift */,
 				A10000090 /* AccessibilityPermission.swift */,
+				A10000100 /* BreakInputPolicy.swift */,
+				A10000102 /* BreakInputTap.swift */,
 				A1000001C /* AmbientReminderManager.swift */,
 			);
 			path = Managers;
@@ -182,6 +191,7 @@
 				A20000002 /* PersistedValueTests.swift */,
 				A20000004 /* SettingsHelperTests.swift */,
 				A20000006 /* BreakCountdownTests.swift */,
+				A20000008 /* BreakInputPolicyTests.swift */,
 			);
 			path = EyeBreakTests;
 			sourceTree = "<group>";
@@ -294,6 +304,8 @@
 				A1000000D /* ScreenBlurManager.swift in Sources */,
 				A10000071 /* UpdateChecker.swift in Sources */,
 				A10000091 /* AccessibilityPermission.swift in Sources */,
+				A10000101 /* BreakInputPolicy.swift in Sources */,
+				A10000103 /* BreakInputTap.swift in Sources */,
 				A100000B1 /* SettingsWindowHost.swift in Sources */,
 				A1000000F /* MenuBarView.swift in Sources */,
 				A10000011 /* SettingsView.swift in Sources */,
@@ -319,6 +331,8 @@
 				A20000012 /* ColorTheme.swift in Sources */,
 				A20000013 /* BreakCountdown.swift in Sources */,
 				A20000007 /* BreakCountdownTests.swift in Sources */,
+				A20000014 /* BreakInputPolicy.swift in Sources */,
+				A20000009 /* BreakInputPolicyTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

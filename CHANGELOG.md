@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+#### Breaks Hold the Keyboard
+
+- **Blur Screen and Eye Exercise now hold the keyboard** - For the length of the break, ⌘Tab, ⌘Q, ⌘H and the global hotkeys other apps have registered no longer reach past the overlay. EyeBreak's own shortcuts are held too, since starting a second break during one means nothing
+- **Three ways out, each working on its own:**
+  - **⎋** - Ends the break early, as before
+  - **⌃⌥⌘⎋** - Releases the keyboard and ends the break, if anything goes wrong
+  - **⌘⌥⎋** - Opens Force Quit, unchanged
+- **A watchdog releases the keyboard regardless** - It is set when the break starts, for the break's length plus 10 seconds, and reads no break state, so it fires even if something else has gone wrong
+
 ### Fixed
 
 #### The Break Overlay Is Modal Again
@@ -24,6 +35,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Every screen shows the same countdown** - One clock drives them all, so they cannot drift apart, and the eye exercise points the same way on each
 - **Plugging a display in mid-break covers it** - Unplugging one does not end the break, and neither rebuilds the overlay from the start: the time left carries over
 - **VoiceOver lands on one overlay** - The screen you were working on, rather than every screen racing to claim it
+
+### Known Limitations
+
+- **Needs Accessibility permission** - macOS resets this grant every time EyeBreak updates. Without it, breaks still cover every display and still end on ⎋, but shortcuts in other apps keep working during a break. Settings and the README both say which state you are in
+- **Secure Event Input** - While a password field has focus, macOS delivers no keyboard event to any app, so a break cannot hold the keyboard for as long as that field is focused
 
 ## [2.3.0] - 2025-12-06
 

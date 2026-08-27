@@ -112,6 +112,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationWillTerminate(_ notification: Notification) {
+        // Before anything else. A break in progress holds a keyboard tap, and a
+        // quit that skipped this would be the one way the tap outlives the app's
+        // own teardown path.
+        BreakInputTap.shared.stop()
+
         // Clean up event monitors
         for monitor in eventMonitors {
             NSEvent.removeMonitor(monitor)
