@@ -1,6 +1,6 @@
 ---
 name: repo-refresh
-description: Run all repo maintenance tasks in sequence — upgrade mise tools, upgrade the gh-stack extension, resolve Swift package dependencies, upgrade GitHub Actions, audit workflows with zizmor — with per-step commits and a PR. Use when the user asks to refresh, upgrade, or maintain the repo.
+description: Run all repo maintenance tasks in sequence — upgrade mise tools, upgrade the gh-stack extension, build and test the app, upgrade GitHub Actions, audit workflows with zizmor — with per-step commits and a PR. Use when the user asks to refresh, upgrade, or maintain the repo.
 ---
 
 # Repo Refresh
@@ -122,31 +122,14 @@ Commit:
 chore: upgrade the gh-stack extension and skill
 ```
 
-### Step 3: Resolve Swift package dependencies
+### Step 3: Build and test the app
 
-The app depends on Sparkle through Swift Package Manager, declared in `EyeBreak.xcodeproj`. The
-version range lives in `project.pbxproj`; the resolved commit lives in
-`EyeBreak.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`.
+Nothing to resolve here any more. Sparkle was the only Swift package, and
+removing it left `EyeBreak.xcodeproj` with no package references and no
+`Package.resolved`.
 
-Check for a newer release first:
-
-```bash
-gh api repos/sparkle-project/Sparkle/releases/latest --jq .tag_name
-grep -n "minimumVersion" EyeBreak.xcodeproj/project.pbxproj
-```
-
-If the latest release sits outside the declared range, report it to the user and use
-AskUserQuestion before widening the range. Sparkle handles app updates, so a major bump changes how
-users receive releases. Read the release notes before recommending it.
-
-Then resolve:
-
-```bash
-xcodebuild -resolvePackageDependencies -project EyeBreak.xcodeproj -scheme EyeBreak
-```
-
-**Verify:** if `Package.resolved` changed, build the app and run the tests. Sparkle is the only
-dependency linked into the app, so this is the one step whose upgrade can break it at runtime.
+The step stays because the build is what proves the steps around it broke
+nothing — Step 1 can move the SwiftLint version CI lints with.
 
 ```bash
 xcodebuild clean build -project EyeBreak.xcodeproj -scheme EyeBreak \
@@ -158,14 +141,10 @@ xcodebuild test -project EyeBreak.xcodeproj -scheme EyeBreak \
   CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM=""
 ```
 
-The test invocation mirrors the `Run tests` step in `ci.yml`, which gates the build. If the two ever
-disagree, `ci.yml` is the source of truth — match it rather than editing this line.
+The test invocation mirrors the `Build and test` step in `ci.yml`, which gates the pull request. If
+the two ever disagree, `ci.yml` is the source of truth — match it rather than editing this line.
 
-Commit:
-
-```
-chore: update Swift package dependencies
-```
+**Verify:** both exit 0. Nothing to commit unless an earlier step changed a file.
 
 ### Step 4: Upgrade GitHub Actions
 
@@ -259,7 +238,6 @@ After all steps complete:
 
    Include in the body:
    - Major version bumps and the breaking changes they carry
-   - Sparkle version changes, called out separately — they affect the update mechanism
    - zizmor findings fixed, and any deliberately left open with the reason
 
 3. Report the PR URL to the user.
