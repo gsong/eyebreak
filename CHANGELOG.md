@@ -37,10 +37,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Plugging a display in mid-break covers it** - Unplugging one does not end the break, and neither rebuilds the overlay from the start: the time left carries over
 - **VoiceOver lands on one overlay** - The screen you were working on, rather than every screen racing to claim it
 
-#### Settings No Longer Burns CPU While Idle
+#### Settings No Longer Burns CPU
 
-- **An open Settings window is free again** - It used to cost about a third of a core with nothing on screen moving. The Active Timers card ran a symbol animation with no end condition, plus a once-a-second ticker that updated a value nothing read. Measured with the timer idle on the General tab: 37% of a core before, 0.0% after
-- **The two "Show ... Now" buttons on the Breaks tab no longer animate forever** - Same class of bug: a symbol effect with no end condition
+- **An open Settings window used to cost about a third of a core** - With the timer idle and nothing on screen moving. Four animations in Settings had no end condition, so each one held the AppKit display cycle open every frame for as long as the window was open
+- **The Active Timers card no longer animates forever** - Its header icon ran a symbol pulse with no `isActive:` gate. The card also ran a once-a-second ticker that wrote a value nothing read
+- **The status banner no longer pulses** - Its status dot and status icon both animated without end whenever the timer was running. The countdown text next to them still updates every second, so the banner still reads as live
+- **The two "Show ... Now" buttons on the Breaks tab no longer pulse** - Same bug, on a tab the measurements below do not cover
+- **Measured** on an M4 Max, Release build, Settings open on the General tab, twelve 5-second `top` samples after a 10-second settle:
+
+  | Timer | Before | After |
+  | --- | --- | --- |
+  | Idle | 37.0% | 0.0% |
+  | Running | 38.3% | 13.5% |
+
+  The 13.5% that remains is Settings re-rendering for the once-a-second countdown, which is real work rather than an animation
 
 ### Known Limitations
 
