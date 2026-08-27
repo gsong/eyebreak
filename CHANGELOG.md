@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+#### The Break Overlay Is Modal Again
+
+- **ESC ends the break** - It used to reach the app underneath instead, because EyeBreak never came to the front and its ESC handler only sees events macOS has already routed to it
+- **Skipping takes one click** - The first click was spent bringing EyeBreak forward, so a skip needed two
+- **Skip is a button** - With the first click no longer swallowed, click-anywhere-to-skip would have ended a break on any stray click
+- **Focus returns to the app you were using** - Every way out of a break hands it back: the timer running out, ESC, Skip, and Stop or Pause from the menu
+- **Stop or Pause during a break takes the overlay down** - It used to stay on screen while the timer had already moved on, which now would trap you behind a screen that ignores both ESC and Skip
+- **Pausing a break no longer loses it** - Smart Schedule and the idle detector both pause during a break, and a long enough break trips the idle threshold on its own. The overlay kept its own clock, so the break ended behind the scenes and the rest of it was spent looking at your desktop — and it was still credited as completed
+
 ## [2.3.0] - 2025-12-06
 
 ### 🎨 Professional UI Polish Update
@@ -587,7 +600,7 @@ None! Zero external dependencies. Pure Swift and native frameworks only.
 
 ---
 
-## [Unreleased]
+## Roadmap
 
 ### Planned Features (Future Versions)
 
