@@ -143,6 +143,27 @@ final class BreakInputPolicyTests: XCTestCase {
         XCTAssertEqual(BreakInputPolicy.watchdogDelay(forBreakOf: -60), 10, accuracy: 0.0001)
     }
 
+    func testAWaitingBreakGetsTwoExtraMinutes() {
+        // A break that waits to be dismissed has no end the watchdog can be
+        // armed for, so it is armed for the longest wait we are willing to hold
+        // the keyboard through, and no longer.
+        XCTAssertEqual(BreakInputPolicy.watchdogDelay(forBreakOf: 20, awaitsDismissal: true),
+                       150, accuracy: 0.0001)
+    }
+
+    func testTheWaitingCapIsOffByDefault() {
+        // The default matters: it is what a break with the feature turned off
+        // gets, and it must be the delay the tap has always used.
+        XCTAssertEqual(BreakInputPolicy.watchdogDelay(forBreakOf: 300),
+                       BreakInputPolicy.watchdogDelay(forBreakOf: 300, awaitsDismissal: false),
+                       accuracy: 0.0001)
+    }
+
+    func testAWaitingBreakOfNonsenseLengthStillGetsTheFullWait() {
+        XCTAssertEqual(BreakInputPolicy.watchdogDelay(forBreakOf: -60, awaitsDismissal: true),
+                       130, accuracy: 0.0001)
+    }
+
     // MARK: - Re-enable budget
 
     func testTheTapCanBeReenabledUpToTheLimit() {

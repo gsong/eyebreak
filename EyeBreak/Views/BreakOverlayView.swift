@@ -65,18 +65,27 @@ struct BreakOverlayView: View {
             VStack(spacing: 40) {
                 Spacer()
                 
-                // Main content based on style
-                switch style {
-                case .blur:
-                    standardBreakContent
-                case .exercise:
-                    eyeExerciseContent
+                // The break is either running or served. A served one shows the
+                // same completion state whichever style ran it: the exercise is
+                // over, so the dot and its instructions have nothing left to say.
+                if countdown.isAwaitingDismissal {
+                    completionContent
+                } else {
+                    switch style {
+                    case .blur:
+                        standardBreakContent
+                    case .exercise:
+                        eyeExerciseContent
+                    }
                 }
                 
                 Spacer()
                 
-                // Skip hint
-                skipHint
+                if countdown.isAwaitingDismissal {
+                    dismissHint
+                } else {
+                    skipHint
+                }
             }
             .padding(40)
             .opacity(opacity)
@@ -87,6 +96,66 @@ struct BreakOverlayView: View {
             if claimsAccessibilityFocus {
                 isMessageFocused = true
             }
+        }
+        .onChange(of: countdown.isAwaitingDismissal) { _, isAwaiting in
+            // The title the focus was on has just been replaced, so VoiceOver
+            // needs pointing at the new one or the swap passes silently.
+            if isAwaiting && claimsAccessibilityFocus {
+                isMessageFocused = true
+            }
+        }
+    }
+    
+    // MARK: - Completion Content
+    
+    /// What a served break looks like while it waits. No countdown, because
+    /// nothing is counting, and one control, because there is one thing to do.
+    private var completionContent: some View {
+        VStack(spacing: 32) {
+            ZStack {
+                Circle()
+                    .stroke(
+                        LinearGradient(
+                            colors: [
+                                currentTheme.accentColor.opacity(0.3),
+                                currentTheme.accentColor.opacity(0.2)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 2
+                    )
+                    .frame(width: 140, height: 140)
+                    .opacity(0.4)
+                
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 80))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [
+                                currentTheme.accentColor,
+                                currentTheme.accentColor.opacity(0.8),
+                                currentTheme.backgroundColor
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .shadow(color: currentTheme.accentColor.opacity(0.5), radius: 20)
+            }
+            
+            Text("Break Complete")
+                .font(.system(size: 48, weight: .bold, design: .rounded))
+                .foregroundStyle(currentTheme.textGradient())
+                .shadow(color: currentTheme.accentColor.opacity(0.3), radius: 10)
+                .shadow(color: Color.black.opacity(0.3), radius: 10)
+                .accessibilityFocused($isMessageFocused)
+            
+            Text("Your next work interval starts when you dismiss this")
+                .font(.system(size: 20, weight: .medium, design: .rounded))
+                .foregroundColor(currentTheme.textColor.opacity(currentTheme.textOpacity))
+                .multilineTextAlignment(.center)
+                .shadow(color: Color.black.opacity(0.3), radius: 5)
         }
     }
     
@@ -258,6 +327,40 @@ struct BreakOverlayView: View {
         .frame(width: 140, height: 140)
     }
     
+    // MARK: - Dismiss Hint
+    
+    /// The one control a served break offers. It ends the wait; it does not skip
+    /// anything, because there is nothing left to skip.
+    private var dismissHint: some View {
+        VStack(spacing: 12) {
+            Button(action: endBreak) {
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 12))
+                    Text("Back to Work")
+                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                }
+                .foregroundColor(currentTheme.accentColor)
+                .padding(.vertical, 10)
+                .padding(.horizontal, 24)
+                .background(
+                    Capsule()
+                        .fill(currentTheme.accentColor.opacity(0.12))
+                )
+                .overlay(
+                    Capsule()
+                        .stroke(currentTheme.accentColor.opacity(0.4), lineWidth: 1.5)
+                )
+            }
+            .buttonStyle(.plain)
+            .help("Start your next work interval")
+            
+            Text("Press ESC or click Back to Work to continue")
+                .font(.system(size: 14, design: .rounded))
+                .foregroundColor(currentTheme.secondaryTextColor.opacity(currentTheme.secondaryTextOpacity * 0.8))
+        }
+    }
+    
     // MARK: - Skip Hint
     
     private var skipHint: some View {
@@ -266,7 +369,7 @@ struct BreakOverlayView: View {
             // because the first click was eaten by app activation. Now that the
             // first click lands, a stray one would end the break, so skipping
             // needs a deliberate target.
-            Button(action: skip) {
+            Button(action: endBreak) {
                 HStack(spacing: 8) {
                     Image(systemName: "forward.fill")
                         .font(.system(size: 12))
@@ -306,7 +409,10 @@ struct BreakOverlayView: View {
     
     // MARK: - Methods
     
-    private func skip() {
+    /// The one way out the overlay offers, and the only thing either hint's
+    /// button does. `BreakTimerManager` reads the state to decide what it means:
+    /// skip a running break, dismiss a served one.
+    private func endBreak() {
         DispatchQueue.main.async {
             onSkip()
         }

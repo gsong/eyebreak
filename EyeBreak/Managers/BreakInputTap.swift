@@ -27,7 +27,10 @@
 //  2. Ctrl-Opt-Cmd-Esc, the panic chord, tears the tap down inside the callback,
 //     on the callback's own thread, before the break is told anything.
 //  3. A watchdog on its own queue tears the tap down at break duration plus a
-//     fixed slack. It reads no break state, so no state bug can extend it.
+//     fixed slack, and plus a fixed allowance when the break is going to wait to
+//     be dismissed. It is armed once and reads no break state, so no state bug
+//     can extend it. It gives the keyboard back and nothing else: a break still
+//     waiting for the user keeps waiting.
 //
 //  Known limitation: Secure Event Input. While a password field has focus, macOS
 //  routes no keyboard event to any tap, so interception silently stops for as
@@ -60,8 +63,17 @@ final class BreakInputTap {
     ///
     /// `onEndBreak` runs on the main thread for bare ESC and for the panic
     /// chord. The chord tears the tap down first; ESC leaves that to the break's
-    /// own teardown.
-    func start(breakDuration: TimeInterval, onEndBreak: @escaping () -> Void) {
+    /// own teardown. Once the break has been served, ending it means dismissing
+    /// it; `BreakTimerManager` decides that from the state, so nothing here has
+    /// to know which phase the break is in.
+    ///
+    /// `awaitsDismissal` only lengthens the watchdog. It is read once, here, and
+    /// never again.
+    func start(
+        breakDuration: TimeInterval,
+        awaitsDismissal: Bool = false,
+        onEndBreak: @escaping () -> Void
+    ) {
         lock.lock()
         guard tapPort == nil else {
             lock.unlock()
@@ -76,7 +88,10 @@ final class BreakInputTap {
         tapPort = port
         budget = TapReenableBudget()
         endBreakHandler = onEndBreak
-        startWatchdog(after: BreakInputPolicy.watchdogDelay(forBreakOf: breakDuration))
+        startWatchdog(after: BreakInputPolicy.watchdogDelay(
+            forBreakOf: breakDuration,
+            awaitsDismissal: awaitsDismissal
+        ))
         lock.unlock()
 
         startTapThread(port)
@@ -176,9 +191,13 @@ final class BreakInputTap {
 
     // MARK: - Watchdog
 
-    /// The out that cannot be reasoned away. It is armed with the tap and reads
-    /// nothing: not the break state, not the countdown, not a setting. A bug
-    /// anywhere else still ends with the keyboard back.
+    /// The out that cannot be reasoned away. It is armed once with the tap and
+    /// reads nothing after that: not the break state, not the countdown, not a
+    /// setting. A bug anywhere else still ends with the keyboard back.
+    ///
+    /// It gives the keyboard back and stops there. A break waiting to be
+    /// dismissed keeps waiting, because the overlay is not what has gone wrong,
+    /// and a break the user has not acknowledged should not acknowledge itself.
     private func startWatchdog(after delay: TimeInterval) {
         let timer = DispatchSource.makeTimerSource(queue: watchdogQueue)
         timer.schedule(deadline: .now() + delay)

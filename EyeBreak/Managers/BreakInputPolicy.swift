@@ -29,6 +29,16 @@ enum BreakInputPolicy {
     /// How long the watchdog outlives the break it was armed for.
     static let watchdogSlack: TimeInterval = 10
 
+    /// The longest wait the keyboard is held through after a break has been
+    /// served and is waiting to be dismissed.
+    ///
+    /// A waiting break has no end for the watchdog to be armed for, so it is
+    /// armed for this and no longer. Two minutes is long enough that a user who
+    /// stepped away and came back finds the break still waiting for them, and
+    /// short enough that a user whose keyboard has stopped working gets it back
+    /// while they are still looking at the screen.
+    static let dismissalWaitAllowance: TimeInterval = 120
+
     /// How many times a disabled tap may be re-enabled before the tap gives up.
     /// See `TapReenableBudget`.
     static let maximumTapReenables = 3
@@ -108,10 +118,20 @@ enum BreakInputPolicy {
         return keyCode == escapeKeyCode && modifiers.isDisjoint(with: consideredModifiers)
     }
 
-    /// When the watchdog tears the tap down: the break, plus enough slack that a
-    /// break ending normally has always got there first.
-    static func watchdogDelay(forBreakOf seconds: TimeInterval) -> TimeInterval {
-        return max(0, seconds) + watchdogSlack
+    /// When the watchdog tears the tap down: the break, plus the wait if the
+    /// break is going to wait to be dismissed, plus enough slack that a break
+    /// ending normally has always got there first.
+    ///
+    /// This is worked out once, when the break starts, from the length of the
+    /// break and a setting. Nothing here reads the state of the break, and the
+    /// watchdog must never be re-armable — that invariant is the whole reason
+    /// the watchdog is an out that no bug elsewhere can reason away.
+    static func watchdogDelay(
+        forBreakOf seconds: TimeInterval,
+        awaitsDismissal: Bool = false
+    ) -> TimeInterval {
+        let wait = awaitsDismissal ? dismissalWaitAllowance : 0
+        return max(0, seconds) + wait + watchdogSlack
     }
 
     // MARK: - Private
