@@ -14,6 +14,9 @@ struct BreakOverlayView: View {
     @ObservedObject var countdown: BreakCountdown
     let style: ScreenBlurManager.OverlayStyle
     let onSkip: () -> Void
+    /// Whether this copy of the overlay takes VoiceOver focus. Every screen runs
+    /// one, and only the screen the user was working on should claim it.
+    let claimsAccessibilityFocus: Bool
     
     @State private var opacity: Double = 0
     @State private var scale: CGFloat = 0.8
@@ -26,10 +29,16 @@ struct BreakOverlayView: View {
         settings.breakOverlayTheme
     }
     
-    init(countdown: BreakCountdown, style: ScreenBlurManager.OverlayStyle, onSkip: @escaping () -> Void) {
+    init(
+        countdown: BreakCountdown,
+        style: ScreenBlurManager.OverlayStyle,
+        onSkip: @escaping () -> Void,
+        claimsAccessibilityFocus: Bool
+    ) {
         self.countdown = countdown
         self.style = style
         self.onSkip = onSkip
+        self.claimsAccessibilityFocus = claimsAccessibilityFocus
     }
     
     var body: some View {
@@ -75,7 +84,9 @@ struct BreakOverlayView: View {
         }
         .onAppear {
             startAnimation()
-            isMessageFocused = true
+            if claimsAccessibilityFocus {
+                isMessageFocused = true
+            }
         }
     }
     

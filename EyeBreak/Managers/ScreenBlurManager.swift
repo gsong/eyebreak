@@ -24,9 +24,12 @@ class ScreenBlurManager {
     /// both, and only `showBreakOverlay` is given them.
     private var overlayStyle: OverlayStyle = .blur
     private var skipHandler: (() -> Void)?
-    /// The screen frames the current windows cover. macOS posts a screen change
-    /// for things that leave the layout alone, so this is what says whether a
-    /// rebuild is worth the flicker.
+    /// The overlay on the screen that held the pointer when the windows were
+    /// built. Only one window can be key, and only one should claim VoiceOver.
+    private var keyOverlayWindow: NSWindow?
+    /// The screen frames the current windows cover, in a fixed order. macOS
+    /// posts a screen change for things that leave the layout alone, so this is
+    /// what says whether a rebuild is worth the flicker.
     private var coveredFrames: [CGRect] = []
     private var screenChangeObserver: NSObjectProtocol?
     private var escapeMonitor: Any?
@@ -110,7 +113,7 @@ class ScreenBlurManager {
         // key status. The windows join all Spaces, so EyeBreak always has one on
         // the current Space, which is what keeps activation from switching Spaces.
         NSApp.activate()
-        self.windowUnderPointer()?.makeKey()
+        self.keyOverlayWindow?.makeKey()
         
         countdown.start()
         self.startObservingScreenChanges()
@@ -149,6 +152,12 @@ class ScreenBlurManager {
         
         let screens = NSScreen.screens
         
+        // The screen holding the pointer is the one the user was working on. It
+        // takes key status, and its overlay is the one VoiceOver should land on.
+        // Both are single-window jobs, so the other screens must not claim them.
+        let mouseLocation = NSEvent.mouseLocation
+        let pointerScreen = screens.first { NSMouseInRect(mouseLocation, $0.frame, false) } ?? screens.first
+        
         for screen in screens {
             let window = self.createOverlayWindow(for: screen)
             
@@ -161,7 +170,8 @@ class ScreenBlurManager {
             let overlayView = BreakOverlayView(
                 countdown: countdown,
                 style: self.overlayStyle,
-                onSkip: onSkip
+                onSkip: onSkip,
+                claimsAccessibilityFocus: screen == pointerScreen
             )
             
             let hostingView = FirstMouseHostingView(rootView: overlayView)
@@ -172,9 +182,13 @@ class ScreenBlurManager {
             
             self.overlayWindows.append(window)
             self.hostingViews.append(hostingView)
+            
+            if screen == pointerScreen {
+                self.keyOverlayWindow = window
+            }
         }
         
-        self.coveredFrames = screens.map(\.frame)
+        self.coveredFrames = Self.sortedFrames(of: screens)
     }
     
     private func closeOverlayWindows() {
@@ -184,6 +198,7 @@ class ScreenBlurManager {
         self.overlayWindows.removeAll()
         self.hostingViews.removeAll()
         self.coveredFrames.removeAll()
+        self.keyOverlayWindow = nil
     }
     
     private func close(_ windows: [NSWindow]) {
@@ -197,14 +212,6 @@ class ScreenBlurManager {
         for window in windows {
             window.close()
         }
-    }
-    
-    /// The overlay on the screen holding the pointer. Only one window can be
-    /// key, and that is the screen the user was working on.
-    private func windowUnderPointer() -> NSWindow? {
-        let mouseLocation = NSEvent.mouseLocation
-        let match = self.overlayWindows.first { NSMouseInRect(mouseLocation, $0.frame, false) }
-        return match ?? self.overlayWindows.first
     }
     
     private func createOverlayWindow(for screen: NSScreen) -> NSWindow {
@@ -258,7 +265,7 @@ class ScreenBlurManager {
     /// the break. The countdown is left alone, so the remaining time carries over.
     private func rebuildOverlayWindowsIfScreensChanged() {
         guard self.countdown != nil else { return }
-        guard NSScreen.screens.map(\.frame) != self.coveredFrames else { return }
+        guard Self.sortedFrames(of: NSScreen.screens) != self.coveredFrames else { return }
         
         // Build the replacements before dropping the old windows. An overlay
         // that goes to zero windows, even for an instant, hands focus back to
@@ -266,11 +273,22 @@ class ScreenBlurManager {
         let stale = self.overlayWindows
         self.overlayWindows.removeAll()
         self.hostingViews.removeAll()
+        self.keyOverlayWindow = nil
         
         self.buildOverlayWindows()
-        self.windowUnderPointer()?.makeKey()
+        self.keyOverlayWindow?.makeKey()
         
         self.close(stale)
+    }
+    
+    /// Screen frames in a fixed order. `NSScreen.screens` puts the main screen
+    /// first, so choosing a different main display reorders it without moving a
+    /// single pixel. Sorting keeps that out of the rebuild test.
+    private static func sortedFrames(of screens: [NSScreen]) -> [CGRect] {
+        screens.map(\.frame).sorted { lhs, rhs in
+            (lhs.origin.x, lhs.origin.y, lhs.width, lhs.height)
+                < (rhs.origin.x, rhs.origin.y, rhs.width, rhs.height)
+        }
     }
     
     // MARK: - Escape Key
@@ -282,7 +300,14 @@ class ScreenBlurManager {
         
         self.escapeMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             guard event.keyCode == 53 else { return event }  // ESC key
-            self?.skipHandler?()
+            
+            // Deferred, like the Skip button. Skipping removes this monitor and
+            // closes the key window, and doing either inside AppKit's dispatch
+            // of the event pulls them out from under it.
+            let skip = self?.skipHandler
+            DispatchQueue.main.async {
+                skip?()
+            }
             return nil  // Consume the event
         }
     }
