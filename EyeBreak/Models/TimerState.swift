@@ -15,7 +15,7 @@ enum TimerState: Equatable {
     case breaking(remainingSeconds: Int) // Break period
     case paused(wasWorking: Bool, remainingSeconds: Int) // Paused due to idle
     case awaitingDismissal // Break served, waiting for the user to dismiss it
-    
+
     var isActive: Bool {
         switch self {
         case .idle, .paused, .awaitingDismissal:
@@ -27,7 +27,7 @@ enum TimerState: Equatable {
             return true
         }
     }
-    
+
     /// Whether a break is on screen right now, running or served and waiting.
     /// Starting a break on top of either would credit two for one rest.
     var hasBreakOnScreen: Bool {
@@ -38,7 +38,7 @@ enum TimerState: Equatable {
             return false
         }
     }
-    
+
     var displayText: String {
         switch self {
         case .idle:
@@ -55,7 +55,7 @@ enum TimerState: Equatable {
             return "Break complete — dismiss to continue"
         }
     }
-    
+
     /// What reaching the end of a break's countdown should do from this state.
     ///
     /// This is why a break is credited exactly once. Only `.breaking` yields an
@@ -70,7 +70,7 @@ enum TimerState: Equatable {
         guard case .breaking = self else { return .ignore }
         return awaitsDismissal ? .awaitDismissal : .endNow
     }
-    
+
     private func formatTime(_ totalSeconds: Int) -> String {
         let minutes = totalSeconds / 60
         let seconds = totalSeconds % 60
@@ -93,9 +93,9 @@ enum BreakStyle: String, CaseIterable, Identifiable {
     case blurScreen = "Blur Screen"
     case notificationOnly = "Floating Window"
     case eyeExercise = "Eye Exercise"
-    
+
     var id: String { rawValue }
-    
+
     var description: String {
         switch self {
         case .blurScreen:
@@ -106,7 +106,7 @@ enum BreakStyle: String, CaseIterable, Identifiable {
             return "Guided eye exercise instructions"
         }
     }
-    
+
     var icon: String {
         switch self {
         case .blurScreen:
@@ -125,7 +125,7 @@ struct BreakStats: Codable {
     var breaksCompleted: Int
     var breaksSkipped: Int
     var totalBreakTime: Int // in seconds
-    
+
     init(date: Date = Date(), breaksCompleted: Int = 0, breaksSkipped: Int = 0, totalBreakTime: Int = 0) {
         self.date = date
         self.breaksCompleted = breaksCompleted
@@ -139,9 +139,9 @@ enum SessionType: String, CaseIterable, Identifiable {
     case standard = "20-20-20"
     case pomodoro = "Pomodoro (25/5)"
     case custom = "Custom"
-    
+
     var id: String { rawValue }
-    
+
     var workMinutes: Int {
         switch self {
         case .standard:
@@ -152,7 +152,7 @@ enum SessionType: String, CaseIterable, Identifiable {
             return 20 // Default, will be overridden by user settings
         }
     }
-    
+
     var breakSeconds: Int {
         switch self {
         case .standard:
@@ -169,9 +169,9 @@ enum SessionType: String, CaseIterable, Identifiable {
 enum WaterReminderStyle: String, CaseIterable, Identifiable {
     case blurScreen = "Blur Screen"
     case ambient = "Ambient Pop-up"
-    
+
     var id: String { rawValue }
-    
+
     var description: String {
         switch self {
         case .blurScreen:

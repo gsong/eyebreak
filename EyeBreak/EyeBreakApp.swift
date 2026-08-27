@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct EyeBreakApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    
+
     var body: some Scene {
         // Settings window - shown on first launch
         Window("EyeBreak Settings", id: "settings") {
@@ -24,30 +24,30 @@ struct EyeBreakApp: App {
                     NSApplication.shared.orderFrontStandardAboutPanel()
                 }
             }
-            
+
             CommandGroup(after: .appSettings) {
                 Button("Start Timer") {
                     BreakTimerManager.shared.start()
                 }
                 .keyboardShortcut("s", modifiers: [.command, .shift])
-                
+
                 Button("Take Break Now") {
                     BreakTimerManager.shared.takeBreakNow()
                 }
                 .keyboardShortcut("b", modifiers: [.command, .shift])
-                
+
                 Button("Stop Timer") {
                     BreakTimerManager.shared.stop()
                 }
                 .keyboardShortcut("x", modifiers: [.command, .shift])
-                
+
                 Divider()
-                
+
                 Button("Show Ambient Reminder") {
                     AmbientReminderManager.shared.showAmbientReminder()
                 }
                 .keyboardShortcut("r", modifiers: [.command, .shift])
-                
+
                 Button("Show Water Reminder") {
                     WaterReminderManager.shared.showWaterReminderNow()
                 }
@@ -60,24 +60,24 @@ struct EyeBreakApp: App {
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusBar: StatusBarController?
     var eventMonitors: [Any] = []
-    
+
     func applicationDidFinishLaunching(_ notification: Notification) {
-        
+
         // Prevent automatic termination
         NSApp.disableRelaunchOnLogin()
-        
+
         // CRITICAL: Create status bar FIRST, while still in default mode
         statusBar = StatusBarController()
-        
+
         // Force a small delay to ensure status bar is fully registered
         // THEN change to accessory mode
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             NSApp.setActivationPolicy(.accessory)
         }
-        
+
         // Setup global keyboard shortcuts
         setupGlobalKeyboardShortcuts()
-        
+
         // Sync launch at login status with settings
         LaunchAtLoginManager.shared.syncWithSettings(AppSettings.shared)
 
@@ -86,17 +86,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // every dev-install.sh run, so check and offer to restore it instead of
         // letting the shortcuts fail silently.
         AccessibilityPermission.shared.promptIfNeededOnLaunch()
-        
+
         // Start ambient reminders if enabled
         if AppSettings.shared.ambientRemindersEnabled {
             AmbientReminderManager.shared.startAmbientReminders()
         }
-        
+
         // Start water reminders if enabled
         if AppSettings.shared.waterReminderEnabled {
             WaterReminderManager.shared.startWaterReminders()
         }
-        
+
         // Auto-start timer if enabled
         if AppSettings.shared.autoStartTimer {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -104,9 +104,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         } else {
         }
-        
+
     }
-    
+
     func applicationWillTerminate(_ notification: Notification) {
         // Before anything else. A break in progress holds a keyboard tap, and a
         // quit that skipped this would be the one way the tap outlives the app's
@@ -118,12 +118,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             NSEvent.removeMonitor(monitor)
         }
     }
-    
+
     // Prevent app from quitting when last window closes
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return false
     }
-    
+
     private func setupGlobalKeyboardShortcuts() {
         // Monitor for Command+Shift+B (Take Break Now)
         let breakNowMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { event in
@@ -164,11 +164,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
             }
         }
-        
+
         if let monitor = breakNowMonitor {
             eventMonitors.append(monitor)
         }
-        
+
         // Also add local monitor for when app is focused
         let localMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
             // Check for Command+Shift+B
@@ -215,7 +215,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             return event
         }
-        
+
         if let monitor = localMonitor {
             eventMonitors.append(monitor)
         }

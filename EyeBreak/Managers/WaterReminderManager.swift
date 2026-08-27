@@ -12,20 +12,20 @@ import Combine
 
 /// Manages water drinking reminders to encourage hydration during work
 class WaterReminderManager: ObservableObject {
-    
+
     // MARK: - Singleton
-    
+
     static let shared = WaterReminderManager()
-    
+
     // MARK: - Properties
-    
+
     private var reminderTimer: Timer?
     @Published var isEnabled: Bool = false
     @Published var isPausedDueToScreenLock: Bool = false
     @Published var secondsUntilNextReminder: Int = 0
     private var nextReminderDate: Date?
     private var cancellables = Set<AnyCancellable>()
-    
+
     // Preset water message templates (theme will be added at runtime)
     private struct MessageTemplate {
         let icon: String
@@ -45,66 +45,66 @@ class WaterReminderManager: ObservableObject {
     ]
 
     // MARK: - Initialization
-    
+
     private init() {
         setupScreenLockNotifications()
         startCountdownTimer()
     }
-    
+
     // MARK: - Public Methods
-    
+
     /// Start water reminders based on settings
     func startWaterReminders() {
         guard !isEnabled else { return }
         isEnabled = true
-        
+
         scheduleNextReminder()
     }
-    
+
     /// Stop water reminders
     func stopWaterReminders() {
         isEnabled = false
         reminderTimer?.invalidate()
         reminderTimer = nil
     }
-    
+
     /// Show a water reminder immediately (manual trigger)
     func showWaterReminderNow() {
         let settings = AppSettings.shared
-        
+
         // Check if Smart Schedule allows reminders now
         if settings.smartScheduleEnabled && !settings.shouldShowBreaksNow {
             showOutsideWorkHoursAlert()
             return
         }
-        
+
         showWaterReminder()
     }
-    
+
     /// Force show water reminder bypassing Smart Schedule (private, called from alert)
     private func forceShowWaterReminder() {
         _showWaterReminderInternal(bypassSchedule: true)
     }
-    
+
     // MARK: - Private Methods
-    
+
     private func scheduleNextReminder() {
         guard isEnabled else { return }
-        
+
         let settings = AppSettings.shared
         let interval = settings.waterReminderInterval
-        
+
         // Store the next reminder date
         nextReminderDate = Date().addingTimeInterval(interval)
         secondsUntilNextReminder = Int(interval)
-        
+
         reminderTimer?.invalidate()
         reminderTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
             self?.showWaterReminder()
             self?.scheduleNextReminder()
         }
     }
-    
+
     private func startCountdownTimer() {
         // Update countdown every second
         Timer.publish(every: 1.0, on: .main, in: .common)
@@ -114,12 +114,12 @@ class WaterReminderManager: ObservableObject {
             }
             .store(in: &cancellables)
     }
-    
+
     /// Updates the countdown display every second
     private func updateCountdown() {
         // When paused, keep the saved value frozen - don't recalculate
         guard !isPausedDueToScreenLock else { return }
-        
+
         // Only update if reminders are active and a date is set.
         // @Published fires on every assignment, not only on change, so assigning
         // an unchanged value would wake every observing view once a second even
@@ -137,25 +137,25 @@ class WaterReminderManager: ObservableObject {
             secondsUntilNextReminder = remaining
         }
     }
-    
+
     private func showWaterReminder() {
         _showWaterReminderInternal(bypassSchedule: false)
     }
-    
+
     private func _showWaterReminderInternal(bypassSchedule: Bool) {
         guard isEnabled else { return }
-        
+
         let settings = AppSettings.shared
-        
+
         // Check Smart Schedule (unless bypassed)
         if !bypassSchedule && settings.smartScheduleEnabled && !settings.shouldShowBreaksNow {
             return
         }
-        
+
         // Generate a new random color theme for this reminder (if using random color theme)
         settings.regenerateWaterReminderRandomTheme()
         let theme = settings.waterReminderTheme
-        
+
         // Check if using custom reminder
         let message: WaterMessage
         if settings.useCustomWaterReminder && !settings.customWaterReminderMessage.isEmpty {
@@ -175,7 +175,7 @@ class WaterReminderManager: ObservableObject {
                 theme: theme
             )
         }
-        
+
         switch settings.waterReminderStyle {
         case .blurScreen:
             showBlurScreenReminder(message: message)
@@ -183,13 +183,13 @@ class WaterReminderManager: ObservableObject {
             showAmbientReminder(message: message)
         }
     }
-    
+
     private func showBlurScreenReminder(message: WaterMessage) {
         // Play sound if enabled
         if AppSettings.shared.soundEnabled {
             NSSound(named: "Glass")?.play()
         }
-        
+
         // Create blur screen overlay on active screen only - using same approach as break overlay
         if Thread.isMainThread {
             showWaterOverlayOnMainThread(message: message)
@@ -199,12 +199,12 @@ class WaterReminderManager: ObservableObject {
             }
         }
     }
-    
+
     private func showWaterOverlayOnMainThread(message: WaterMessage) {
         // Get the screen with mouse cursor (the active screen user is on)
         let mouseLocation = NSEvent.mouseLocation
         let activeScreen = NSScreen.screens.first(where: { NSMouseInRect(mouseLocation, $0.frame, false) }) ?? NSScreen.main ?? NSScreen.screens[0]
-        
+
         // Create overlay window using custom class (like BreakOverlayWindow)
         let window = WaterReminderWindow(
             contentRect: activeScreen.frame,
@@ -213,7 +213,7 @@ class WaterReminderManager: ObservableObject {
             defer: false,
             screen: activeScreen
         )
-        
+
         // Configure window properties (matching break overlay)
         window.level = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(.maximumWindow)))
         window.backgroundColor = .clear
@@ -227,10 +227,10 @@ class WaterReminderManager: ObservableObject {
         window.alphaValue = 1.0
         window.hidesOnDeactivate = false
         window.canHide = false
-        
+
         // CRITICAL: Force window frame to the active screen
         window.setFrame(activeScreen.frame, display: true, animate: false)
-        
+
         // Create the content view with water reminder
         let contentView = WaterBlurOverlayView(
             message: message,
@@ -238,37 +238,37 @@ class WaterReminderManager: ObservableObject {
                 window?.orderOut(nil)
             }
         )
-        
+
         let hostingController = NSHostingController(rootView: contentView)
         hostingController.view.frame = activeScreen.frame
         window.contentView = hostingController.view
-        
+
         // CRITICAL: Use orderFrontRegardless() instead of makeKeyAndOrderFront()
         // This prevents desktop switching but still shows the overlay
         window.orderFrontRegardless()
-        
+
         // No auto-dismiss - user must click the button to acknowledge
     }
-    
+
     private func showAmbientReminder(message: WaterMessage) {
         // Play sound if enabled
         if AppSettings.shared.soundEnabled {
             NSSound(named: "Glass")?.play()
         }
-        
+
         // Get the screen with mouse cursor (the active screen user is on)
         let mouseLocation = NSEvent.mouseLocation
         let activeScreen = NSScreen.screens.first(where: { NSMouseInRect(mouseLocation, $0.frame, false) }) ?? NSScreen.main ?? NSScreen.screens[0]
         let screenFrame = activeScreen.visibleFrame
-        
+
         // Center horizontally, position at top
         let windowWidth: CGFloat = 420
         let windowHeight: CGFloat = 110
         let x = screenFrame.midX - (windowWidth / 2)
         let y = screenFrame.maxY - windowHeight - 60  // 60pt from top
-        
+
         let windowRect = NSRect(x: x, y: y, width: windowWidth, height: windowHeight)
-        
+
         // Create floating window
         let window = NSWindow(
             contentRect: windowRect,
@@ -276,14 +276,14 @@ class WaterReminderManager: ObservableObject {
             backing: .buffered,
             defer: false
         )
-        
+
         window.isOpaque = false
         window.backgroundColor = .clear
         window.level = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(.maximumWindow)))
         window.collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle, .transient, .fullScreenAuxiliary]
         window.hasShadow = false
         window.isMovable = false
-        
+
         // Create SwiftUI view
         let contentView = WaterReminderView(
             message: message,
@@ -291,11 +291,11 @@ class WaterReminderManager: ObservableObject {
                 window?.orderOut(nil)
             }
         )
-        
+
         window.contentView = NSHostingView(rootView: contentView)
         window.setFrame(windowRect, display: true, animate: false)
         window.orderFrontRegardless()
-        
+
         // Auto-dismiss after 8 seconds (same as ambient reminders)
         DispatchQueue.main.asyncAfter(deadline: .now() + 8) { [weak window] in
             window?.orderOut(nil)
@@ -310,12 +310,12 @@ struct WaterMessage {
     let title: String
     let message: String
     let theme: ColorTheme  // Theme for coloring
-    
+
     var glassColor: Color {
         // Use background color from theme
         return theme.backgroundColor
     }
-    
+
     var accentColor: Color {
         // Use accent color from theme
         return theme.accentColor
@@ -327,9 +327,9 @@ struct WaterMessage {
 struct WaterReminderView: View {
     let message: WaterMessage
     let onDismiss: () -> Void
-    
+
     @State private var isVisible = false
-    
+
     var body: some View {
         ZStack {
             // Glass morphism background with theme colors - using backgroundGradient() for proper opacity
@@ -348,7 +348,7 @@ struct WaterReminderView: View {
                 )
                 .shadow(color: Color.black.opacity(0.15), radius: 15, x: 0, y: 5)
                 .shadow(color: message.theme.accentColor.opacity(0.25), radius: 20, x: 0, y: 8)
-            
+
             HStack(spacing: 16) {
                 // Water icon - using SF Symbol with theme colors
                 ZStack {
@@ -364,7 +364,7 @@ struct WaterReminderView: View {
                             )
                         )
                         .frame(width: 50, height: 50)
-                    
+
                     Image(systemName: message.icon)
                         .font(.system(size: 24))
                         .foregroundStyle(
@@ -379,20 +379,20 @@ struct WaterReminderView: View {
                         )
                         .symbolRenderingMode(.hierarchical)
                 }
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(message.title)
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                         .foregroundColor(message.theme.textColor.opacity(message.theme.textOpacity))
-                    
+
                     Text(message.message)
                         .font(.system(size: 13, weight: .regular, design: .rounded))
                         .foregroundColor(message.theme.secondaryTextColor.opacity(message.theme.secondaryTextOpacity))
                         .lineLimit(2)
                 }
-                
+
                 Spacer()
-                
+
                 // Dismiss button
                 Button(action: onDismiss) {
                     Image(systemName: "xmark.circle.fill")
@@ -423,16 +423,16 @@ struct WaterReminderView: View {
 struct WaterBlurOverlayView: View {
     let message: WaterMessage
     let onDismiss: () -> Void
-    
+
     @State private var scale: CGFloat = 0.5
     @State private var opacity: Double = 0
-    
+
     var body: some View {
         ZStack {
             // Blur background
             VisualEffectBlur()
                 .ignoresSafeArea()
-            
+
             // Gradient overlay with theme colors
             LinearGradient(
                 colors: [
@@ -444,7 +444,7 @@ struct WaterBlurOverlayView: View {
                 endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
-            
+
             VStack(spacing: 32) {
                 // Water icon with animation
                 ZStack {
@@ -462,7 +462,7 @@ struct WaterBlurOverlayView: View {
                             )
                         )
                         .frame(width: 200, height: 200)
-                    
+
                     // Icon background circle
                     Circle()
                         .fill(
@@ -484,7 +484,7 @@ struct WaterBlurOverlayView: View {
                                 )
                         )
                         .shadow(color: Color.black.opacity(0.2), radius: 20, x: 0, y: 10)
-                    
+
                     // Water icon
                     Image(systemName: message.icon)
                         .font(.system(size: 56, weight: .light, design: .rounded))
@@ -501,14 +501,14 @@ struct WaterBlurOverlayView: View {
                         .symbolRenderingMode(.hierarchical)
                 }
                 .scaleEffect(scale)
-                
+
                 // Message content
                 VStack(spacing: 16) {
                     Text(message.title)
                         .font(.system(size: 36, weight: .bold, design: .rounded))
                         .foregroundColor(message.theme.textColor.opacity(message.theme.textOpacity))
                         .multilineTextAlignment(.center)
-                    
+
                     Text(message.message)
                         .font(.system(size: 20, weight: .regular, design: .rounded))
                         .foregroundColor(message.theme.secondaryTextColor.opacity(message.theme.secondaryTextOpacity))
@@ -517,7 +517,7 @@ struct WaterBlurOverlayView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(.horizontal, 60)
-                
+
                 // Gentle dismiss button - no countdown, user chooses when to dismiss
                 Button(action: {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
@@ -585,7 +585,7 @@ struct VisualEffectBlur: NSViewRepresentable {
         view.material = .hudWindow
         return view
     }
-    
+
     func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }
 
@@ -634,24 +634,24 @@ extension WaterReminderManager {
             """
         alert.alertStyle = .informational
         alert.icon = NSImage(systemSymbolName: "drop.circle", accessibilityDescription: "Water Reminder")
-        
+
         alert.addButton(withTitle: "Show Anyway")
         alert.addButton(withTitle: "Cancel")
-        
+
         let response = alert.runModal()
-        
+
         if response == .alertFirstButtonReturn {
             // Force show reminder bypassing schedule
             forceShowWaterReminder()
         }
     }
-    
+
     // MARK: - Screen Lock Handling
-    
+
     /// Sets up system notifications to automatically pause/resume reminders when screen locks
     private func setupScreenLockNotifications() {
         let notificationCenter = DistributedNotificationCenter.default()
-        
+
         // Screen lock events
         notificationCenter.addObserver(
             forName: NSNotification.Name("com.apple.screenIsLocked"),
@@ -660,7 +660,7 @@ extension WaterReminderManager {
         ) { [weak self] _ in
             self?.pauseForScreenLock()
         }
-        
+
         notificationCenter.addObserver(
             forName: NSNotification.Name("com.apple.screenIsUnlocked"),
             object: nil,
@@ -668,7 +668,7 @@ extension WaterReminderManager {
         ) { [weak self] _ in
             self?.resumeFromScreenLock()
         }
-        
+
         // Screen saver events (treated same as screen lock)
         notificationCenter.addObserver(
             forName: NSNotification.Name("com.apple.screensaver.didstart"),
@@ -677,7 +677,7 @@ extension WaterReminderManager {
         ) { [weak self] _ in
             self?.pauseForScreenLock()
         }
-        
+
         notificationCenter.addObserver(
             forName: NSNotification.Name("com.apple.screensaver.didstop"),
             object: nil,
@@ -686,40 +686,40 @@ extension WaterReminderManager {
             self?.resumeFromScreenLock()
         }
     }
-    
+
     /// Pauses the reminder timer when screen locks, preserving the remaining time
     private func pauseForScreenLock() {
         guard isEnabled else { return }
-        
+
         // Mark as paused
         isPausedDueToScreenLock = true
-        
+
         // Stop the timer
         reminderTimer?.invalidate()
         reminderTimer = nil
-        
+
         // Save the remaining seconds before clearing the date
         // This preserves the countdown value for display and resume
         if let nextDate = nextReminderDate {
             secondsUntilNextReminder = max(0, Int(nextDate.timeIntervalSinceNow))
         }
-        
+
         // Clear the date to prevent updateCountdown() from recalculating
         nextReminderDate = nil
     }
-    
+
     /// Resumes the reminder timer when screen unlocks, continuing from saved time
     private func resumeFromScreenLock() {
         guard isEnabled && isPausedDueToScreenLock else { return }
-        
+
         // Clear paused flag
         isPausedDueToScreenLock = false
-        
+
         // Resume with saved remaining time
         if secondsUntilNextReminder > 0 {
             let remaining = TimeInterval(secondsUntilNextReminder)
             nextReminderDate = Date().addingTimeInterval(remaining)
-            
+
             // Schedule timer to fire after the remaining time
             reminderTimer = Timer.scheduledTimer(withTimeInterval: remaining, repeats: false) { [weak self] _ in
                 self?.showWaterReminder()

@@ -15,9 +15,9 @@ enum ColorThemeType: String, Codable, CaseIterable, Identifiable {
     case defaultTheme = "Default"
     case randomColor = "Random Color"
     case custom = "Custom"
-    
+
     var id: String { rawValue }
-    
+
     var description: String {
         switch self {
         case .defaultTheme:
@@ -28,7 +28,7 @@ enum ColorThemeType: String, Codable, CaseIterable, Identifiable {
             return "Create your own personalized theme"
         }
     }
-    
+
     var icon: String {
         switch self {
         case .defaultTheme:
@@ -46,46 +46,46 @@ enum ColorThemeType: String, Codable, CaseIterable, Identifiable {
 /// Represents a complete color theme with all customization options
 struct ColorTheme: Codable, Equatable {
     var themeType: ColorThemeType
-    
+
     // Background colors (stored as hex for UserDefaults compatibility)
     var backgroundColorHex: String
     var backgroundOpacity: Double
-    
+
     // Text colors
     var textColorHex: String
     var textOpacity: Double
-    
+
     // Secondary text colors
     var secondaryTextColorHex: String
     var secondaryTextOpacity: Double
-    
+
     // Accent colors
     var accentColorHex: String
     var accentOpacity: Double
-    
+
     // Glass effect properties
     var glassBlurRadius: Double
     var glassHighlightOpacity: Double
-    
+
     // Computed Color properties for easy use
     var backgroundColor: Color {
         Color(hex: backgroundColorHex) ?? .blue
     }
-    
+
     var textColor: Color {
         Color(hex: textColorHex) ?? .white
     }
-    
+
     var secondaryTextColor: Color {
         Color(hex: secondaryTextColorHex) ?? .white
     }
-    
+
     var accentColor: Color {
         Color(hex: accentColorHex) ?? .cyan
     }
-    
+
     // MARK: - Presets
-    
+
     /// Default vibrant theme (current style)
     static let defaultTheme = ColorTheme(
         themeType: .defaultTheme,
@@ -100,7 +100,7 @@ struct ColorTheme: Codable, Equatable {
         glassBlurRadius: 0.5,
         glassHighlightOpacity: 0.25
     )
-    
+
     /// Random color theme - generates a fresh beautiful color scheme each time
     static func randomColorTheme() -> ColorTheme {
         let palette = RandomColorPalette.generate()
@@ -118,7 +118,7 @@ struct ColorTheme: Codable, Equatable {
             glassHighlightOpacity: 0.3
         )
     }
-    
+
     /// Default custom theme (user can modify)
     static let customTheme = ColorTheme(
         themeType: .custom,
@@ -133,9 +133,9 @@ struct ColorTheme: Codable, Equatable {
         glassBlurRadius: 2.0,
         glassHighlightOpacity: 0.3
     )
-    
+
     // MARK: - Factory Method
-    
+
     static func theme(for type: ColorThemeType, customTheme: ColorTheme? = nil) -> ColorTheme {
         switch type {
         case .defaultTheme:
@@ -153,7 +153,7 @@ struct ColorTheme: Codable, Equatable {
 struct RandomColorPalette {
     let primary: String
     let accent: String
-    
+
     /// Curated beautiful color palettes that always look good
     private static let beautifulPalettes: [(primary: String, accent: String)] = [
         // Vibrant & Energetic
@@ -162,32 +162,32 @@ struct RandomColorPalette {
         ("#00B894", "#FDCB6E"),  // Emerald & Gold
         ("#0984E3", "#00CEC9"),  // Blue & Cyan
         ("#E17055", "#74B9FF"),  // Terracotta & Sky Blue
-        
+
         // Warm & Inviting
         ("#FD7272", "#FFA502"),  // Warm Red & Orange
         ("#FF7979", "#FDCB6E"),  // Salmon & Yellow
         ("#FF6348", "#FF9FF3"),  // Tomato & Pink
         ("#FF6B9D", "#FFC312"),  // Rose & Amber
-        
+
         // Cool & Calm
         ("#5F27CD", "#00D2D3"),  // Deep Purple & Aqua
         ("#341F97", "#54A0FF"),  // Dark Purple & Light Blue
         ("#2C3E50", "#3498DB"),  // Dark Blue & Bright Blue
         ("#1B9CFC", "#55E6C1"),  // Ocean Blue & Mint
-        
+
         // Modern & Professional
         ("#6C5CE7", "#A29BFE"),  // Purple Gradient
         ("#00B894", "#55EFC4"),  // Green Gradient
         ("#0984E3", "#74B9FF"),  // Blue Gradient
         ("#FF7675", "#FD79A8"),  // Pink Gradient
-        
+
         // Nature Inspired
         ("#27AE60", "#F39C12"),  // Forest Green & Sunflower
         ("#16A085", "#E67E22"),  // Teal & Carrot
         ("#2ECC71", "#F1C40F"),  // Spring Green & Daffodil
         ("#1ABC9C", "#E74C3C")  // Turquoise & Alizarin
     ]
-    
+
     static func generate() -> RandomColorPalette {
         let palette = beautifulPalettes.randomElement() ?? beautifulPalettes[0]
         return RandomColorPalette(primary: palette.primary, accent: palette.accent)
@@ -222,17 +222,17 @@ extension Color {
             opacity: Double(a) / 255
         )
     }
-    
+
     /// Convert Color to hex string
     func toHex() -> String? {
         guard let components = NSColor(self).cgColor.components, components.count >= 3 else {
             return nil
         }
-        
+
         let r = Float(components[0])
         let g = Float(components[1])
         let b = Float(components[2])
-        
+
         return String(format: "#%02lX%02lX%02lX",
                      lroundf(r * 255),
                      lroundf(g * 255),
@@ -269,7 +269,7 @@ extension ColorTheme {
             )
         }
     }
-    
+
     /// Apply text gradient based on theme
     func textGradient() -> LinearGradient {
         LinearGradient(
@@ -281,7 +281,7 @@ extension ColorTheme {
             endPoint: .bottomTrailing
         )
     }
-    
+
     /// Apply border gradient based on theme
     func borderGradient() -> LinearGradient {
         // Consistent border for all themes

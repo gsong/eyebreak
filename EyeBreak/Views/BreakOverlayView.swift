@@ -17,18 +17,18 @@ struct BreakOverlayView: View {
     /// Whether this copy of the overlay takes VoiceOver focus. Every screen runs
     /// one, and only the screen the user was working on should claim it.
     let claimsAccessibilityFocus: Bool
-    
+
     @State private var opacity: Double = 0
     @State private var scale: CGFloat = 0.8
     @AccessibilityFocusState private var isMessageFocused: Bool
-    
+
     // Get the color theme from settings
     @ObservedObject private var settings = AppSettings.shared
-    
+
     private var currentTheme: ColorTheme {
         settings.breakOverlayTheme
     }
-    
+
     init(
         countdown: BreakCountdown,
         style: ScreenBlurManager.OverlayStyle,
@@ -40,13 +40,13 @@ struct BreakOverlayView: View {
         self.onSkip = onSkip
         self.claimsAccessibilityFocus = claimsAccessibilityFocus
     }
-    
+
     var body: some View {
         ZStack {
             // Theme-based background gradient
             currentTheme.backgroundGradient()
                 .ignoresSafeArea()
-            
+
             // Background blur
             VisualEffectView(
                 material: .hudWindow,
@@ -54,17 +54,17 @@ struct BreakOverlayView: View {
             )
             .ignoresSafeArea()
             .opacity(0.8)
-            
+
             // Dimming overlay with theme color
             currentTheme.backgroundColor.opacity(currentTheme.backgroundOpacity * 0.3)
                 .ignoresSafeArea()
-            
+
             // Optimized: Remove floating particles to reduce CPU usage
-            
+
             // Content
             VStack(spacing: 40) {
                 Spacer()
-                
+
                 // The break is either running or served. A served one shows the
                 // same completion state whichever style ran it: the exercise is
                 // over, so the dot and its instructions have nothing left to say.
@@ -78,9 +78,9 @@ struct BreakOverlayView: View {
                         eyeExerciseContent
                     }
                 }
-                
+
                 Spacer()
-                
+
                 if countdown.isAwaitingDismissal {
                     dismissHint
                 } else {
@@ -105,9 +105,9 @@ struct BreakOverlayView: View {
             }
         }
     }
-    
+
     // MARK: - Completion Content
-    
+
     /// What a served break looks like while it waits. No countdown, because
     /// nothing is counting, and one control, because there is one thing to do.
     private var completionContent: some View {
@@ -127,7 +127,7 @@ struct BreakOverlayView: View {
                     )
                     .frame(width: 140, height: 140)
                     .opacity(0.4)
-                
+
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 80))
                     .foregroundStyle(
@@ -143,14 +143,14 @@ struct BreakOverlayView: View {
                     )
                     .shadow(color: currentTheme.accentColor.opacity(0.5), radius: 20)
             }
-            
+
             Text("Break Complete")
                 .font(.system(size: 48, weight: .bold, design: .rounded))
                 .foregroundStyle(currentTheme.textGradient())
                 .shadow(color: currentTheme.accentColor.opacity(0.3), radius: 10)
                 .shadow(color: Color.black.opacity(0.3), radius: 10)
                 .accessibilityFocused($isMessageFocused)
-            
+
             Text("Your next work interval starts when you dismiss this")
                 .font(.system(size: 20, weight: .medium, design: .rounded))
                 .foregroundColor(currentTheme.textColor.opacity(currentTheme.textOpacity))
@@ -158,9 +158,9 @@ struct BreakOverlayView: View {
                 .shadow(color: Color.black.opacity(0.3), radius: 5)
         }
     }
-    
+
     // MARK: - Standard Break Content
-    
+
     private var standardBreakContent: some View {
         VStack(spacing: 32) {
             // Optimized: Simplified icon with minimal animation
@@ -180,7 +180,7 @@ struct BreakOverlayView: View {
                     )
                     .frame(width: 140, height: 140)
                     .opacity(0.4)
-                
+
                 // Main icon with gradient (no animation)
                 Image(systemName: "eye.slash.fill")
                     .font(.system(size: 80))
@@ -197,7 +197,7 @@ struct BreakOverlayView: View {
                     )
                     .shadow(color: currentTheme.accentColor.opacity(0.5), radius: 20)
             }
-            
+
             // Title with gradient
             Text("Time for a Break")
                 .font(.system(size: 48, weight: .bold, design: .rounded))
@@ -205,19 +205,19 @@ struct BreakOverlayView: View {
                 .shadow(color: currentTheme.accentColor.opacity(0.3), radius: 10)
                 .shadow(color: Color.black.opacity(0.3), radius: 10)
                 .accessibilityFocused($isMessageFocused)
-            
+
             // Instruction with subtle animation
             VStack(spacing: 12) {
                 HStack(spacing: 12) {
                     Image(systemName: "arrow.left.and.right")
                         .font(.title2)
                         .foregroundColor(currentTheme.accentColor)
-                    
+
                     Text("Look at something 20 feet away")
                         .font(.system(size: 24, weight: .medium, design: .rounded))
                         .foregroundColor(currentTheme.textColor.opacity(currentTheme.textOpacity))
                 }
-                
+
                 HStack(spacing: 8) {
                     Image(systemName: "sparkles")
                         .font(.caption)
@@ -232,23 +232,23 @@ struct BreakOverlayView: View {
             }
             .multilineTextAlignment(.center)
             .shadow(color: Color.black.opacity(0.3), radius: 5)
-            
+
             // Enhanced timer display
             timerDisplay
         }
     }
-    
+
     // MARK: - Eye Exercise Content
-    
+
     private var eyeExerciseContent: some View {
         AnimatedEyeExerciseView(
             remainingSeconds: countdown.remainingSeconds,
             totalDuration: countdown.totalSeconds
         )
     }
-    
+
     // MARK: - Timer Display
-    
+
     private var timerDisplay: some View {
         ZStack {
             // Outer decorative ring
@@ -266,7 +266,7 @@ struct BreakOverlayView: View {
                     lineWidth: 2
                 )
                 .frame(width: 140, height: 140)
-            
+
             // Background circle with glow
             Circle()
                 .fill(currentTheme.backgroundColor.opacity(0.1))
@@ -276,7 +276,7 @@ struct BreakOverlayView: View {
                         .stroke(currentTheme.textColor.opacity(0.2), lineWidth: 8)
                 )
                 .shadow(color: currentTheme.accentColor.opacity(0.3), radius: 20)
-            
+
             // Progress circle with beautiful animated gradient
             Circle()
                 .trim(from: 0, to: progress)
@@ -297,7 +297,7 @@ struct BreakOverlayView: View {
                 .rotationEffect(.degrees(-90))
                 .shadow(color: currentTheme.accentColor.opacity(0.5), radius: 10)
                 .animation(.linear(duration: 1), value: progress)
-            
+
             // Countdown text with enhanced styling
             VStack(spacing: 4) {
                 Text("\(countdown.remainingSeconds)")
@@ -305,14 +305,14 @@ struct BreakOverlayView: View {
                     .foregroundStyle(currentTheme.textGradient())
                     .shadow(color: currentTheme.accentColor.opacity(0.5), radius: 10)
                     .contentTransition(.numericText())
-                
+
                 Text("seconds")
                     .font(.caption)
                     .foregroundColor(currentTheme.secondaryTextColor.opacity(currentTheme.secondaryTextOpacity))
                     .textCase(.uppercase)
                     .tracking(2)
             }
-            
+
             // Rotating accent dots
             ForEach(0..<8) { index in
                 Circle()
@@ -326,9 +326,9 @@ struct BreakOverlayView: View {
         }
         .frame(width: 140, height: 140)
     }
-    
+
     // MARK: - Dismiss Hint
-    
+
     /// The one control a served break offers. It ends the wait; it does not skip
     /// anything, because there is nothing left to skip.
     private var dismissHint: some View {
@@ -354,15 +354,15 @@ struct BreakOverlayView: View {
             }
             .buttonStyle(.plain)
             .help("Start your next work interval")
-            
+
             Text("Press ESC or click Back to Work to continue")
                 .font(.system(size: 14, design: .rounded))
                 .foregroundColor(currentTheme.secondaryTextColor.opacity(currentTheme.secondaryTextOpacity * 0.8))
         }
     }
-    
+
     // MARK: - Skip Hint
-    
+
     private var skipHint: some View {
         VStack(spacing: 12) {
             // The overlay used to skip on a tap anywhere, which was safe only
@@ -390,25 +390,25 @@ struct BreakOverlayView: View {
             }
             .buttonStyle(.plain)
             .help("Skip this break")
-            
+
             Text("Press ESC or click Skip Break to skip")
                 .font(.system(size: 14, design: .rounded))
                 .foregroundColor(currentTheme.secondaryTextColor.opacity(currentTheme.secondaryTextOpacity * 0.8))
-            
+
             Text("(Not recommended—your eyes need this!)")
                 .font(.system(size: 12, design: .rounded))
                 .foregroundColor(currentTheme.secondaryTextColor.opacity(currentTheme.secondaryTextOpacity * 0.6))
         }
     }
-    
+
     // MARK: - Computed Properties
-    
+
     private var progress: CGFloat {
         CGFloat(countdown.progress)
     }
-    
+
     // MARK: - Methods
-    
+
     /// The one way out the overlay offers, and the only thing either hint's
     /// button does. `BreakTimerManager` reads the state to decide what it means:
     /// skip a running break, dismiss a served one.
@@ -417,7 +417,7 @@ struct BreakOverlayView: View {
             onSkip()
         }
     }
-    
+
     private func startAnimation() {
         withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
             opacity = 1
@@ -432,13 +432,13 @@ struct BreakOverlayView: View {
 struct AnimatedEyeExerciseView: View {
     let remainingSeconds: Int
     let totalDuration: Int
-    
+
     @ObservedObject private var settings = AppSettings.shared
-    
+
     private var currentTheme: ColorTheme {
         settings.breakOverlayTheme
     }
-    
+
     /// Where to look, worked out from the clock rather than from a timer of this
     /// view's own. Every screen runs this view, so a timer each would put the
     /// displays on different directions, and a rebuild would restart the pattern.
@@ -447,7 +447,7 @@ struct AnimatedEyeExerciseView: View {
         let elapsed = max(0, totalDuration - remainingSeconds)
         return exercisePattern[(elapsed / interval) % exercisePattern.count]
     }
-    
+
     enum ExerciseDirection: String {
         case center = "Look at Center"
         case left = "Look Left"
@@ -458,7 +458,7 @@ struct AnimatedEyeExerciseView: View {
         case topRight = "Look Top-Right"
         case bottomLeft = "Look Bottom-Left"
         case bottomRight = "Look Bottom-Right"
-        
+
         var offset: (x: CGFloat, y: CGFloat) {
             switch self {
             case .center: return (0, 0)
@@ -472,7 +472,7 @@ struct AnimatedEyeExerciseView: View {
             case .bottomRight: return (200, 150)
             }
         }
-        
+
         var color: Color {
             switch self {
             case .center: return .white
@@ -481,7 +481,7 @@ struct AnimatedEyeExerciseView: View {
             case .topLeft, .topRight, .bottomLeft, .bottomRight: return .purple
             }
         }
-        
+
         var iconName: String {
             switch self {
             case .center: return "circle.fill"
@@ -496,14 +496,14 @@ struct AnimatedEyeExerciseView: View {
             }
         }
     }
-    
+
     let exercisePattern: [ExerciseDirection] = [
         .center, .left, .center, .right,
         .center, .up, .center, .down,
         .center, .topLeft, .center, .topRight,
         .center, .bottomLeft, .center, .bottomRight
     ]
-    
+
     var body: some View {
         VStack(spacing: 40) {
             // Title
@@ -511,29 +511,29 @@ struct AnimatedEyeExerciseView: View {
                 .font(.system(size: 48, weight: .bold, design: .rounded))
                 .foregroundStyle(currentTheme.textGradient())
                 .shadow(color: Color.black.opacity(0.3), radius: 10)
-            
+
             // Optimized: Reduced exercise area size to reduce rendering load
             ZStack {
                 // Background guide
                 Circle()
                     .strokeBorder(currentTheme.textColor.opacity(0.2), lineWidth: 2)
                     .frame(width: 400, height: 400)
-                
+
                 // Horizontal guide line
                 Rectangle()
                     .fill(currentTheme.textColor.opacity(0.1))
                     .frame(width: 400, height: 2)
-                
+
                 // Vertical guide line
                 Rectangle()
                     .fill(currentTheme.textColor.opacity(0.1))
                     .frame(width: 2, height: 400)
-                
+
                 // Center reference point
                 Circle()
                     .fill(currentTheme.textColor.opacity(0.3))
                     .frame(width: 20, height: 20)
-                
+
                 // Optimized: Simplified animated moving dot
                 ZStack {
                     // Main dot (removed glow effect to improve performance)
@@ -541,7 +541,7 @@ struct AnimatedEyeExerciseView: View {
                         .fill(currentDirection.color)
                         .frame(width: 50, height: 50)
                         .shadow(color: currentDirection.color.opacity(0.5), radius: 10)
-                    
+
                     // Icon indicator
                     Image(systemName: currentDirection.iconName)
                         .font(.system(size: 24))
@@ -551,7 +551,7 @@ struct AnimatedEyeExerciseView: View {
                 .animation(.spring(response: 0.6, dampingFraction: 0.7), value: currentDirection)
             }
             .frame(height: 400)
-            
+
             // Direction instruction
             VStack(spacing: 12) {
                 Text(currentDirection.rawValue)
@@ -559,7 +559,7 @@ struct AnimatedEyeExerciseView: View {
                     .foregroundColor(currentDirection.color)
                     .shadow(color: Color.black.opacity(0.3), radius: 10)
                     .animation(.easeInOut(duration: 0.3), value: currentDirection)
-                
+
                 Text("Follow the moving dot with your eyes")
                     .font(.system(size: 20, weight: .medium, design: .rounded))
                     .foregroundColor(currentTheme.textColor.opacity(currentTheme.textOpacity * 0.9))
@@ -567,7 +567,7 @@ struct AnimatedEyeExerciseView: View {
             .padding(20)
             .background(currentTheme.backgroundColor.opacity(0.2))
             .cornerRadius(16)
-            
+
             // Timer countdown
             Text("Break ends in: \(remainingSeconds)s")
                 .font(.system(size: 24, weight: .semibold, design: .rounded))
@@ -585,7 +585,7 @@ struct AnimatedEyeExerciseView: View {
 struct VisualEffectView: NSViewRepresentable {
     let material: NSVisualEffectView.Material
     let blendingMode: NSVisualEffectView.BlendingMode
-    
+
     func makeNSView(context: Context) -> NSVisualEffectView {
         let view = NSVisualEffectView()
         view.material = material
@@ -593,7 +593,7 @@ struct VisualEffectView: NSViewRepresentable {
         view.state = .active
         return view
     }
-    
+
     func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
         nsView.material = material
         nsView.blendingMode = blendingMode

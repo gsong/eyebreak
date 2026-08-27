@@ -12,7 +12,7 @@ import SwiftUI
 struct AmbientReminderView: View {
     let reminderType: ReminderType
     let onDismiss: () -> Void
-    
+
     @State private var scale: CGFloat = 0.1
     @State private var opacity: Double = 0
     @State private var rotation: Double = 0
@@ -23,20 +23,20 @@ struct AmbientReminderView: View {
     @State private var glowPulse: Bool = false
     @State private var shimmer: Bool = false
     @State private var glassShimmer: Double = 0
-    
+
     // Get the color theme from settings
     @ObservedObject private var settings = AppSettings.shared
-    
+
     private var currentTheme: ColorTheme {
         settings.ambientReminderTheme
     }
-    
+
     var body: some View {
         HStack(spacing: 18) {
             // Optimized: Simplified icon with minimal animation
             ZStack {
                 // Optimized: Removed outer ethereal glow to reduce CPU usage
-                
+
                 // Liquid glass background circle
                 ZStack {
                     // Base glass layer
@@ -52,9 +52,9 @@ struct AmbientReminderView: View {
                         )
                         .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 4)
                         .shadow(color: currentTheme.accentColor.opacity(0.2), radius: 15, x: 0, y: 0)
-                    
+
                     // Optimized: Removed animated shimmer overlay to reduce CPU usage
-                    
+
                     // Progress ring with refined styling
                     Circle()
                         .trim(from: 0, to: progress)
@@ -67,7 +67,7 @@ struct AmbientReminderView: View {
                         .shadow(color: currentTheme.accentColor.opacity(0.3), radius: 4)
                         .animation(.linear(duration: 0.5), value: progress)
                 }
-                
+
                 // SF Symbol icon with professional styling
                 Image(systemName: reminderType.iconName)
                     .font(.system(size: 32, weight: .light, design: .rounded))
@@ -78,7 +78,7 @@ struct AmbientReminderView: View {
                     .shadow(color: Color.black.opacity(0.15), radius: 2, x: 0, y: 1)
                     // Optimized: Removed symbolEffect to reduce CPU usage
             }
-            
+
             // Content section with refined typography
             VStack(alignment: .leading, spacing: 5) {
                 Text(reminderType.message)
@@ -87,7 +87,7 @@ struct AmbientReminderView: View {
                     .tracking(0.2)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
-                
+
                 Text(reminderType.subtitle)
                     .font(.system(size: 13, weight: .regular, design: .rounded))
                     .foregroundColor(currentTheme.secondaryTextColor.opacity(currentTheme.secondaryTextOpacity))
@@ -95,9 +95,9 @@ struct AmbientReminderView: View {
                     .lineLimit(1)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            
+
             Spacer()
-            
+
             // Countdown and close controls
             VStack(spacing: 10) {
                 // Minimalist countdown
@@ -109,13 +109,13 @@ struct AmbientReminderView: View {
                             Circle()
                                 .stroke(currentTheme.textColor.opacity(0.3), lineWidth: 1)
                         )
-                    
+
                     Text("\(remainingSeconds)")
                         .font(.system(size: 15, weight: .medium, design: .rounded))
                         .foregroundColor(currentTheme.textColor.opacity(currentTheme.textOpacity))
                         .contentTransition(.numericText())
                 }
-                
+
                 // Refined close button
                 Button(action: {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
@@ -130,7 +130,7 @@ struct AmbientReminderView: View {
                                 Circle()
                                     .stroke(currentTheme.textColor.opacity(0.3), lineWidth: 1)
                             )
-                        
+
                         Image(systemName: "xmark")
                             .font(.system(size: 10, weight: .semibold))
                             .foregroundColor(currentTheme.textColor.opacity(0.9))
@@ -150,7 +150,7 @@ struct AmbientReminderView: View {
                 RoundedRectangle(cornerRadius: 28, style: .continuous)
                     .fill(currentTheme.backgroundGradient())
                     .blur(radius: currentTheme.glassBlurRadius)
-                
+
                 // Top highlight for glass effect
                 RoundedRectangle(cornerRadius: 28, style: .continuous)
                     .fill(
@@ -163,7 +163,7 @@ struct AmbientReminderView: View {
                             endPoint: .center
                         )
                     )
-                
+
                 // Border with subtle gradient
                 RoundedRectangle(cornerRadius: 28, style: .continuous)
                     .stroke(
@@ -188,16 +188,16 @@ struct AmbientReminderView: View {
             countdownTimer = nil
         }
     }
-    
+
     private func playSound() {
         // Play the same sound as break start (Glass) for consistency
         NSSound(named: "Glass")?.play()
     }
-    
+
     private func startCountdown() {
         // Initialize remaining seconds from settings
         remainingSeconds = AppSettings.shared.ambientReminderDurationSeconds
-        
+
         // Start countdown timer (update every second)
         countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] _ in
             if remainingSeconds > 0 {
@@ -208,24 +208,24 @@ struct AmbientReminderView: View {
             }
         }
     }
-    
+
     private func startAnimations() {
         // Get duration from settings
         let duration = TimeInterval(AppSettings.shared.ambientReminderDurationSeconds)
-        
+
         // Smooth entrance animation
         withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
             scale = 1.0
             opacity = 1.0
         }
-        
+
         // Countdown progress animation
         withAnimation(.linear(duration: duration)) {
             progress = 0.0
         }
-        
+
         // Optimized: Removed floating animation to reduce CPU usage
-        
+
         // Type-specific animations - simplified
         switch reminderType {
         case .lookAround:

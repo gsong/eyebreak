@@ -11,61 +11,61 @@ import AppKit
 
 /// Detects user idle time using IOKit
 class IdleDetector {
-    
+
     // MARK: - Properties
-    
+
     private var timer: Timer?
     private let threshold: TimeInterval
     private var isIdle = false
-    
+
     var onIdleStateChanged: ((Bool) -> Void)?
-    
+
     // MARK: - Initialization
-    
+
     init(threshold: TimeInterval = 300) { // Default 5 minutes
         self.threshold = threshold
     }
-    
+
     deinit {
         stop()
     }
-    
+
     // MARK: - Public Methods
-    
+
     func start() {
         stop()
-        
+
         // Optimize: Check idle time every 5 seconds instead of every second to reduce CPU usage
         timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
             self?.checkIdleTime()
         }
     }
-    
+
     func stop() {
         timer?.invalidate()
         timer = nil
     }
-    
+
     // MARK: - Private Methods
-    
+
     private func checkIdleTime() {
         let idleTime = getSystemIdleTime()
         let shouldBeIdle = idleTime >= threshold
-        
+
         if shouldBeIdle != isIdle {
             isIdle = shouldBeIdle
             onIdleStateChanged?(isIdle)
         }
     }
-    
+
     private func getSystemIdleTime() -> TimeInterval {
         var idleTime: TimeInterval = 0
-        
+
         let service = IOServiceGetMatchingService(
             kIOMainPortDefault,
             IOServiceMatching("IOHIDSystem")
         )
-        
+
         if service != 0 {
             let property = IORegistryEntryCreateCFProperty(
                 service,
@@ -73,14 +73,14 @@ class IdleDetector {
                 kCFAllocatorDefault,
                 0
             )
-            
+
             IOObjectRelease(service)
-            
+
             if let idleNanos = property?.takeRetainedValue() as? NSNumber {
                 idleTime = TimeInterval(idleNanos.int64Value) / TimeInterval(NSEC_PER_SEC)
             }
         }
-        
+
         return idleTime
     }
 }
@@ -89,7 +89,7 @@ class IdleDetector {
 
 /// Backup idle detector using CGEventSource (requires accessibility permissions)
 class CGEventIdleDetector {
-    
+
     static func getIdleTime() -> TimeInterval {
         let idleTimeNanos = CGEventSource.secondsSinceLastEventType(
             .combinedSessionState,

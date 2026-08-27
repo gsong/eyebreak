@@ -11,18 +11,18 @@ import AppKit
 
 /// Manages the core timer logic for work/break cycles
 class BreakTimerManager: ObservableObject {
-    
+
     // MARK: - Singleton
-    
+
     static let shared = BreakTimerManager()
-    
+
     // MARK: - Published Properties
-    
+
     @Published var state: TimerState = .idle
     @Published var settings = AppSettings.shared
-    
+
     // MARK: - Private Properties
-    
+
     private var timer: Timer?
     private var remainingSeconds: Int = 0
     private var idleDetector: IdleDetector?
@@ -34,83 +34,83 @@ class BreakTimerManager: ObservableObject {
     /// same value: a setting toggled mid-break would otherwise leave the
     /// watchdog allowing for one behavior and the timer doing the other.
     private var breakAwaitsDismissal = false
-    
+
     // MARK: - Initialization
-    
+
     private init() {
         setupIdleDetection()
         setupWorkspaceNotifications()
     }
-    
+
     deinit {
         stop()
     }
-    
+
     // MARK: - Public Methods
-    
+
     /// Start the timer from idle state
     func start() {
         guard state == .idle else { return }
-        
+
         remainingSeconds = settings.workIntervalSeconds
         state = .working(remainingSeconds: remainingSeconds)
         startTimer()
-        
+
         if settings.soundEnabled {
             SoundManager.shared.playSound(.start)
         }
     }
-    
+
     /// Stop the timer and return to idle
     func stop() {
         timer?.invalidate()
         timer = nil
         state = .idle
         idleDetector?.stop()
-        
+
         NotificationManager.shared.cancelAllNotifications()
     }
-    
+
     /// Trigger an immediate break
     func takeBreakNow() {
         // A served break waiting to be dismissed is still a break on screen.
         guard !state.hasBreakOnScreen else { return }
-        
+
         // Check if Smart Schedule allows breaks now
         if settings.smartScheduleEnabled && !settings.shouldShowBreaksNow {
             showOutsideWorkHoursAlert()
             return
         }
-        
+
         stop()
         remainingSeconds = settings.breakDurationSeconds
         state = .breaking(remainingSeconds: remainingSeconds)
         startTimer()
         showBreakOverlay(duration: remainingSeconds)
-        
+
         if settings.soundEnabled {
             SoundManager.shared.playSound(.breakStart)
         }
     }
-    
+
     /// Force a break even if outside work hours (from alert "Take Break Anyway")
     func forceBreakNow() {
         guard !state.hasBreakOnScreen else { return }
-        
+
         // Set flag to bypass Smart Schedule checks during this break
         isForcedBreak = true
-        
+
         stop()
         remainingSeconds = settings.breakDurationSeconds
         state = .breaking(remainingSeconds: remainingSeconds)
         startTimer()
         showBreakOverlay(duration: remainingSeconds)
-        
+
         if settings.soundEnabled {
             SoundManager.shared.playSound(.breakStart)
         }
     }
-    
+
     /// Skip the current break (discouraged!)
     func skipBreak() {
         // Once the break has been served there is nothing left to skip. Every
@@ -121,7 +121,7 @@ class BreakTimerManager: ObservableObject {
             dismissBreak()
             return
         }
-        
+
         guard case .breaking = state else {
             // Stop or Pause during a break leaves the breaking state behind but
             // not the overlay. The overlay holds keyboard focus now, so leaving
@@ -130,15 +130,15 @@ class BreakTimerManager: ObservableObject {
             ScreenBlurManager.shared.hideOverlay()
             return
         }
-        
+
         settings.updateStats(breaksSkipped: 1)
         endBreak()
-        
+
         if settings.soundEnabled {
             SoundManager.shared.playSound(.skip)
         }
     }
-    
+
     /// End the wait after a served break and go back to work.
     ///
     /// The next work interval is a full one. The break was credited when it was
@@ -152,16 +152,16 @@ class BreakTimerManager: ObservableObject {
         // way to close at all.
         ScreenBlurManager.shared.hideOverlay()
         FloatingBreakWindow.shared?.hide()
-        
+
         guard case .awaitingDismissal = state else { return }
-        
+
         startNextWorkInterval()
     }
-    
+
     /// Pause the timer
     func pause() {
         guard state.isActive else { return }
-        
+
         let wasWorking: Bool
         switch state {
         case .working, .preBreak:
@@ -171,12 +171,12 @@ class BreakTimerManager: ObservableObject {
         default:
             wasWorking = true
         }
-        
+
         timer?.invalidate()
         timer = nil
         state = .paused(wasWorking: wasWorking, remainingSeconds: remainingSeconds)
         wasWorkingBeforePause = wasWorking
-        
+
         // A paused break has to lose its overlay. Nothing behind it is counting
         // any more, and an overlay left up holds the keyboard until its watchdog
         // gives it back. `resume()` puts the overlay back for what is left of
@@ -185,17 +185,17 @@ class BreakTimerManager: ObservableObject {
             ScreenBlurManager.shared.hideOverlay()
         }
     }
-    
+
     /// Resume from paused state
     func resume() {
         guard case .paused(let wasWorking, let seconds) = state else { return }
-        
+
         remainingSeconds = seconds
         if wasWorking {
             state = .working(remainingSeconds: remainingSeconds)
         } else {
             state = .breaking(remainingSeconds: remainingSeconds)
-            
+
             // Put the break back on screen for what is left of it.
             if usesScreenOverlay {
                 showBreakOverlay(duration: remainingSeconds)
@@ -203,31 +203,31 @@ class BreakTimerManager: ObservableObject {
         }
         startTimer()
     }
-    
+
     // MARK: - Private Methods
-    
+
     private func startTimer() {
         timer?.invalidate()
-        
+
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.tick()
         }
-        
+
         // Optimize: Use default run loop mode instead of common to reduce CPU usage
         // This prevents timer from firing during UI interactions
         if let timer = timer {
             RunLoop.main.add(timer, forMode: .default)
         }
-        
+
         // Start idle detection if enabled
         if settings.idleDetectionEnabled {
             idleDetector?.start()
         }
     }
-    
+
     private func tick() {
         remainingSeconds -= 1
-        
+
         // Check smart schedule - pause if outside work hours (UNLESS it's a forced break)
         if !isForcedBreak && !settings.shouldShowBreaksNow {
             if state.isActive && state != .paused(wasWorking: wasWorkingBeforePause, remainingSeconds: remainingSeconds) {
@@ -235,7 +235,7 @@ class BreakTimerManager: ObservableObject {
                 return
             }
         }
-        
+
         switch state {
         case .working(let seconds):
             if remainingSeconds <= settings.preBreakWarningSeconds && seconds > settings.preBreakWarningSeconds {
@@ -248,26 +248,26 @@ class BreakTimerManager: ObservableObject {
             } else {
                 state = .working(remainingSeconds: remainingSeconds)
             }
-            
+
         case .preBreak:
             if remainingSeconds <= 0 {
                 startBreak()
             } else {
                 state = .preBreak(remainingSeconds: remainingSeconds)
             }
-            
+
         case .breaking:
             if remainingSeconds <= 0 {
                 serveBreak()
             } else {
                 state = .breaking(remainingSeconds: remainingSeconds)
             }
-            
+
         default:
             break
         }
     }
-    
+
     private func startBreak() {
         // Check if Smart Schedule allows breaks now
         if settings.smartScheduleEnabled && !settings.shouldShowBreaksNow {
@@ -276,19 +276,19 @@ class BreakTimerManager: ObservableObject {
             state = .working(remainingSeconds: remainingSeconds)
             return
         }
-        
+
         remainingSeconds = settings.breakDurationSeconds
         state = .breaking(remainingSeconds: remainingSeconds)
-        
+
         showBreakOverlay(duration: remainingSeconds)
-        
+
         if settings.soundEnabled {
             SoundManager.shared.playSound(.breakStart)
         }
-        
+
         NotificationManager.shared.sendBreakStartNotification()
     }
-    
+
     /// The break ran its length. Credit it, then either go straight back to work
     /// or hold the overlay until the user says they are back.
     ///
@@ -303,38 +303,38 @@ class BreakTimerManager: ObservableObject {
         case .awaitDismissal:
             // Reset forced break flag
             isForcedBreak = false
-            
+
             creditBreak()
             awaitDismissal()
         }
     }
-    
+
     /// The break is over and work starts again now. Either it ran out with the
     /// wait turned off, or the user skipped it — a skip is already a deliberate
     /// act, so it does not ask for a second one.
     private func endBreak() {
         // Reset forced break flag
         isForcedBreak = false
-        
+
         creditBreak()
-        
+
         ScreenBlurManager.shared.hideOverlay()
-        
+
         startNextWorkInterval()
     }
-    
+
     /// Records the break as taken. This is the moment the rest was served, which
     /// is not the moment the user comes back to the machine.
     private func creditBreak() {
         settings.updateStats(breaksCompleted: 1, breakTime: settings.breakDurationSeconds)
-        
+
         if settings.soundEnabled {
             SoundManager.shared.playSound(.breakEnd)
         }
-        
+
         NotificationManager.shared.sendBreakCompleteNotification()
     }
-    
+
     /// Holds the overlay on screen with nothing counting behind it. No timer runs
     /// during the wait, which is also what keeps sleep, screen lock and idle
     /// detection from touching it: they all go through `pause()`, and `pause()`
@@ -343,20 +343,20 @@ class BreakTimerManager: ObservableObject {
         timer?.invalidate()
         timer = nil
         state = .awaitingDismissal
-        
+
         ScreenBlurManager.shared.awaitBreakDismissal()
     }
-    
+
     private func startNextWorkInterval() {
         remainingSeconds = settings.workIntervalSeconds
         state = .working(remainingSeconds: remainingSeconds)
-        
+
         // The break's own timer is still running on the path straight back to
         // work, and `awaitDismissal` invalidated it on the other. Starting it
         // here covers both; `startTimer` invalidates whatever it replaces.
         startTimer()
     }
-    
+
     /// Whether the break style puts a full-screen overlay up. The Floating
     /// Window style does not, and it runs its own timer, so pausing must leave
     /// it alone.
@@ -368,13 +368,13 @@ class BreakTimerManager: ObservableObject {
             return false
         }
     }
-    
+
     private func showBreakOverlay(duration: Int) {
         // One read of the setting for this break, shared by the overlay, the
         // keyboard watchdog and the end of the countdown. Toggling it mid-break
         // applies to the next break rather than to this one.
         breakAwaitsDismissal = settings.requireBreakDismissal
-        
+
         switch settings.breakStyle {
         case .blurScreen:
             ScreenBlurManager.shared.showBreakOverlay(
@@ -410,15 +410,15 @@ class BreakTimerManager: ObservableObject {
             )
         }
     }
-    
+
     // MARK: - Idle Detection Setup
-    
+
     private func setupIdleDetection() {
         idleDetector = IdleDetector(threshold: TimeInterval(settings.idleThresholdSeconds))
-        
+
         idleDetector?.onIdleStateChanged = { [weak self] isIdle in
             guard let self = self else { return }
-            
+
             if isIdle && self.state.isActive {
                 // User went idle, pause timer
                 self.pause()
@@ -429,9 +429,9 @@ class BreakTimerManager: ObservableObject {
             }
         }
     }
-    
+
     // MARK: - Screen Lock and Sleep Handling
-    
+
     /// Sets up system notifications to automatically pause/resume timer during sleep and screen lock
     private func setupWorkspaceNotifications() {
         // Mac sleep events
@@ -440,7 +440,7 @@ class BreakTimerManager: ObservableObject {
                 self?.pause()
             }
             .store(in: &cancellables)
-        
+
         NotificationCenter.default.publisher(for: NSWorkspace.didWakeNotification)
             .sink { [weak self] _ in
                 if case .paused = self?.state {
@@ -448,10 +448,10 @@ class BreakTimerManager: ObservableObject {
                 }
             }
             .store(in: &cancellables)
-        
+
         // Screen lock events
         let notificationCenter = DistributedNotificationCenter.default()
-        
+
         notificationCenter.addObserver(
             forName: NSNotification.Name("com.apple.screenIsLocked"),
             object: nil,
@@ -459,7 +459,7 @@ class BreakTimerManager: ObservableObject {
         ) { [weak self] _ in
             self?.pause()
         }
-        
+
         notificationCenter.addObserver(
             forName: NSNotification.Name("com.apple.screenIsUnlocked"),
             object: nil,
@@ -469,7 +469,7 @@ class BreakTimerManager: ObservableObject {
                 self?.resume()
             }
         }
-        
+
         // Screen saver events (treated same as screen lock)
         notificationCenter.addObserver(
             forName: NSNotification.Name("com.apple.screensaver.didstart"),
@@ -478,7 +478,7 @@ class BreakTimerManager: ObservableObject {
         ) { [weak self] _ in
             self?.pause()
         }
-        
+
         notificationCenter.addObserver(
             forName: NSNotification.Name("com.apple.screensaver.didstop"),
             object: nil,
@@ -489,9 +489,9 @@ class BreakTimerManager: ObservableObject {
             }
         }
     }
-    
+
     // MARK: - Smart Schedule Alert
-    
+
     private func showOutsideWorkHoursAlert() {
         let alert = NSAlert()
         alert.messageText = "Outside Work Hours"
@@ -505,13 +505,13 @@ class BreakTimerManager: ObservableObject {
             """
         alert.alertStyle = .informational
         alert.icon = NSImage(systemSymbolName: "clock.badge.exclamationmark", accessibilityDescription: "Schedule")
-        
+
         alert.addButton(withTitle: "Take Break Anyway")
         alert.addButton(withTitle: "Open Settings")
         alert.addButton(withTitle: "Cancel")
-        
+
         let response = alert.runModal()
-        
+
         switch response {
         case .alertFirstButtonReturn:
             // Take break anyway - use forceBreakNow method

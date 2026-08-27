@@ -10,9 +10,9 @@ import AppKit
 
 /// A small, elegant floating window that appears during "Notification Only" breaks
 class FloatingBreakWindow: NSWindow {
-    
+
     static var shared: FloatingBreakWindow?
-    
+
     init() {
         super.init(
             contentRect: NSRect(x: 0, y: 0, width: 340, height: 320),
@@ -20,14 +20,14 @@ class FloatingBreakWindow: NSWindow {
             backing: .buffered,
             defer: false
         )
-        
+
         self.isOpaque = false
         self.backgroundColor = .clear
         self.level = .floating
         self.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         self.hasShadow = true
         self.isMovableByWindowBackground = true
-        
+
         // Position in bottom-right corner with padding
         if let screen = NSScreen.main {
             let screenFrame = screen.visibleFrame
@@ -36,7 +36,7 @@ class FloatingBreakWindow: NSWindow {
             self.setFrameOrigin(NSPoint(x: x, y: y))
         }
     }
-    
+
     /// - Parameters:
     ///   - awaitsDismissal: Whether the panel holds a completion state at zero
     ///     instead of closing. `onDismiss` is reached only when it does.
@@ -55,23 +55,23 @@ class FloatingBreakWindow: NSWindow {
             onDismiss: onDismiss,
             window: self
         )
-        
+
         self.contentView = NSHostingView(rootView: contentView)
         self.makeKeyAndOrderFront(nil)
-        
+
         // Play notification sound
         NSSound.beep()
-        
+
         // Animate in
         self.alphaValue = 0
         NSAnimationContext.runAnimationGroup({ context in
             context.duration = 0.3
             self.animator().alphaValue = 1
         })
-        
+
         FloatingBreakWindow.shared = self
     }
-    
+
     func hide() {
         NSAnimationContext.runAnimationGroup({ context in
             context.duration = 0.3
@@ -81,7 +81,7 @@ class FloatingBreakWindow: NSWindow {
             FloatingBreakWindow.shared = nil
         })
     }
-    
+
     // Prevent window from becoming key (so it doesn't steal focus)
     override var canBecomeKey: Bool { false }
     override var canBecomeMain: Bool { false }
@@ -97,13 +97,13 @@ struct FloatingBreakContentView: View {
     let onComplete: () -> Void
     let onDismiss: () -> Void
     weak var window: FloatingBreakWindow?
-    
+
     @State private var remainingSeconds: Int
     @State private var timer: Timer?
     @State private var progress: Double = 1.0
     @State private var isHovered: Bool = false
     @State private var isAwaitingDismissal: Bool = false
-    
+
     init(
         duration: Int,
         awaitsDismissal: Bool,
@@ -120,7 +120,7 @@ struct FloatingBreakContentView: View {
         self.window = window
         self._remainingSeconds = State(initialValue: duration)
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // Header with close button
@@ -207,7 +207,7 @@ struct FloatingBreakContentView: View {
             ZStack {
                 // Background with blur effect
                 FloatingWindowBlurView(material: .hudWindow, blendingMode: .behindWindow)
-                
+
                 // Subtle border for definition
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .strokeBorder(Color.white.opacity(0.15), lineWidth: 1)
@@ -221,9 +221,9 @@ struct FloatingBreakContentView: View {
             isHovered = hovering
         }
     }
-    
+
     // MARK: - Break Content
-    
+
     private var breakContent: some View {
         VStack(spacing: 20) {
             VStack(spacing: 8) {
@@ -308,9 +308,9 @@ struct FloatingBreakContentView: View {
             .help("Skip this break")
         }
     }
-    
+
     // MARK: - Completion Content
-    
+
     /// What the panel shows once the break has been served. This style installs
     /// no keyboard tap and the panel cannot become key, so a click is the only
     /// way out of it.
@@ -326,14 +326,14 @@ struct FloatingBreakContentView: View {
                             endPoint: .trailing
                         )
                     )
-                
+
                 Text("Your next work interval starts when you dismiss this")
                     .font(.system(size: 13))
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
             }
             .padding(.top, 8)
-            
+
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 72))
                 .foregroundStyle(
@@ -345,7 +345,7 @@ struct FloatingBreakContentView: View {
                 )
                 .shadow(color: .blue.opacity(0.3), radius: 8)
                 .frame(height: 110)
-            
+
             Button(action: handleDismiss) {
                 HStack(spacing: 6) {
                     Image(systemName: "checkmark")
@@ -370,7 +370,7 @@ struct FloatingBreakContentView: View {
             .help("Start your next work interval")
         }
     }
-    
+
     private func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             if remainingSeconds > 0 {
@@ -378,7 +378,7 @@ struct FloatingBreakContentView: View {
                 progress = Double(remainingSeconds) / Double(duration)
             } else {
                 stopTimer()
-                
+
                 // `onComplete` is what credits the break, at zero, whether or
                 // not the panel then waits. Only the closing differs.
                 if awaitsDismissal {
@@ -390,18 +390,18 @@ struct FloatingBreakContentView: View {
             }
         }
     }
-    
+
     private func stopTimer() {
         timer?.invalidate()
         timer = nil
     }
-    
+
     private func handleSkip() {
         stopTimer()
         window?.hide()
         onSkip()
     }
-    
+
     /// Ends the wait. `BreakTimerManager` closes the panel on its way through, so
     /// a dismissal from the popover instead of from here reaches the same place.
     private func handleDismiss() {
@@ -415,7 +415,7 @@ struct FloatingBreakContentView: View {
 struct FloatingWindowBlurView: NSViewRepresentable {
     let material: NSVisualEffectView.Material
     let blendingMode: NSVisualEffectView.BlendingMode
-    
+
     func makeNSView(context: Context) -> NSVisualEffectView {
         let view = NSVisualEffectView()
         view.material = material
@@ -423,7 +423,7 @@ struct FloatingWindowBlurView: NSViewRepresentable {
         view.state = .active
         return view
     }
-    
+
     func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
         nsView.material = material
         nsView.blendingMode = blendingMode
