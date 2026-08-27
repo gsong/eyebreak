@@ -28,6 +28,17 @@ enum TimerState: Equatable {
         }
     }
     
+    /// Whether a break is on screen right now, running or served and waiting.
+    /// Starting a break on top of either would credit two for one rest.
+    var hasBreakOnScreen: Bool {
+        switch self {
+        case .breaking, .awaitingDismissal:
+            return true
+        case .idle, .working, .preBreak, .paused:
+            return false
+        }
+    }
+    
     var displayText: String {
         switch self {
         case .idle:
@@ -41,7 +52,7 @@ enum TimerState: Equatable {
         case .paused(_, let seconds):
             return "Paused - \(formatTime(seconds)) remaining"
         case .awaitingDismissal:
-            return "Break complete \u{2014} dismiss to continue"
+            return "Break complete — dismiss to continue"
         }
     }
     

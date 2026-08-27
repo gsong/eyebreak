@@ -38,18 +38,18 @@ class FloatingBreakWindow: NSWindow {
     }
     
     /// - Parameters:
-    ///   - waitsForDismissal: Whether the panel holds a completion state at zero
+    ///   - awaitsDismissal: Whether the panel holds a completion state at zero
     ///     instead of closing. `onDismiss` is reached only when it does.
     func show(
         duration: Int,
-        waitsForDismissal: Bool = false,
+        awaitsDismissal: Bool = false,
         onSkip: @escaping () -> Void,
         onComplete: @escaping () -> Void,
         onDismiss: @escaping () -> Void = {}
     ) {
         let contentView = FloatingBreakContentView(
             duration: duration,
-            waitsForDismissal: waitsForDismissal,
+            awaitsDismissal: awaitsDismissal,
             onSkip: onSkip,
             onComplete: onComplete,
             onDismiss: onDismiss,
@@ -92,7 +92,7 @@ class FloatingBreakWindow: NSWindow {
 struct FloatingBreakContentView: View {
     let duration: Int
     /// Whether zero swaps this panel to a completion state instead of closing it.
-    let waitsForDismissal: Bool
+    let awaitsDismissal: Bool
     let onSkip: () -> Void
     let onComplete: () -> Void
     let onDismiss: () -> Void
@@ -106,14 +106,14 @@ struct FloatingBreakContentView: View {
     
     init(
         duration: Int,
-        waitsForDismissal: Bool,
+        awaitsDismissal: Bool,
         onSkip: @escaping () -> Void,
         onComplete: @escaping () -> Void,
         onDismiss: @escaping () -> Void,
         window: FloatingBreakWindow?
     ) {
         self.duration = duration
-        self.waitsForDismissal = waitsForDismissal
+        self.awaitsDismissal = awaitsDismissal
         self.onSkip = onSkip
         self.onComplete = onComplete
         self.onDismiss = onDismiss
@@ -376,7 +376,7 @@ struct FloatingBreakContentView: View {
                 
                 // `onComplete` is what credits the break, at zero, whether or
                 // not the panel then waits. Only the closing differs.
-                if waitsForDismissal {
+                if awaitsDismissal {
                     isAwaitingDismissal = true
                 } else {
                     window?.hide()

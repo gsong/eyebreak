@@ -28,6 +28,19 @@ final class TimerStateTests: XCTestCase {
         XCTAssertTrue(TimerState.breaking(remainingSeconds: 20).isActive)
     }
 
+    // MARK: - A break on screen
+
+    func testOnlyABreakCountsAsOnScreen() {
+        // Both guard the same thing: starting a break on top of one already on
+        // screen would credit two for one rest.
+        XCTAssertTrue(TimerState.breaking(remainingSeconds: 20).hasBreakOnScreen)
+        XCTAssertTrue(TimerState.awaitingDismissal.hasBreakOnScreen)
+        XCTAssertFalse(TimerState.idle.hasBreakOnScreen)
+        XCTAssertFalse(TimerState.working(remainingSeconds: 1200).hasBreakOnScreen)
+        XCTAssertFalse(TimerState.preBreak(remainingSeconds: 30).hasBreakOnScreen)
+        XCTAssertFalse(TimerState.paused(wasWorking: false, remainingSeconds: 10).hasBreakOnScreen)
+    }
+
     // MARK: - Time formatting
     //
     // displayText is what the menu bar shows every second, so the exact shape of
@@ -74,7 +87,7 @@ final class TimerStateTests: XCTestCase {
         // The break is already credited by the time this shows, so the text has
         // to name the one thing still outstanding.
         XCTAssertEqual(TimerState.awaitingDismissal.displayText,
-                       "Break complete \u{2014} dismiss to continue")
+                       "Break complete — dismiss to continue")
     }
 
     func testIdleText() {

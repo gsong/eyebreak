@@ -68,15 +68,8 @@ class BreakTimerManager: ObservableObject {
     
     /// Trigger an immediate break
     func takeBreakNow() {
-        // Don't start a new break if a break is already on screen. A served one
-        // waiting to be dismissed counts: it is still the last break, and
-        // starting another on top of it would credit two for one rest.
-        if case .breaking = state {
-            return
-        }
-        if case .awaitingDismissal = state {
-            return
-        }
+        // A served break waiting to be dismissed is still a break on screen.
+        guard !state.hasBreakOnScreen else { return }
         
         // Check if Smart Schedule allows breaks now
         if settings.smartScheduleEnabled && !settings.shouldShowBreaksNow {
@@ -97,13 +90,7 @@ class BreakTimerManager: ObservableObject {
     
     /// Force a break even if outside work hours (from alert "Take Break Anyway")
     func forceBreakNow() {
-        // Don't start a new break if a break is already on screen — see takeBreakNow.
-        if case .breaking = state {
-            return
-        }
-        if case .awaitingDismissal = state {
-            return
-        }
+        guard !state.hasBreakOnScreen else { return }
         
         // Set flag to bypass Smart Schedule checks during this break
         isForcedBreak = true
@@ -383,14 +370,16 @@ class BreakTimerManager: ObservableObject {
         case .blurScreen:
             ScreenBlurManager.shared.showBreakOverlay(
                 duration: duration,
-                style: .blur
+                style: .blur,
+                awaitsDismissal: settings.requireBreakDismissal
             ) { [weak self] in
                 self?.skipBreak()
             }
         case .eyeExercise:
             ScreenBlurManager.shared.showBreakOverlay(
                 duration: duration,
-                style: .exercise
+                style: .exercise,
+                awaitsDismissal: settings.requireBreakDismissal
             ) { [weak self] in
                 self?.skipBreak()
             }
@@ -399,7 +388,7 @@ class BreakTimerManager: ObservableObject {
             let window = FloatingBreakWindow()
             window.show(
                 duration: duration,
-                waitsForDismissal: settings.requireBreakDismissal,
+                awaitsDismissal: settings.requireBreakDismissal,
                 onSkip: { [weak self] in
                     self?.skipBreak()
                 },
