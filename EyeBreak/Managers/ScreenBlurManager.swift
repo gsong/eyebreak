@@ -110,18 +110,21 @@ class ScreenBlurManager {
         
         self.buildOverlayWindows()
         
-        // The overlay has to be modal. ESC runs off a local event monitor, which
-        // only sees events macOS already routed to EyeBreak, and macOS routes
-        // keys to the frontmost app. So the app activates and a window takes
-        // key status. The windows join all Spaces, so EyeBreak always has one on
-        // the current Space, which is what keeps activation from switching Spaces.
+        // The overlay has to be modal, so the app activates and a window takes
+        // key status. This is a request, not a guarantee: under cooperative
+        // activation (macOS 14+) the system can refuse an app that activates
+        // itself from a timer while another app is frontmost. The windows join
+        // all Spaces, so EyeBreak always has one on the current Space, which is
+        // what keeps a granted activation from switching Spaces.
         NSApp.activate()
         self.keyOverlayWindow?.makeKey()
 
         // Covering every screen and holding focus still leaves macOS routing
         // Cmd-Tab, Cmd-Q and every registered global hotkey past the overlay.
-        // The tap is what closes that, and the panic chord ends the break the
-        // same way ESC and the Skip button do.
+        // The tap is what closes that. It is also what makes ESC end the break
+        // whether or not the activation above was granted: the tap sees the key
+        // whichever app has focus, where the local monitor below sees it only
+        // once EyeBreak is frontmost.
         BreakInputTap.shared.start(breakDuration: TimeInterval(duration)) { [weak self] in
             self?.skipHandler?()
         }
@@ -310,6 +313,11 @@ class ScreenBlurManager {
     
     /// One ESC monitor for the whole overlay set. It used to live in the SwiftUI
     /// view, which with a view per screen would install one monitor per display.
+    ///
+    /// With the keyboard tap installed this never fires: the tap consumes bare
+    /// ESC and ends the break itself. It is the fallback for a break without the
+    /// Accessibility grant, and there it works only once EyeBreak is frontmost,
+    /// which may take a click on the overlay.
     private func startMonitoringEscape() {
         guard self.escapeMonitor == nil else { return }
         
