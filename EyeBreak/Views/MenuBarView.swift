@@ -11,40 +11,40 @@ struct MenuBarView: View {
     @EnvironmentObject var timerManager: BreakTimerManager
     @EnvironmentObject var settings: AppSettings
     @Environment(\.openWindow) var openWindow
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // Header
             headerSection
-            
+
             Divider()
-            
+
             // Status
             statusSection
                 .padding()
-            
+
             Divider()
-            
+
             // Controls
             controlsSection
                 .padding()
-            
+
             Divider()
-            
+
             // Quick Stats
             quickStatsSection
                 .padding()
-            
+
             Divider()
-            
+
             // Bottom Actions
             bottomActionsSection
         }
         .frame(width: 300)
     }
-    
+
     // MARK: - Header Section
-    
+
     private var headerSection: some View {
         HStack {
             ZStack {
@@ -58,7 +58,7 @@ struct MenuBarView: View {
                         )
                     )
                     .frame(width: 44, height: 44)
-                
+
                 // Eye icon - removed heavy animation
                 Image(systemName: timerManager.state.isActive ? "eye.fill" : "eye")
                     .font(.title2)
@@ -70,25 +70,25 @@ struct MenuBarView: View {
                         )
                     )
             }
-            
+
             VStack(alignment: .leading, spacing: 2) {
                 Text("EyeBreak")
                     .font(.headline)
                     .fontWeight(.semibold)
-                
+
                 Text(statusText)
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .transition(.opacity.combined(with: .scale))
             }
-            
+
             Spacer()
-            
+
             statusIndicator
         }
         .padding()
     }
-    
+
     private var statusText: String {
         switch timerManager.state {
         case .idle: return "Ready to start"
@@ -99,20 +99,20 @@ struct MenuBarView: View {
         case .awaitingDismissal: return "Break complete"
         }
     }
-    
+
     private var statusIndicator: some View {
         ZStack {
             // Optimized: Simplified pulse rings - reduced animation complexity
             Circle()
                 .fill(timerManager.state.isActive ? Color.green.opacity(0.3) : Color.clear)
                 .frame(width: 16, height: 16)
-            
+
             // Core indicator with gradient
             Circle()
                 .fill(
                     LinearGradient(
-                        colors: timerManager.state.isActive ? 
-                            [Color.green, Color.green.opacity(0.8)] : 
+                        colors: timerManager.state.isActive ?
+                            [Color.green, Color.green.opacity(0.8)] :
                             [Color.gray, Color.gray.opacity(0.6)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
@@ -123,16 +123,16 @@ struct MenuBarView: View {
         }
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: timerManager.state.isActive)
     }
-    
+
     // MARK: - Status Section
-    
+
     private var statusSection: some View {
         VStack(spacing: 12) {
             Text(timerManager.state.displayText)
                 .font(.system(.body, design: .rounded))
                 .foregroundColor(.secondary)
                 .animation(.easeInOut, value: timerManager.state)
-            
+
             if case .working(let seconds) = timerManager.state {
                 VStack(spacing: 12) {
                     // Progress ring with gradient
@@ -140,7 +140,7 @@ struct MenuBarView: View {
                         Circle()
                             .stroke(Color.blue.opacity(0.2), lineWidth: 6)
                             .frame(width: 100, height: 100)
-                        
+
                         Circle()
                             .trim(from: 0, to: progressValue)
                             .stroke(
@@ -154,27 +154,27 @@ struct MenuBarView: View {
                             .rotationEffect(.degrees(-90))
                             .shadow(color: .blue.opacity(0.4), radius: 8)
                             .animation(.linear(duration: 1), value: progressValue)
-                        
+
                         // Time display
                         VStack(spacing: 4) {
                             Text(formatTime(seconds))
                                 .font(.system(.title2, design: .monospaced))
                                 .fontWeight(.bold)
                                 .contentTransition(.numericText())
-                            
+
                             Text("remaining")
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                         }
                     }
-                    
+
                     // Mini progress bar
                     ProgressView(value: progressValue, total: 1.0)
                         .tint(.blue)
                         .scaleEffect(y: 0.5)
                 }
                 .transition(.scale.combined(with: .opacity))
-                
+
             } else if case .breaking(let seconds) = timerManager.state {
                 VStack(spacing: 12) {
                     // Animated break indicator
@@ -182,7 +182,7 @@ struct MenuBarView: View {
                         Circle()
                             .stroke(Color.green.opacity(0.2), lineWidth: 6)
                             .frame(width: 100, height: 100)
-                        
+
                         Circle()
                             .trim(from: 0, to: progressValue)
                             .stroke(
@@ -196,7 +196,7 @@ struct MenuBarView: View {
                             .rotationEffect(.degrees(-90))
                             .shadow(color: .green.opacity(0.4), radius: 8)
                             .animation(.linear(duration: 1), value: progressValue)
-                        
+
                         VStack(spacing: 4) {
                             Text("\(seconds)")
                                 .font(.system(.title, design: .monospaced))
@@ -209,20 +209,20 @@ struct MenuBarView: View {
                                     )
                                 )
                                 .contentTransition(.numericText())
-                            
+
                             Text("seconds")
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                         }
                     }
-                    
+
                     Text("👁️ Rest your eyes")
                         .font(.caption)
                         .foregroundColor(.green)
                         .transition(.scale.combined(with: .opacity))
                 }
                 .transition(.scale.combined(with: .opacity))
-                
+
             } else if case .preBreak(let seconds) = timerManager.state {
                 VStack(spacing: 8) {
                     // Warning icon with pulse
@@ -236,7 +236,7 @@ struct MenuBarView: View {
                             )
                         )
                         .symbolEffect(.bounce.byLayer, value: seconds)
-                    
+
                     Text("\(seconds)s until break")
                         .font(.system(.title3, design: .monospaced))
                         .fontWeight(.semibold)
@@ -248,7 +248,7 @@ struct MenuBarView: View {
                             )
                         )
                         .contentTransition(.numericText())
-                    
+
                     Text("Prepare to rest")
                         .font(.caption)
                         .foregroundColor(.orange)
@@ -258,7 +258,7 @@ struct MenuBarView: View {
         }
         .animation(.spring(response: 0.4, dampingFraction: 0.75), value: timerManager.state)
     }
-    
+
     private var progressValue: Double {
         switch timerManager.state {
         case .working(let remaining):
@@ -271,9 +271,9 @@ struct MenuBarView: View {
             return 0
         }
     }
-    
+
     // MARK: - Controls Section
-    
+
     private var controlsSection: some View {
         VStack(spacing: 12) {
             if timerManager.state == .idle {
@@ -377,7 +377,7 @@ struct MenuBarView: View {
                     .shadow(color: .green.opacity(0.3), radius: 8, x: 0, y: 4)
                 }
                 .professionalButtonStyle(color: .green)
-                
+
             } else if case .paused = timerManager.state {
                 Button(action: timerManager.resume) {
                     HStack {
@@ -403,15 +403,15 @@ struct MenuBarView: View {
             }
         }
     }
-    
+
     // MARK: - Quick Stats Section
-    
+
     private var quickStatsSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Today's Progress")
                 .font(.caption)
                 .foregroundColor(.secondary)
-            
+
             HStack(spacing: 16) {
                 StatBadge(
                     icon: "checkmark.circle.fill",
@@ -419,7 +419,7 @@ struct MenuBarView: View {
                     label: "Breaks",
                     color: .green
                 )
-                
+
                 StatBadge(
                     icon: "flame.fill",
                     value: "\(settings.getTodayStats().breaksCompleted)/\(settings.dailyBreakGoal)",
@@ -430,9 +430,9 @@ struct MenuBarView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-    
+
     // MARK: - Bottom Actions Section
-    
+
     private var bottomActionsSection: some View {
         VStack(spacing: 0) {
             Button(action: { openWindow(id: "settings") }) {
@@ -446,9 +446,9 @@ struct MenuBarView: View {
             .padding(.horizontal)
             .padding(.vertical, 8)
             .hoverEffect()
-            
+
             Divider()
-            
+
             Button(action: { NSApplication.shared.terminate(nil) }) {
                 HStack {
                     Label("Quit EyeBreak", systemImage: "xmark.circle")
@@ -462,9 +462,9 @@ struct MenuBarView: View {
             .hoverEffect()
         }
     }
-    
+
     // MARK: - Helper Methods
-    
+
     private func formatTime(_ totalSeconds: Int) -> String {
         let minutes = totalSeconds / 60
         let seconds = totalSeconds % 60

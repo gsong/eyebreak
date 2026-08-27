@@ -12,28 +12,28 @@ struct OnboardingView: View {
     @Binding var isPresented: Bool
     @EnvironmentObject var settings: AppSettings
     @Environment(\.dismiss) var dismiss
-    
+
     @State private var currentPage = 0
     private let totalPages = 4
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // Content
             TabView(selection: $currentPage) {
                 WelcomePage()
                     .tag(0)
-                
+
                 RulePage()
                     .tag(1)
-                
+
                 FeaturesPage()
                     .tag(2)
-                
+
                 PermissionsPage()
                     .tag(3)
             }
             .tabViewStyle(.automatic)
-            
+
             // Navigation
             HStack {
                 if currentPage > 0 {
@@ -44,9 +44,9 @@ struct OnboardingView: View {
                     }
                     .keyboardShortcut(.cancelAction)
                 }
-                
+
                 Spacer()
-                
+
                 // Page indicators
                 HStack(spacing: 8) {
                     ForEach(0..<totalPages, id: \.self) { index in
@@ -55,9 +55,9 @@ struct OnboardingView: View {
                             .frame(width: 8, height: 8)
                     }
                 }
-                
+
                 Spacer()
-                
+
                 if currentPage < totalPages - 1 {
                     Button("Continue") {
                         withAnimation {
@@ -78,7 +78,7 @@ struct OnboardingView: View {
         }
         .frame(width: 600, height: 500)
     }
-    
+
     private func completeOnboarding() {
         settings.completeOnboarding()
         isPresented = false
@@ -91,11 +91,11 @@ struct OnboardingView: View {
 struct WelcomePage: View {
     @State private var animateIcon = false
     @State private var animateGlow = false
-    
+
     var body: some View {
         VStack(spacing: 32) {
             Spacer()
-            
+
             ZStack {
                 // Animated glow rings
                 ForEach(0..<3) { index in
@@ -118,7 +118,7 @@ struct WelcomePage: View {
                             value: animateGlow
                         )
                 }
-                
+
                 // Main icon with gradient
                 Image(systemName: "eye.fill")
                     .font(.system(size: 100))
@@ -139,7 +139,7 @@ struct WelcomePage: View {
                 }
                 animateGlow = true
             }
-            
+
             VStack(spacing: 12) {
                 Text("Welcome to EyeBreak")
                     .font(.system(size: 36, weight: .bold, design: .rounded))
@@ -150,7 +150,7 @@ struct WelcomePage: View {
                             endPoint: .trailing
                         )
                     )
-                
+
                 HStack(spacing: 6) {
                     Image(systemName: "sparkles")
                         .foregroundColor(.yellow)
@@ -161,7 +161,7 @@ struct WelcomePage: View {
                         .foregroundColor(.yellow)
                 }
             }
-            
+
             Text("""
             Spending hours in front of a screen can cause eye strain, headaches, \
             and fatigue. EyeBreak helps you take regular breaks to keep your eyes healthy.
@@ -171,7 +171,7 @@ struct WelcomePage: View {
             .multilineTextAlignment(.center)
             .frame(maxWidth: 400)
             .padding(.horizontal)
-            
+
             Spacer()
         }
         .padding(40)
@@ -184,10 +184,10 @@ struct RulePage: View {
     var body: some View {
         VStack(spacing: 32) {
             Spacer()
-            
+
             Text("The 20-20-20 Rule")
                 .font(.system(size: 36, weight: .bold, design: .rounded))
-            
+
             VStack(spacing: 24) {
                 RuleCard(
                     number: "20",
@@ -196,7 +196,7 @@ struct RulePage: View {
                     icon: "desktopcomputer",
                     color: .blue
                 )
-                
+
                 RuleCard(
                     number: "20",
                     unit: "feet",
@@ -204,7 +204,7 @@ struct RulePage: View {
                     icon: "eye",
                     color: .green
                 )
-                
+
                 RuleCard(
                     number: "20",
                     unit: "seconds",
@@ -213,13 +213,13 @@ struct RulePage: View {
                     color: .orange
                 )
             }
-            
+
             Text("This simple technique reduces eye strain and keeps you productive.")
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 400)
-            
+
             Spacer()
         }
         .padding(40)
@@ -232,9 +232,9 @@ struct RuleCard: View {
     let description: String
     let icon: String
     let color: Color
-    
+
     @State private var animate = false
-    
+
     var body: some View {
         HStack(spacing: 20) {
             // Enhanced icon with gradient background
@@ -249,7 +249,7 @@ struct RuleCard: View {
                     )
                     .frame(width: 64, height: 64)
                     .shadow(color: color.opacity(0.2), radius: 8)
-                
+
                 Image(systemName: icon)
                     .font(.title)
                     .foregroundStyle(
@@ -262,7 +262,7 @@ struct RuleCard: View {
             }
             .scaleEffect(animate ? 1.0 : 0.8)
             .animation(.spring(response: 0.5, dampingFraction: 0.6).delay(0.2), value: animate)
-            
+
             VStack(alignment: .leading, spacing: 6) {
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Text(number)
@@ -274,18 +274,18 @@ struct RuleCard: View {
                                 endPoint: .trailing
                             )
                         )
-                    
+
                     Text(unit)
                         .font(.title3)
                         .foregroundColor(.secondary)
                         .fontWeight(.medium)
                 }
-                
+
                 Text(description)
                     .font(.body)
                     .foregroundColor(.secondary)
             }
-            
+
             Spacer()
         }
         .padding(20)
@@ -317,35 +317,35 @@ struct FeaturesPage: View {
     var body: some View {
         VStack(spacing: 32) {
             Spacer()
-            
+
             Text("What EyeBreak Does")
                 .font(.system(size: 36, weight: .bold, design: .rounded))
-            
+
             VStack(alignment: .leading, spacing: 20) {
                 FeatureItem(
                     icon: "bell.badge.fill",
                     title: "Gentle Reminders",
                     description: "Get a notification 30 seconds before each break"
                 )
-                
+
                 FeatureItem(
                     icon: "eye.slash.fill",
                     title: "Screen Blur",
                     description: "Your screen blurs during breaks to encourage rest"
                 )
-                
+
                 FeatureItem(
                     icon: "moon.zzz.fill",
                     title: "Smart Pausing",
                     description: "Automatically pauses when you're away from your Mac"
                 )
-                
+
                 FeatureItem(
                     icon: "chart.bar.fill",
                     title: "Track Progress",
                     description: "See how many breaks you've taken each day"
                 )
-                
+
                 FeatureItem(
                     icon: "lock.fill",
                     title: "Privacy First",
@@ -353,7 +353,7 @@ struct FeaturesPage: View {
                 )
             }
             .frame(width: 400)
-            
+
             Spacer()
         }
         .padding(40)
@@ -418,19 +418,19 @@ struct FeatureItem: View {
 struct PermissionsPage: View {
     @State private var notificationGranted = false
     @State private var screenRecordingGranted = false
-    
+
     var body: some View {
         VStack(spacing: 32) {
             Spacer()
-            
+
             Text("Permissions Needed")
                 .font(.system(size: 36, weight: .bold, design: .rounded))
-            
+
             Text("EyeBreak needs a few permissions to work properly")
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
-            
+
             VStack(spacing: 16) {
                 PermissionCard(
                     icon: "bell.badge.fill",
@@ -441,7 +441,7 @@ struct PermissionsPage: View {
                 ) {
                     requestNotifications()
                 }
-                
+
                 PermissionCard(
                     icon: "eye.slash.fill",
                     title: "Screen Recording",
@@ -453,17 +453,17 @@ struct PermissionsPage: View {
                 }
             }
             .frame(width: 450)
-            
+
             Text("You can change these permissions anytime in System Settings.")
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
-            
+
             Spacer()
         }
         .padding(40)
     }
-    
+
     private func requestNotifications() {
         NotificationManager.shared.requestAuthorization()
         // Give it a moment then check status
@@ -471,7 +471,7 @@ struct PermissionsPage: View {
             checkNotificationStatus()
         }
     }
-    
+
     private func checkNotificationStatus() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
@@ -479,7 +479,7 @@ struct PermissionsPage: View {
             }
         }
     }
-    
+
     private func openScreenRecordingSettings() {
         if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture") {
             NSWorkspace.shared.open(url)

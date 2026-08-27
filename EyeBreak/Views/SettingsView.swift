@@ -116,7 +116,7 @@ struct UnifiedCountdownCard: View {
                             )
                         )
                         .frame(width: 40, height: 40)
-                    
+
                     Image(systemName: "clock.badge.checkmark")
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundStyle(
@@ -127,7 +127,7 @@ struct UnifiedCountdownCard: View {
                             )
                         )
                 }
-                
+
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Active Timers")
                         .font(.headline)
@@ -136,11 +136,11 @@ struct UnifiedCountdownCard: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-                
+
                 Spacer()
             }
             .padding(.bottom, 8)
-            
+
             VStack(spacing: 12) {
                 // Eye Break Timer
                 CountdownRow(
@@ -151,10 +151,10 @@ struct UnifiedCountdownCard: View {
                     isActive: eyeBreakIsActive,
                     status: eyeBreakStatus
                 )
-                
+
                 Divider()
                     .padding(.horizontal, 8)
-                
+
                 // Ambient Reminder Timer
                 CountdownRow(
                     icon: "sparkles",
@@ -164,10 +164,10 @@ struct UnifiedCountdownCard: View {
                     isActive: ambientManager.isEnabled,
                     status: ambientStatus
                 )
-                
+
                 Divider()
                     .padding(.horizontal, 8)
-                
+
                 // Water Reminder Timer
                 CountdownRow(
                     icon: "drop.fill",
@@ -197,13 +197,13 @@ struct UnifiedCountdownCard: View {
                 )
         )
     }
-    
+
     // MARK: - Eye Break Computed Properties
-    
+
     private var eyeBreakIsActive: Bool {
         timerManager.state != .idle
     }
-    
+
     private var eyeBreakStatus: String {
         switch timerManager.state {
         case .idle:
@@ -220,7 +220,7 @@ struct UnifiedCountdownCard: View {
             return "Break complete"
         }
     }
-    
+
     private var eyeBreakCountdown: String {
         switch timerManager.state {
         case .idle:
@@ -233,9 +233,9 @@ struct UnifiedCountdownCard: View {
             return "--:--"
         }
     }
-    
+
     // MARK: - Ambient Reminder Computed Properties
-    
+
     private var ambientStatus: String {
         if !ambientManager.isEnabled {
             return "Disabled"
@@ -247,7 +247,7 @@ struct UnifiedCountdownCard: View {
             return "Active"
         }
     }
-    
+
     private var ambientCountdown: String {
         if !ambientManager.isEnabled {
             return "--:--"
@@ -255,9 +255,9 @@ struct UnifiedCountdownCard: View {
         // Use actual countdown from manager
         return formatTime(ambientManager.secondsUntilNextReminder)
     }
-    
+
     // MARK: - Water Reminder Computed Properties
-    
+
     private var waterStatus: String {
         if !waterManager.isEnabled {
             return "Disabled"
@@ -269,7 +269,7 @@ struct UnifiedCountdownCard: View {
             return "Active"
         }
     }
-    
+
     private var waterCountdown: String {
         if !waterManager.isEnabled {
             return "--:--"
@@ -277,9 +277,9 @@ struct UnifiedCountdownCard: View {
         // Use actual countdown from manager
         return formatTime(waterManager.secondsUntilNextReminder)
     }
-    
+
     // MARK: - Helper Methods
-    
+
     private func formatTime(_ totalSeconds: Int) -> String {
         let minutes = totalSeconds / 60
         let seconds = totalSeconds % 60
@@ -296,7 +296,7 @@ struct CountdownRow: View {
     let countdown: String
     let isActive: Bool
     let status: String
-    
+
     var body: some View {
         HStack(spacing: 16) {
             // Icon with status indicator
@@ -305,13 +305,13 @@ struct CountdownRow: View {
                     Circle()
                         .fill(color.opacity(0.15))
                         .frame(width: 48, height: 48)
-                    
+
                     Image(systemName: icon)
                         .font(.system(size: 22, weight: .medium))
                         .foregroundColor(color)
                         .symbolRenderingMode(.hierarchical)
                 }
-                
+
                 // Status dot
                 Circle()
                     .fill(statusColor)
@@ -322,27 +322,27 @@ struct CountdownRow: View {
                     )
                     .offset(x: 2, y: 2)
             }
-            
+
             // Title and status
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
-                
+
                 HStack(spacing: 6) {
                     Circle()
                         .fill(statusColor)
                         .frame(width: 6, height: 6)
-                    
+
                     Text(status)
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
             }
-            
+
             Spacer()
-            
+
             // Countdown display
             VStack(alignment: .trailing, spacing: 2) {
                 Text(countdown)
@@ -356,7 +356,7 @@ struct CountdownRow: View {
                     )
                     .monospacedDigit()
                     .contentTransition(.numericText())
-                
+
                 if isActive {
                     Text("remaining")
                         .font(.caption2)
@@ -374,7 +374,7 @@ struct CountdownRow: View {
                 .fill(isActive ? color.opacity(0.05) : Color.clear)
         )
     }
-    
+
     private var statusColor: Color {
         if !isActive {
             return .gray
@@ -388,10 +388,9 @@ struct CountdownRow: View {
 
 // MARK: - General Settings
 
-
 struct GeneralSettingsView: View {
     @EnvironmentObject var settings: AppSettings
-    
+
     var body: some View {
         Form {
             // Unified Countdown Display at the top
@@ -402,7 +401,7 @@ struct GeneralSettingsView: View {
             }
             .listRowInsets(EdgeInsets())
             .listRowBackground(Color.clear)
-            
+
             Section {
                 Toggle("Launch at Login", isOn: Binding(
                     get: { settings.launchAtLogin },
@@ -412,14 +411,14 @@ struct GeneralSettingsView: View {
                     }
                 ))
                 .help("Automatically start EyeBreak when you log in to your Mac")
-                
+
                 Toggle("Auto-Start Timer", isOn: $settings.autoStartTimer)
                     .help("Automatically start the break timer when the app launches")
-                
+
                 Toggle("Enable Sound Effects", isOn: $settings.soundEnabled)
-                
+
                 Toggle("Idle Detection", isOn: $settings.idleDetectionEnabled)
-                
+
                 if settings.idleDetectionEnabled {
                     Picker("Idle Threshold", selection: $settings.idleThresholdMinutes) {
                         Text("3 minutes").tag(3)
@@ -473,7 +472,7 @@ struct GeneralSettingsView: View {
         .formStyle(.grouped)
         .padding()
     }
-    
+
     private var sessionTypeDescription: String {
         switch settings.sessionType {
         case .standard:
@@ -553,14 +552,14 @@ struct BreakSettingsView: View {
                     VStack(alignment: .leading, spacing: 6) {
                         Toggle("Wait for me to dismiss the break", isOn: $settings.requireBreakDismissal)
                             .toggleStyle(.switch)
-                        
+
                         Text("The break is counted when it ends, but the screen stays up and your next work interval does not start until you dismiss it.")
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    
+
                     Button(action: previewBreakStyle) {
                         HStack {
                             Image(systemName: "play.circle.fill")
@@ -662,7 +661,7 @@ struct BreakSettingsView: View {
                                     )
                                 )
                                 .frame(width: 36, height: 36)
-                            
+
                             Image(systemName: "sparkles")
                                 .foregroundStyle(
                                     LinearGradient(
@@ -672,7 +671,7 @@ struct BreakSettingsView: View {
                                     )
                                 )
                         }
-                        
+
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Enable Ambient Reminders")
                                 .font(.headline)
@@ -680,9 +679,9 @@ struct BreakSettingsView: View {
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
-                        
+
                         Spacer()
-                        
+
                         Toggle("", isOn: Binding(
                             get: { settings.ambientRemindersEnabled },
                             set: { newValue in
@@ -705,12 +704,12 @@ struct BreakSettingsView: View {
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
                                     .stroke(
-                                        settings.ambientRemindersEnabled ? 
+                                        settings.ambientRemindersEnabled ?
                                             LinearGradient(
                                                 colors: [Color.orange.opacity(0.3), Color.yellow.opacity(0.2)],
                                                 startPoint: .topLeading,
                                                 endPoint: .bottomTrailing
-                                            ) : 
+                                            ) :
                                             LinearGradient(colors: [Color.clear], startPoint: .top, endPoint: .bottom),
                                         lineWidth: 1
                                     )
@@ -718,7 +717,7 @@ struct BreakSettingsView: View {
                     )
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: settings.ambientRemindersEnabled)
                 }
-                
+
                 if settings.ambientRemindersEnabled {
                     VStack(alignment: .leading, spacing: 16) {
                         // Enhanced interval slider
@@ -732,7 +731,7 @@ struct BreakSettingsView: View {
                         ) { newValue in
                             settings.ambientReminderIntervalMinutes = Int(newValue)
                         }
-                        
+
                         // Enhanced duration slider
                         EnhancedSliderCard(
                             title: "Display Duration",
@@ -744,7 +743,7 @@ struct BreakSettingsView: View {
                         ) { newValue in
                             settings.ambientReminderDurationSeconds = Int(newValue)
                         }
-                        
+
                         // Enhanced test button
                         Button(action: {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
@@ -770,7 +769,7 @@ struct BreakSettingsView: View {
                             .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
                         }
                         .buttonStyle(.plain)
-                        
+
                         HStack {
                             Image(systemName: "keyboard")
                                 .foregroundColor(.secondary)
@@ -779,9 +778,9 @@ struct BreakSettingsView: View {
                                 .foregroundColor(.secondary)
                         }
                         .padding(.horizontal, 4)
-                        
+
                         Divider()
-                        
+
                         // Professional custom reminder section
                         VStack(alignment: .leading, spacing: 16) {
                             HStack {
@@ -791,11 +790,11 @@ struct BreakSettingsView: View {
                                     .font(.headline)
                                     .fontWeight(.semibold)
                             }
-                            
+
                             Toggle("Use Custom Reminder", isOn: $settings.useCustomReminder)
                                 .toggleStyle(.switch)
                                 .padding(.horizontal, 4)
-                            
+
                             if settings.useCustomReminder {
                                 VStack(alignment: .leading, spacing: 16) {
                                     // Professional SF Symbol picker
@@ -804,7 +803,7 @@ struct BreakSettingsView: View {
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                             .foregroundColor(.secondary)
-                                        
+
                                         // Icon grid selector
                                         CustomIconPickerView(selectedIcon: $settings.customReminderEmoji)
                                     }
@@ -817,18 +816,18 @@ struct BreakSettingsView: View {
                                                     .stroke(Color.purple.opacity(0.2), lineWidth: 1)
                                             )
                                     )
-                                    
+
                                     // Custom message input - refined
                                     VStack(alignment: .leading, spacing: 12) {
                                         Label("Reminder Message", systemImage: "text.bubble")
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                             .foregroundColor(.secondary)
-                                        
+
                                         TextField("e.g., \"Take a deep breath\" or \"Look away\"", text: $settings.customReminderMessage)
                                             .textFieldStyle(.roundedBorder)
                                             .font(.system(size: 14))
-                                        
+
                                         // Preview
                                         if !settings.customReminderMessage.isEmpty {
                                             HStack(spacing: 12) {
@@ -836,12 +835,12 @@ struct BreakSettingsView: View {
                                                     Circle()
                                                         .fill(Color.purple.opacity(0.15))
                                                         .frame(width: 40, height: 40)
-                                                    
+
                                                     Image(systemName: settings.customReminderEmoji.isEmpty ? "eye" : settings.customReminderEmoji)
                                                         .font(.system(size: 20))
                                                         .foregroundColor(.purple)
                                                 }
-                                                
+
                                                 VStack(alignment: .leading, spacing: 2) {
                                                     Text(settings.customReminderMessage)
                                                         .font(.system(size: 13, weight: .semibold))
@@ -850,7 +849,7 @@ struct BreakSettingsView: View {
                                                         .font(.caption2)
                                                         .foregroundColor(.secondary)
                                                 }
-                                                
+
                                                 Spacer()
                                             }
                                             .padding(12)
@@ -867,7 +866,7 @@ struct BreakSettingsView: View {
                                                     .stroke(Color.purple.opacity(0.2), lineWidth: 1)
                                             )
                                     )
-                                    
+
                                 }
                             }
                         }
@@ -879,7 +878,7 @@ struct BreakSettingsView: View {
                 Text("Gentle reminders appear while you work to encourage blinking and looking away. They don't interrupt your workflow.")
                     .font(.caption)
             }
-            
+
             // Water Reminder Section
             Section {
                 VStack(alignment: .leading, spacing: 16) {
@@ -895,7 +894,7 @@ struct BreakSettingsView: View {
                                     )
                                 )
                                 .frame(width: 36, height: 36)
-                            
+
                             Image(systemName: "drop.fill")
                                 .foregroundStyle(
                                     LinearGradient(
@@ -905,7 +904,7 @@ struct BreakSettingsView: View {
                                     )
                                 )
                         }
-                        
+
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Enable Water Reminders")
                                 .font(.headline)
@@ -913,9 +912,9 @@ struct BreakSettingsView: View {
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
-                        
+
                         Spacer()
-                        
+
                         Toggle("", isOn: Binding(
                             get: { settings.waterReminderEnabled },
                             set: { newValue in
@@ -938,12 +937,12 @@ struct BreakSettingsView: View {
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
                                     .stroke(
-                                        settings.waterReminderEnabled ? 
+                                        settings.waterReminderEnabled ?
                                             LinearGradient(
                                                 colors: [Color.blue.opacity(0.3), Color.cyan.opacity(0.2)],
                                                 startPoint: .topLeading,
                                                 endPoint: .bottomTrailing
-                                            ) : 
+                                            ) :
                                             LinearGradient(colors: [Color.clear], startPoint: .top, endPoint: .bottom),
                                         lineWidth: 1
                                     )
@@ -951,7 +950,7 @@ struct BreakSettingsView: View {
                     )
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: settings.waterReminderEnabled)
                 }
-                
+
                 if settings.waterReminderEnabled {
                     VStack(alignment: .leading, spacing: 16) {
                         // Reminder interval picker
@@ -963,7 +962,7 @@ struct BreakSettingsView: View {
                                     .font(.subheadline)
                                     .fontWeight(.medium)
                             }
-                            
+
                             Picker("Interval", selection: $settings.waterReminderInterval) {
                                 Text("30 minutes").tag(TimeInterval(1800))
                                 Text("45 minutes").tag(TimeInterval(2700))
@@ -989,7 +988,7 @@ struct BreakSettingsView: View {
                                         .stroke(Color.blue.opacity(0.2), lineWidth: 1)
                                 )
                         )
-                        
+
                         // Reminder style picker
                         VStack(alignment: .leading, spacing: 12) {
                             HStack {
@@ -999,14 +998,14 @@ struct BreakSettingsView: View {
                                     .font(.subheadline)
                                     .fontWeight(.medium)
                             }
-                            
+
                             Picker("Style", selection: $settings.waterReminderStyle) {
                                 ForEach(WaterReminderStyle.allCases) { style in
                                     Text(style.rawValue).tag(style)
                                 }
                             }
                             .pickerStyle(.segmented)
-                            
+
                             Text(settings.waterReminderStyle.description)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
@@ -1021,7 +1020,7 @@ struct BreakSettingsView: View {
                                         .stroke(Color.cyan.opacity(0.2), lineWidth: 1)
                                 )
                         )
-                        
+
                         // Test button
                         Button(action: {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
@@ -1047,7 +1046,7 @@ struct BreakSettingsView: View {
                             .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
                         }
                         .buttonStyle(.plain)
-                        
+
                         HStack {
                             Image(systemName: "keyboard")
                                 .foregroundColor(.secondary)
@@ -1056,9 +1055,9 @@ struct BreakSettingsView: View {
                                 .foregroundColor(.secondary)
                         }
                         .padding(.horizontal, 4)
-                        
+
                         Divider()
-                        
+
                         // Custom water reminder section
                         VStack(alignment: .leading, spacing: 16) {
                             HStack {
@@ -1068,11 +1067,11 @@ struct BreakSettingsView: View {
                                     .font(.headline)
                                     .fontWeight(.semibold)
                             }
-                            
+
                             Toggle("Use Custom Reminder", isOn: $settings.useCustomWaterReminder)
                                 .toggleStyle(.switch)
                                 .padding(.horizontal, 4)
-                            
+
                             if settings.useCustomWaterReminder {
                                 VStack(alignment: .leading, spacing: 16) {
                                     // SF Symbol picker for water reminder
@@ -1081,7 +1080,7 @@ struct BreakSettingsView: View {
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                             .foregroundColor(.secondary)
-                                        
+
                                         // Icon grid selector - water-related icons
                                         CustomWaterIconPickerView(selectedIcon: $settings.customWaterReminderIcon)
                                     }
@@ -1094,18 +1093,18 @@ struct BreakSettingsView: View {
                                                     .stroke(Color.blue.opacity(0.2), lineWidth: 1)
                                             )
                                     )
-                                    
+
                                     // Custom message input
                                     VStack(alignment: .leading, spacing: 12) {
                                         Label("Reminder Message", systemImage: "text.bubble")
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                             .foregroundColor(.secondary)
-                                        
+
                                         TextField("e.g., \"Time to hydrate\" or \"Drink water\"", text: $settings.customWaterReminderMessage)
                                             .textFieldStyle(.roundedBorder)
                                             .font(.system(size: 14))
-                                        
+
                                         // Preview
                                         if !settings.customWaterReminderMessage.isEmpty {
                                             HStack(spacing: 12) {
@@ -1113,13 +1112,13 @@ struct BreakSettingsView: View {
                                                     Circle()
                                                         .fill(Color.blue.opacity(0.15))
                                                         .frame(width: 40, height: 40)
-                                                    
+
                                                     Image(systemName: settings.customWaterReminderIcon.isEmpty ? "drop.fill" : settings.customWaterReminderIcon)
                                                         .font(.system(size: 18))
                                                         .foregroundColor(.blue)
                                                         .symbolRenderingMode(.hierarchical)
                                                 }
-                                                
+
                                                 VStack(alignment: .leading, spacing: 2) {
                                                     Text(settings.customWaterReminderMessage)
                                                         .font(.system(size: 13, weight: .semibold))
@@ -1128,7 +1127,7 @@ struct BreakSettingsView: View {
                                                         .font(.caption2)
                                                         .foregroundColor(.secondary)
                                                 }
-                                                
+
                                                 Spacer()
                                             }
                                             .padding(12)
@@ -1156,7 +1155,7 @@ struct BreakSettingsView: View {
                 Text("Stay hydrated for better focus and health. Reminders appear at your chosen interval.")
                     .font(.caption)
             }
-            
+
             // Color Theme Settings Section
             Section {
                 VStack(spacing: 20) {
@@ -1176,9 +1175,9 @@ struct BreakSettingsView: View {
                             settings.objectWillChange.send()
                         }
                     )
-                    
+
                     Divider()
-                    
+
                     // Break Overlay Theme
                     ThemeSettingsCard(
                         title: "Break Overlay Theme",
@@ -1195,9 +1194,9 @@ struct BreakSettingsView: View {
                             settings.objectWillChange.send()
                         }
                     )
-                    
+
                     Divider()
-                    
+
                     // Water Reminder Theme - always show now since all styles support themes
                     ThemeSettingsCard(
                         title: "Water Reminder Theme",
@@ -1214,10 +1213,10 @@ struct BreakSettingsView: View {
                             settings.objectWillChange.send()
                         }
                     )
-                    
+
                     // Quick presets for custom themes
-                    if settings.ambientReminderThemeType == .custom || 
-                       settings.breakOverlayThemeType == .custom || 
+                    if settings.ambientReminderThemeType == .custom ||
+                       settings.breakOverlayThemeType == .custom ||
                        settings.waterReminderThemeType == .custom {
                         QuickPresetsView(
                             customTheme: Binding(
@@ -1256,14 +1255,14 @@ struct BreakSettingsView: View {
                 Text("Customize the appearance of ambient reminders, break overlays, and water reminders. Choose from preset themes or create your own custom color scheme.")
                     .font(.caption)
             }
-            
+
             Section {
                 Stepper(
                     "Daily Break Goal: \(settings.dailyBreakGoal)",
                     value: $settings.dailyBreakGoal,
                     in: 1...100
                 )
-                
+
                 Text("Set a target for breaks to take each day")
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -1274,9 +1273,9 @@ struct BreakSettingsView: View {
         .formStyle(.grouped)
         .padding()
     }
-    
+
     // MARK: - Preview Function
-    
+
     private func previewBreakStyle() {
         switch settings.breakStyle {
         case .blurScreen:
@@ -1289,25 +1288,25 @@ struct BreakSettingsView: View {
                 // When user clicks skip, hide the overlay
                 ScreenBlurManager.shared.hideOverlay()
             }
-            
+
             // Auto-hide after 5 seconds
             DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                 ScreenBlurManager.shared.hideOverlay()
             }
-            
+
         case .notificationOnly:
             // Show 5-second preview of floating window
             let window = FloatingBreakWindow()
             window.show(
                 duration: 5,
-                onSkip: { 
+                onSkip: {
                     window.hide()
                 },
-                onComplete: { 
+                onComplete: {
                     window.hide()
                 }
             )
-            
+
         case .eyeExercise:
             // Show 5-second preview of exercise with proper cleanup
             ScreenBlurManager.shared.showBreakOverlay(
@@ -1318,7 +1317,7 @@ struct BreakSettingsView: View {
                 // When user clicks skip, hide the overlay
                 ScreenBlurManager.shared.hideOverlay()
             }
-            
+
             // Auto-hide after 5 seconds
             DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                 ScreenBlurManager.shared.hideOverlay()
@@ -1613,7 +1612,7 @@ struct TimerStatusBanner: View {
                     Circle()
                         .fill(statusColor.opacity(0.2))
                         .frame(width: 40, height: 40)
-                    
+
                     // Middle ring
                     Circle()
                         .stroke(
@@ -1625,7 +1624,7 @@ struct TimerStatusBanner: View {
                             lineWidth: 2
                         )
                         .frame(width: 24, height: 24)
-                    
+
                     // Core indicator
                     Circle()
                         .fill(
@@ -1638,7 +1637,7 @@ struct TimerStatusBanner: View {
                         .frame(width: 12, height: 12)
                         .shadow(color: statusColor.opacity(0.5), radius: 4)
                 }
-                
+
                 // Enhanced timer display
                 HStack(spacing: 12) {
                     VStack(alignment: .leading, spacing: 4) {
@@ -1646,7 +1645,7 @@ struct TimerStatusBanner: View {
                             .font(.headline)
                             .fontWeight(.semibold)
                             .foregroundColor(statusColor)
-                        
+
                         if case .working(let seconds) = timerManager.state {
                             Text("\(formatTime(seconds)) remaining")
                                 .font(.system(.subheadline, design: .monospaced))
@@ -1668,7 +1667,7 @@ struct TimerStatusBanner: View {
                                 .foregroundColor(.secondary)
                         }
                     }
-                    
+
                     // Visual icon based on state
                     if timerManager.state.isActive {
                         Image(systemName: statusIcon)
@@ -1682,25 +1681,25 @@ struct TimerStatusBanner: View {
                             )
                     }
                 }
-                
+
                 Spacer()
-                
+
                 // Enhanced control buttons
                 controlButtons
             }
             .padding(.horizontal, 24)
             .padding(.vertical, 20)
-            
+
             // Enhanced progress bar
             if case .working(let remaining) = timerManager.state {
                 ZStack(alignment: .leading) {
                     Rectangle()
                         .fill(Color.blue.opacity(0.1))
                         .frame(height: 4)
-                    
+
                     GeometryReader { geometry in
                         let progress = 1.0 - (Double(remaining) / Double(settings.workIntervalSeconds))
-                        
+
                         Rectangle()
                             .fill(
                                 LinearGradient(
@@ -1716,16 +1715,16 @@ struct TimerStatusBanner: View {
                     .frame(height: 4)
                 }
                 .transition(.opacity)
-                
+
             } else if case .breaking(let remaining) = timerManager.state {
                 ZStack(alignment: .leading) {
                     Rectangle()
                         .fill(Color.green.opacity(0.1))
                         .frame(height: 4)
-                    
+
                     GeometryReader { geometry in
                         let progress = 1.0 - (Double(remaining) / Double(settings.breakDurationSeconds))
-                        
+
                         Rectangle()
                             .fill(
                                 LinearGradient(
@@ -1749,7 +1748,7 @@ struct TimerStatusBanner: View {
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         )
     }
-    
+
     private var statusIcon: String {
         switch timerManager.state {
         case .working: return "desktopcomputer"
@@ -1758,7 +1757,7 @@ struct TimerStatusBanner: View {
         default: return "timer"
         }
     }
-    
+
     private var statusColor: Color {
         switch timerManager.state {
         case .idle:
@@ -1775,20 +1774,20 @@ struct TimerStatusBanner: View {
             return .green
         }
     }
-    
+
     private var timerDisplay: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(statusText)
                 .font(.headline)
                 .foregroundColor(.primary)
-            
+
             Text(timeText)
                 .font(.system(size: 32, weight: .bold, design: .rounded))
                 .foregroundColor(.primary)
                 .monospacedDigit()
         }
     }
-    
+
     private var statusText: String {
         switch timerManager.state {
         case .idle:
@@ -1805,7 +1804,7 @@ struct TimerStatusBanner: View {
             return "Break complete:"
         }
     }
-    
+
     private var timeText: String {
         switch timerManager.state {
         case .idle:
@@ -1818,7 +1817,7 @@ struct TimerStatusBanner: View {
             return "--:--"
         }
     }
-    
+
     private var controlButtons: some View {
         HStack(spacing: 12) {
             switch timerManager.state {
@@ -1830,7 +1829,7 @@ struct TimerStatusBanner: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .keyboardShortcut("s", modifiers: [.command, .shift])
-                
+
             case .working, .preBreak:
                 Button {
                     timerManager.takeBreakNow()
@@ -1839,7 +1838,7 @@ struct TimerStatusBanner: View {
                 }
                 .buttonStyle(.bordered)
                 .keyboardShortcut("b", modifiers: [.command, .shift])
-                
+
                 Button {
                     timerManager.stop()
                 } label: {
@@ -1847,7 +1846,7 @@ struct TimerStatusBanner: View {
                 }
                 .buttonStyle(.bordered)
                 .keyboardShortcut("x", modifiers: [.command, .shift])
-                
+
             case .breaking:
                 Button {
                     timerManager.skipBreak()
@@ -1855,7 +1854,7 @@ struct TimerStatusBanner: View {
                     Label("Skip Break", systemImage: "forward.fill")
                 }
                 .buttonStyle(.bordered)
-                
+
             case .awaitingDismissal:
                 Button {
                     timerManager.dismissBreak()
@@ -1863,7 +1862,7 @@ struct TimerStatusBanner: View {
                     Label("Back to Work", systemImage: "checkmark.circle.fill")
                 }
                 .buttonStyle(.borderedProminent)
-                
+
             case .paused:
                 Button {
                     timerManager.resume()
@@ -1874,7 +1873,7 @@ struct TimerStatusBanner: View {
             }
         }
     }
-    
+
     private func formatTime(_ totalSeconds: Int) -> String {
         let minutes = totalSeconds / 60
         let seconds = totalSeconds % 60
@@ -2024,9 +2023,9 @@ struct EnhancedSliderCard: View {
     let color: Color
     let range: ClosedRange<Double>
     let onChange: (Double) -> Void
-    
+
     @State private var animateValue = false
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -2041,7 +2040,7 @@ struct EnhancedSliderCard: View {
                             )
                         )
                         .frame(width: 32, height: 32)
-                    
+
                     Image(systemName: icon)
                         .foregroundStyle(
                             LinearGradient(
@@ -2052,14 +2051,14 @@ struct EnhancedSliderCard: View {
                         )
                         .font(.system(size: 14))
                 }
-                
+
                 Text(title)
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
-                
+
                 Spacer()
-                
+
                 // Value display with animation
                 HStack(spacing: 4) {
                     Text("\(value)")
@@ -2072,7 +2071,7 @@ struct EnhancedSliderCard: View {
                             )
                         )
                         .contentTransition(.numericText())
-                    
+
                     Text(unit)
                         .font(.caption)
                         .foregroundColor(.secondary)
@@ -2081,7 +2080,7 @@ struct EnhancedSliderCard: View {
                 .scaleEffect(animateValue ? 1.1 : 1.0)
                 .animation(.spring(response: 0.3, dampingFraction: 0.6), value: animateValue)
             }
-            
+
             // Custom styled slider
             Slider(
                 value: Binding(
@@ -2122,7 +2121,7 @@ struct EnhancedSliderCard: View {
 
 struct CustomIconPickerView: View {
     @Binding var selectedIcon: String
-    
+
     // Curated professional SF Symbols for eye care reminders
     let iconOptions: [(name: String, symbol: String)] = [
         ("Eye", "eye"),
@@ -2142,7 +2141,7 @@ struct CustomIconPickerView: View {
         ("Headphones", "headphones"),
         ("Cup", "cup.and.saucer.fill")
     ]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             LazyVGrid(columns: [
@@ -2158,7 +2157,7 @@ struct CustomIconPickerView: View {
                     )
                 }
             }
-            
+
             if selectedIcon.isEmpty {
                 Text("Select an icon for your custom reminder")
                     .font(.caption)
@@ -2175,12 +2174,12 @@ struct IconOptionButton: View {
     let symbol: String
     let isSelected: Bool
     let onSelect: () -> Void
-    
+
     var body: some View {
         Button(action: onSelect) {
             ZStack {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(isSelected ? 
+                    .fill(isSelected ?
                           LinearGradient(colors: [.purple, .purple.opacity(0.8)], startPoint: .topLeading, endPoint: .bottomTrailing) :
                           LinearGradient(colors: [Color(NSColor.controlBackgroundColor)], startPoint: .top, endPoint: .bottom))
                     .overlay(
@@ -2188,7 +2187,7 @@ struct IconOptionButton: View {
                             .stroke(isSelected ? Color.purple : Color.gray.opacity(0.3), lineWidth: isSelected ? 2 : 1)
                     )
                     .shadow(color: isSelected ? Color.purple.opacity(0.3) : Color.clear, radius: 8, x: 0, y: 2)
-                
+
                 Image(systemName: symbol)
                     .font(.system(size: 24, weight: .medium))
                     .foregroundColor(isSelected ? .white : .secondary)
@@ -2204,7 +2203,7 @@ struct IconOptionButton: View {
 
 struct CustomWaterIconPickerView: View {
     @Binding var selectedIcon: String
-    
+
     // Curated water-related SF Symbols
     let iconOptions: [(name: String, symbol: String)] = [
         ("Drop", "drop.fill"),
@@ -2224,7 +2223,7 @@ struct CustomWaterIconPickerView: View {
         ("Bell", "bell.fill"),
         ("Hand Raised", "hand.raised.fill")
     ]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             LazyVGrid(columns: [
@@ -2240,7 +2239,7 @@ struct CustomWaterIconPickerView: View {
                     )
                 }
             }
-            
+
             if selectedIcon.isEmpty {
                 Text("Select an icon for your water reminder")
                     .font(.caption)
@@ -2257,12 +2256,12 @@ struct WaterIconOptionButton: View {
     let symbol: String
     let isSelected: Bool
     let onSelect: () -> Void
-    
+
     var body: some View {
         Button(action: onSelect) {
             ZStack {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(isSelected ? 
+                    .fill(isSelected ?
                           LinearGradient(colors: [.blue, .cyan], startPoint: .topLeading, endPoint: .bottomTrailing) :
                           LinearGradient(colors: [Color(NSColor.controlBackgroundColor)], startPoint: .top, endPoint: .bottom))
                     .overlay(
@@ -2270,7 +2269,7 @@ struct WaterIconOptionButton: View {
                             .stroke(isSelected ? Color.blue : Color.gray.opacity(0.3), lineWidth: isSelected ? 2 : 1)
                     )
                     .shadow(color: isSelected ? Color.blue.opacity(0.3) : Color.clear, radius: 8, x: 0, y: 2)
-                
+
                 Image(systemName: symbol)
                     .font(.system(size: 24, weight: .medium))
                     .foregroundColor(isSelected ? .white : .secondary)
@@ -2288,14 +2287,14 @@ struct WaterIconOptionButton: View {
 struct SmartScheduleView: View {
     @EnvironmentObject var settings: AppSettings
     @State private var selectedPreset: SchedulePreset?
-    
+
     enum SchedulePreset: String, CaseIterable {
         case standard = "Standard (9 AM - 5 PM)"
         case flexible = "Flexible (8 AM - 6 PM)"
         case earlyBird = "Early Bird (6 AM - 2 PM)"
         case nightOwl = "Night Owl (2 PM - 10 PM)"
         case fullTime = "24/7 (Always Active)"
-        
+
         var hours: (start: Double, end: Double) {
             switch self {
             case .standard: return (9.0, 17.0)
@@ -2305,7 +2304,7 @@ struct SmartScheduleView: View {
             case .fullTime: return (0.0, 24.0)
             }
         }
-        
+
         var days: Set<Int> {
             switch self {
             case .fullTime:
@@ -2315,23 +2314,23 @@ struct SmartScheduleView: View {
             }
         }
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Toggle("Enable Smart Schedule", isOn: $settings.smartScheduleEnabled)
                 .font(.headline)
-            
+
             if settings.smartScheduleEnabled {
                 Divider()
                     .padding(.vertical, 4)
-                
+
                 // Quick Presets
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Quick Presets")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.secondary)
-                    
+
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
                         ForEach(SchedulePreset.allCases, id: \.self) { preset in
                             Button(action: {
@@ -2362,22 +2361,22 @@ struct SmartScheduleView: View {
                     }
                 }
                 .padding(.bottom, 8)
-                
+
                 Divider()
-                
+
                 // Custom Work Hours
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Custom Work Hours")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.secondary)
-                    
+
                     HStack(spacing: 16) {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Start Time")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                            
+
                             Picker("Start", selection: $settings.workHoursStart) {
                                 ForEach(0..<24) { hour in
                                     Text(settings.timeString(from: Double(hour)))
@@ -2390,15 +2389,15 @@ struct SmartScheduleView: View {
                                 selectedPreset = nil
                             }
                         }
-                        
+
                         Image(systemName: "arrow.right")
                             .foregroundColor(.secondary)
-                        
+
                         VStack(alignment: .leading, spacing: 4) {
                             Text("End Time")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                            
+
                             Picker("End", selection: $settings.workHoursEnd) {
                                 ForEach(0..<24) { hour in
                                     Text(settings.timeString(from: Double(hour)))
@@ -2412,16 +2411,16 @@ struct SmartScheduleView: View {
                             }
                         }
                     }
-                    
+
                     Text("Breaks will only show between \(settings.timeString(from: settings.workHoursStart)) and \(settings.timeString(from: settings.workHoursEnd))")
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .padding(.top, 4)
                 }
                 .padding(.bottom, 8)
-                
+
                 Divider()
-                
+
                 // Active Days
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
@@ -2429,9 +2428,9 @@ struct SmartScheduleView: View {
                             .font(.subheadline)
                             .fontWeight(.semibold)
                             .foregroundColor(.secondary)
-                        
+
                         Spacer()
-                        
+
                         Button(settings.pauseOnWeekends ? "Weekdays Only" : "All 7 Days") {
                             settings.pauseOnWeekends.toggle()
                             if settings.pauseOnWeekends {
@@ -2444,7 +2443,7 @@ struct SmartScheduleView: View {
                         .font(.caption)
                         .foregroundColor(.blue)
                     }
-                    
+
                     HStack(spacing: 8) {
                         ForEach(1...7, id: \.self) { weekday in
                             DayButton(
@@ -2456,19 +2455,19 @@ struct SmartScheduleView: View {
                             }
                         }
                     }
-                    
+
                     Text("Select which days breaks should be active")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-                
+
                 Divider()
-                
+
                 // Status Indicator
                 HStack {
                     Image(systemName: settings.shouldShowBreaksNow ? "checkmark.circle.fill" : "pause.circle.fill")
                         .foregroundColor(settings.shouldShowBreaksNow ? .green : .orange)
-                    
+
                     Text(settings.shouldShowBreaksNow ? "Breaks Active Now" : "Breaks Paused (Outside Work Hours)")
                         .font(.caption)
                         .fontWeight(.medium)
@@ -2483,7 +2482,7 @@ struct SmartScheduleView: View {
             }
         }
     }
-    
+
     private func applyPreset(_ preset: SchedulePreset) {
         selectedPreset = preset
         let hours = preset.hours
@@ -2492,7 +2491,7 @@ struct SmartScheduleView: View {
         settings.activeDays = preset.days
         settings.pauseOnWeekends = !preset.days.contains(1) || !preset.days.contains(7)
     }
-    
+
     private func toggleDay(_ weekday: Int) {
         if settings.activeDays.contains(weekday) {
             settings.activeDays.remove(weekday)
@@ -2500,7 +2499,7 @@ struct SmartScheduleView: View {
             settings.activeDays.insert(weekday)
         }
         selectedPreset = nil
-        
+
         // Update pause on weekends based on active days
         let hasWeekends = settings.activeDays.contains(1) || settings.activeDays.contains(7)
         settings.pauseOnWeekends = !hasWeekends
@@ -2514,7 +2513,7 @@ struct DayButton: View {
     let isActive: Bool
     let dayName: String
     let onTap: () -> Void
-    
+
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: 4) {
@@ -2526,7 +2525,7 @@ struct DayButton: View {
             .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(isActive ? 
+                    .fill(isActive ?
                           LinearGradient(colors: [.blue, .cyan], startPoint: .topLeading, endPoint: .bottomTrailing) :
                           LinearGradient(colors: [Color(NSColor.controlBackgroundColor)], startPoint: .top, endPoint: .bottom))
             )

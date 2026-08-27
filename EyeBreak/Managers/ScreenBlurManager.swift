@@ -10,9 +10,9 @@ import SwiftUI
 
 /// Manages full-screen blur overlay during breaks
 class ScreenBlurManager {
-    
+
     static let shared = ScreenBlurManager()
-    
+
     private var overlayWindows: [NSWindow] = []
     private var hostingViews: [NSHostingView<BreakOverlayView>] = []
     /// The app that was frontmost when the break started. The overlay activates
@@ -34,16 +34,16 @@ class ScreenBlurManager {
     private var screenChangeObserver: NSObjectProtocol?
     private var escapeMonitor: Any?
     private let windowQueue = DispatchQueue(label: "com.eyebreak.window", qos: .userInteractive)
-    
+
     enum OverlayStyle {
         case blur
         case exercise
     }
-    
+
     private init() {}
-    
+
     // MARK: - Public Methods
-    
+
     /// - Parameter awaitsDismissal: Whether this break will wait to be dismissed
     ///   once it has been served. All it does here is lengthen the keyboard
     ///   watchdog, and the caller decides it: a break reads the setting, and the
@@ -54,7 +54,7 @@ class ScreenBlurManager {
         awaitsDismissal: Bool,
         onSkip: @escaping () -> Void
     ) {
-        
+
         // Optimize: Execute on main thread directly if already on main thread
         if Thread.isMainThread {
             self.showOverlayOnMainThread(
@@ -74,7 +74,7 @@ class ScreenBlurManager {
             }
         }
     }
-    
+
     /// Swaps the overlay to its completion state and leaves it up.
     ///
     /// The keyboard tap stays installed, so the ways out of a break are still the
@@ -89,9 +89,9 @@ class ScreenBlurManager {
             }
         }
     }
-    
+
     func hideOverlay() {
-        
+
         // Optimize: Execute on main thread directly if already on main thread
         if Thread.isMainThread {
             self.hideOverlayOnMainThread()
@@ -101,9 +101,9 @@ class ScreenBlurManager {
             }
         }
     }
-    
+
     // MARK: - Private Methods
-    
+
     private func showOverlayOnMainThread(
         duration: Int,
         style: OverlayStyle,
@@ -112,14 +112,14 @@ class ScreenBlurManager {
     ) {
         // Generate a new random color theme for this break overlay (if using random color theme)
         AppSettings.shared.regenerateBreakOverlayRandomTheme()
-        
+
         // Clear anything a previous break left behind, the keyboard tap included.
         // Starting a break inside a break must not leave the last one's watchdog
         // holding the only teardown.
         self.closeOverlayWindows()
         self.countdown?.stop()
         BreakInputTap.shared.stop()
-        
+
         self.overlayStyle = style
         self.skipHandler = {
             // Ensure onSkip is called on main thread safely
@@ -131,14 +131,14 @@ class ScreenBlurManager {
                 }
             }
         }
-        
+
         // One countdown for the whole break, not one per screen. N timers would
         // drift apart, and a rebuild would restart the count. It only draws:
         // reaching zero here ends nothing, because `BreakTimerManager` owns that
         // transition and two clocks racing for it was safe only by accident.
         let countdown = BreakCountdown(totalSeconds: duration)
         self.countdown = countdown
-        
+
         // Remember who had focus so the break can hand it back. Ignore EyeBreak
         // itself, or a preview started from Settings would make us the app we
         // return to.
@@ -146,9 +146,9 @@ class ScreenBlurManager {
         if frontmost?.processIdentifier != ProcessInfo.processInfo.processIdentifier {
             self.previousFrontmostApp = frontmost
         }
-        
+
         self.buildOverlayWindows()
-        
+
         // The overlay has to be modal, so the app activates and a window takes
         // key status. This is a request, not a guarantee: under cooperative
         // activation (macOS 14+) the system can refuse an app that activates
@@ -175,7 +175,7 @@ class ScreenBlurManager {
         self.startObservingScreenChanges()
         self.startMonitoringEscape()
     }
-    
+
     private func hideOverlayOnMainThread() {
 
         // First, ahead of the window teardown. Every exit path from a break ends
@@ -184,13 +184,13 @@ class ScreenBlurManager {
 
         self.stopObservingScreenChanges()
         self.stopMonitoringEscape()
-        
+
         self.countdown?.stop()
         self.countdown = nil
         self.skipHandler = nil
-        
+
         self.closeOverlayWindows()
-        
+
         // Give focus back to whatever the break interrupted. Every way out of a
         // break — timer expiry, ESC, the Skip button, and Stop or Pause from the
         // menu — ends up here.
@@ -202,28 +202,28 @@ class ScreenBlurManager {
             _ = previous.activate(from: .current)
         }
     }
-    
+
     // MARK: - Overlay Windows
-    
+
     /// Covers every attached screen. A break that covers one of three displays
     /// is not modal: the other two stay visible and stay clickable.
     private func buildOverlayWindows() {
         guard let countdown = self.countdown, let onSkip = self.skipHandler else { return }
-        
+
         let screens = NSScreen.screens
-        
+
         // The screen holding the pointer is the one the user was working on. It
         // takes key status, and its overlay is the one VoiceOver should land on.
         // Both are single-window jobs, so the other screens must not claim them.
         let mouseLocation = NSEvent.mouseLocation
         let pointerScreen = screens.first { NSMouseInRect(mouseLocation, $0.frame, false) } ?? screens.first
-        
+
         for screen in screens {
             let window = self.createOverlayWindow(for: screen)
-            
+
             // CRITICAL: Force window frame to this screen
             window.setFrame(screen.frame, display: true, animate: false)
-            
+
             // Every screen shows the full break. The user may be looking at any
             // of them, and "the active screen" stops meaning anything once the
             // overlay holds focus.
@@ -233,47 +233,47 @@ class ScreenBlurManager {
                 onSkip: onSkip,
                 claimsAccessibilityFocus: screen == pointerScreen
             )
-            
+
             let hostingView = FirstMouseHostingView(rootView: overlayView)
             hostingView.frame = CGRect(origin: .zero, size: screen.frame.size)
-            
+
             window.contentView = hostingView
             window.orderFrontRegardless()
-            
+
             self.overlayWindows.append(window)
             self.hostingViews.append(hostingView)
-            
+
             if screen == pointerScreen {
                 self.keyOverlayWindow = window
             }
         }
-        
+
         self.coveredFrames = Self.sortedFrames(of: screens)
     }
-    
+
     private func closeOverlayWindows() {
         self.close(self.overlayWindows)
-        
+
         // Clear arrays
         self.overlayWindows.removeAll()
         self.hostingViews.removeAll()
         self.coveredFrames.removeAll()
         self.keyOverlayWindow = nil
     }
-    
+
     private func close(_ windows: [NSWindow]) {
         // First, remove content views to break retain cycles
         for window in windows {
             window.contentView = nil
             window.orderOut(nil)
         }
-        
+
         // Then close windows
         for window in windows {
             window.close()
         }
     }
-    
+
     private func createOverlayWindow(for screen: NSScreen) -> NSWindow {
         let window = BreakOverlayWindow(
             contentRect: screen.frame,
@@ -282,7 +282,7 @@ class ScreenBlurManager {
             defer: false,
             screen: screen
         )
-        
+
         window.level = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(.maximumWindow)))  // Highest possible level - above everything
         window.backgroundColor = .clear  // Clear background for blur effect
         window.isOpaque = false  // Allow transparency
@@ -296,15 +296,15 @@ class ScreenBlurManager {
         window.alphaValue = 1.0  // Full opacity
         window.hidesOnDeactivate = false
         window.canHide = false
-        
+
         return window
     }
-    
+
     // MARK: - Display Changes
-    
+
     private func startObservingScreenChanges() {
         guard self.screenChangeObserver == nil else { return }
-        
+
         self.screenChangeObserver = NotificationCenter.default.addObserver(
             forName: NSApplication.didChangeScreenParametersNotification,
             object: nil,
@@ -313,20 +313,20 @@ class ScreenBlurManager {
             self?.rebuildOverlayWindowsIfScreensChanged()
         }
     }
-    
+
     private func stopObservingScreenChanges() {
         guard let observer = self.screenChangeObserver else { return }
         NotificationCenter.default.removeObserver(observer)
         self.screenChangeObserver = nil
     }
-    
+
     /// Rebuilds the overlay for the screens attached right now. A display added
     /// mid-break must not stay an uncovered hole, and removing one must not end
     /// the break. The countdown is left alone, so the remaining time carries over.
     private func rebuildOverlayWindowsIfScreensChanged() {
         guard self.countdown != nil else { return }
         guard Self.sortedFrames(of: NSScreen.screens) != self.coveredFrames else { return }
-        
+
         // Build the replacements before dropping the old windows. An overlay
         // that goes to zero windows, even for an instant, hands focus back to
         // whatever is underneath and stops being modal.
@@ -334,13 +334,13 @@ class ScreenBlurManager {
         self.overlayWindows.removeAll()
         self.hostingViews.removeAll()
         self.keyOverlayWindow = nil
-        
+
         self.buildOverlayWindows()
         self.keyOverlayWindow?.makeKey()
-        
+
         self.close(stale)
     }
-    
+
     /// Screen frames in a fixed order. `NSScreen.screens` puts the main screen
     /// first, so choosing a different main display reorders it without moving a
     /// single pixel. Sorting keeps that out of the rebuild test.
@@ -350,9 +350,9 @@ class ScreenBlurManager {
                 < (rhs.origin.x, rhs.origin.y, rhs.width, rhs.height)
         }
     }
-    
+
     // MARK: - Escape Key
-    
+
     /// One ESC monitor for the whole overlay set. It used to live in the SwiftUI
     /// view, which with a view per screen would install one monitor per display.
     ///
@@ -362,7 +362,7 @@ class ScreenBlurManager {
     /// which may take a click on the overlay.
     private func startMonitoringEscape() {
         guard self.escapeMonitor == nil else { return }
-        
+
         self.escapeMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             // Bare ESC only. The keyboard tap passes two Escape chords on
             // purpose — Force Quit and the panic chord — and matching the key
@@ -371,7 +371,7 @@ class ScreenBlurManager {
                 keyCode: Int64(event.keyCode),
                 modifiers: Self.eventFlags(of: event.modifierFlags)
             ) else { return event }
-            
+
             // Deferred, like the Skip button. Skipping removes this monitor and
             // closes the key window, and doing either inside AppKit's dispatch
             // of the event pulls them out from under it.
@@ -382,7 +382,7 @@ class ScreenBlurManager {
             return nil  // Consume the event
         }
     }
-    
+
     /// The modifiers of an AppKit event, in the terms the tap's rules are written
     /// in. One definition of "bare ESC" serves the monitor and the tap; only the
     /// event types differ.
@@ -420,7 +420,7 @@ class BreakOverlayWindow: NSWindow {
     override var canBecomeKey: Bool {
         return true
     }
-    
+
     override var canBecomeMain: Bool {
         return true
     }
@@ -429,21 +429,21 @@ class BreakOverlayWindow: NSWindow {
 // MARK: - Sound Manager
 
 class SoundManager {
-    
+
     static let shared = SoundManager()
-    
+
     enum SoundType {
         case start
         case breakStart
         case breakEnd
         case skip
     }
-    
+
     private init() {}
-    
+
     func playSound(_ type: SoundType) {
         let soundName: NSSound.Name
-        
+
         switch type {
         case .start:
             soundName = .init("Blow")
@@ -454,7 +454,7 @@ class SoundManager {
         case .skip:
             soundName = .init("Tink")
         }
-        
+
         NSSound(named: soundName)?.play()
     }
 }

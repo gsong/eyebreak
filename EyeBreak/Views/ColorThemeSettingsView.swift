@@ -16,23 +16,23 @@ struct ThemeSettingsCard: View {
     @Binding var selectedThemeType: ColorThemeType
     @Binding var customTheme: ColorTheme
     let onThemeChange: () -> Void
-    
+
     @State private var showingCustomEditor = false
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Header
             headerView
-            
+
             // Theme Type Picker - Custom Button Style for Better Visual Feedback
             themePickerView
-            
+
             // Description with visual indicator
             descriptionView
-            
+
             // Preview
             ThemePreviewCard(theme: selectedThemeType == .custom ? customTheme : ColorTheme.theme(for: selectedThemeType))
-            
+
             // Custom theme editor
             if selectedThemeType == .custom {
                 customEditorSection
@@ -48,7 +48,7 @@ struct ThemeSettingsCard: View {
                 .stroke(Color.blue.opacity(0.2), lineWidth: 1)
         )
     }
-    
+
     private var headerView: some View {
         HStack {
             Image(systemName: icon)
@@ -59,7 +59,7 @@ struct ThemeSettingsCard: View {
             Spacer()
         }
     }
-    
+
     private var themePickerView: some View {
         HStack(spacing: 12) {
             ForEach(ColorThemeType.allCases) { type in
@@ -74,20 +74,20 @@ struct ThemeSettingsCard: View {
             }
         }
     }
-    
+
     private var descriptionView: some View {
         HStack {
             Image(systemName: "checkmark.circle.fill")
                 .foregroundColor(.green)
                 .font(.caption)
-            
+
             Text(selectedThemeType.description)
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
         .padding(.horizontal, 4)
     }
-    
+
     private var customEditorSection: some View {
         VStack(spacing: 0) {
             Button(action: {
@@ -105,7 +105,7 @@ struct ThemeSettingsCard: View {
                 .cornerRadius(8)
             }
             .buttonStyle(.plain)
-            
+
             if showingCustomEditor {
                 CustomThemeEditor(theme: $customTheme, onThemeChange: onThemeChange)
                     .padding(.top, 12)
@@ -118,7 +118,7 @@ struct ThemeSettingsCard: View {
 
 struct ThemePreviewCard: View {
     let theme: ColorTheme
-    
+
     var body: some View {
         HStack(spacing: 16) {
             // Icon preview
@@ -130,25 +130,25 @@ struct ThemePreviewCard: View {
                         Circle()
                             .stroke(theme.borderGradient(), lineWidth: 1)
                     )
-                
+
                 Image(systemName: "eye")
                     .foregroundStyle(theme.textGradient())
                     .font(.title3)
             }
-            
+
             // Text preview
             VStack(alignment: .leading, spacing: 4) {
                 Text("Preview")
                     .font(.headline)
                     .foregroundColor(theme.textColor.opacity(theme.textOpacity))
-                
+
                 Text("This is how it will look")
                     .font(.caption)
                     .foregroundColor(theme.secondaryTextColor.opacity(theme.secondaryTextOpacity))
             }
-            
+
             Spacer()
-            
+
             // Accent color indicator
             Circle()
                 .fill(theme.accentColor.opacity(theme.accentOpacity))
@@ -169,7 +169,7 @@ struct ThemePreviewCard: View {
 struct CustomThemeEditor: View {
     @Binding var theme: ColorTheme
     let onThemeChange: () -> Void
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             // Background Color
@@ -187,9 +187,9 @@ struct CustomThemeEditor: View {
                 opacity: $theme.backgroundOpacity,
                 onOpacityChange: onThemeChange
             )
-            
+
             Divider()
-            
+
             // Text Color
             ColorPickerRow(
                 title: "Text Color",
@@ -205,9 +205,9 @@ struct CustomThemeEditor: View {
                 opacity: $theme.textOpacity,
                 onOpacityChange: onThemeChange
             )
-            
+
             Divider()
-            
+
             // Secondary Text Color
             ColorPickerRow(
                 title: "Secondary Text",
@@ -223,9 +223,9 @@ struct CustomThemeEditor: View {
                 opacity: $theme.secondaryTextOpacity,
                 onOpacityChange: onThemeChange
             )
-            
+
             Divider()
-            
+
             // Accent Color
             ColorPickerRow(
                 title: "Accent Color",
@@ -241,15 +241,15 @@ struct CustomThemeEditor: View {
                 opacity: $theme.accentOpacity,
                 onOpacityChange: onThemeChange
             )
-            
+
             Divider()
-            
+
             // Glass Effect Settings
             VStack(alignment: .leading, spacing: 12) {
                 Text("Glass Effect")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
-                
+
                 HStack {
                     Text("Blur Radius")
                         .frame(width: 120, alignment: .leading)
@@ -262,7 +262,7 @@ struct CustomThemeEditor: View {
                         .frame(width: 40)
                         .foregroundColor(.secondary)
                 }
-                
+
                 HStack {
                     Text("Highlight")
                         .frame(width: 120, alignment: .leading)
@@ -276,7 +276,7 @@ struct CustomThemeEditor: View {
                         .foregroundColor(.secondary)
                 }
             }
-            
+
             // Reset button
             HStack {
                 Spacer()
@@ -306,18 +306,18 @@ struct ColorPickerRow: View {
     @Binding var color: Color
     @Binding var opacity: Double
     let onOpacityChange: () -> Void
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
-            
+
             HStack(spacing: 12) {
                 ColorPicker("", selection: $color, supportsOpacity: false)
                     .labelsHidden()
                     .frame(width: 50)
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Text("Opacity")
@@ -328,7 +328,7 @@ struct ColorPickerRow: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
-                    
+
                     Slider(value: $opacity, in: 0...1) {
                         Text("Opacity")
                     } onEditingChanged: { _ in
@@ -345,7 +345,7 @@ struct ColorPickerRow: View {
 struct QuickPresetsView: View {
     @Binding var customTheme: ColorTheme
     let onThemeChange: () -> Void
-    
+
     let presets: [(name: String, theme: ColorTheme)] = [
         ("Ocean Blue", ColorTheme(
             themeType: .custom,
@@ -400,12 +400,12 @@ struct QuickPresetsView: View {
             glassHighlightOpacity: 0.3
         ))
     ]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Quick Presets")
                 .font(.headline)
-            
+
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))], spacing: 12) {
                 ForEach(presets, id: \.name) { preset in
                     Button(action: {
@@ -420,7 +420,7 @@ struct QuickPresetsView: View {
                                     Circle()
                                         .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                                 )
-                            
+
                             Text(preset.name)
                                 .font(.caption)
                                 .foregroundColor(.primary)
@@ -450,12 +450,12 @@ struct ThemeTypeButton: View {
     let type: ColorThemeType
     let isSelected: Bool
     let onSelect: () -> Void
-    
+
     var body: some View {
         Button(action: onSelect) {
             VStack(spacing: 8) {
                 iconCircle
-                
+
                 Text(type.rawValue)
                     .font(.caption)
                     .fontWeight(isSelected ? .semibold : .regular)
@@ -468,7 +468,7 @@ struct ThemeTypeButton: View {
         }
         .buttonStyle(.plain)
     }
-    
+
     private var iconCircle: some View {
         ZStack {
             Circle()
@@ -478,13 +478,13 @@ struct ThemeTypeButton: View {
                     Circle()
                         .stroke(isSelected ? Color.blue : Color.gray.opacity(0.3), lineWidth: 2)
                 )
-            
+
             Image(systemName: type.icon)
                 .font(.title3)
                 .foregroundColor(isSelected ? .white : .secondary)
         }
     }
-    
+
     private var circleFill: LinearGradient {
         if isSelected {
             return LinearGradient(
@@ -500,12 +500,12 @@ struct ThemeTypeButton: View {
             )
         }
     }
-    
+
     private var backgroundColor: some View {
         RoundedRectangle(cornerRadius: 12)
             .fill(isSelected ? Color.blue.opacity(0.1) : Color(NSColor.controlBackgroundColor).opacity(0.5))
     }
-    
+
     private var borderOverlay: some View {
         RoundedRectangle(cornerRadius: 12)
             .stroke(isSelected ? Color.blue.opacity(0.5) : Color.clear, lineWidth: 2)

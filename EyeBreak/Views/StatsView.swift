@@ -11,11 +11,11 @@ import Charts
 struct StatsView: View {
     @EnvironmentObject var settings: AppSettings
     @State private var selectedTimeRange: TimeRange = .week
-    
+
     enum TimeRange: String, CaseIterable {
         case week = "Week"
         case month = "Month"
-        
+
         var days: Int {
             switch self {
             case .week: return 7
@@ -23,25 +23,25 @@ struct StatsView: View {
             }
         }
     }
-    
+
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
                 // Today's Summary
                 todaySummarySection
-                
+
                 Divider()
                     .padding(.vertical)
-                
+
                 // Historical Chart
                 historicalChartSection
-                
+
                 Divider()
                     .padding(.vertical)
-                
+
                 // Insights
                 insightsSection
-                
+
                 // Reset Button
                 Button(action: {
                     settings.resetStats()
@@ -69,9 +69,9 @@ struct StatsView: View {
             .padding(40)
         }
     }
-    
+
     // MARK: - Today's Summary
-    
+
     private var todaySummarySection: some View {
         VStack(spacing: 16) {
             HStack(spacing: 10) {
@@ -103,9 +103,9 @@ struct StatsView: View {
 
                 Spacer()
             }
-            
+
             let todayStats = settings.getTodayStats()
-            
+
             HStack(spacing: 20) {
                 EnhancedStatBox(
                     title: "Breaks Taken",
@@ -114,7 +114,7 @@ struct StatsView: View {
                     color: .green,
                     trend: .up
                 )
-                
+
                 EnhancedStatBox(
                     title: "Breaks Skipped",
                     value: "\(todayStats.breaksSkipped)",
@@ -122,7 +122,7 @@ struct StatsView: View {
                     color: .red,
                     trend: .down
                 )
-                
+
                 EnhancedStatBox(
                     title: "Total Break Time",
                     value: formatDuration(todayStats.totalBreakTime),
@@ -131,7 +131,7 @@ struct StatsView: View {
                     trend: .neutral
                 )
             }
-            
+
             // Enhanced progress bar with animation
             VStack(spacing: 8) {
                 HStack {
@@ -142,9 +142,9 @@ struct StatsView: View {
                             .font(.subheadline)
                             .fontWeight(.medium)
                     }
-                    
+
                     Spacer()
-                    
+
                     HStack(spacing: 4) {
                         Text("\(todayStats.breaksCompleted)")
                             .font(.subheadline)
@@ -158,21 +158,21 @@ struct StatsView: View {
                             .foregroundColor(.secondary)
                     }
                 }
-                
+
                 ZStack(alignment: .leading) {
                     // Background
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color.secondary.opacity(0.15))
                         .frame(height: 12)
-                    
+
                     // Progress with gradient
                     GeometryReader { geometry in
                         let progress = min(Double(todayStats.breaksCompleted) / Double(settings.dailyBreakGoal), 1.0)
-                        
+
                         RoundedRectangle(cornerRadius: 8)
                             .fill(
                                 LinearGradient(
-                                    colors: todayStats.breaksCompleted >= settings.dailyBreakGoal ? 
+                                    colors: todayStats.breaksCompleted >= settings.dailyBreakGoal ?
                                         [Color.green, Color.mint] : [Color.blue, Color.cyan],
                                     startPoint: .leading,
                                     endPoint: .trailing
@@ -183,7 +183,7 @@ struct StatsView: View {
                             .animation(.spring(response: 0.6, dampingFraction: 0.7), value: progress)
                     }
                     .frame(height: 12)
-                    
+
                     // Sparkle effect when goal reached
                     if todayStats.breaksCompleted >= settings.dailyBreakGoal {
                         HStack(spacing: 4) {
@@ -220,7 +220,7 @@ struct StatsView: View {
             )
         }
     }
-    
+
     // MARK: - Historical Chart
 
     private var historicalChartSection: some View {
@@ -306,7 +306,7 @@ struct StatsView: View {
             }
         }
     }
-    
+
     @available(macOS 13.0, *)
     private var chartView: some View {
         let data = getChartData()
@@ -346,9 +346,9 @@ struct StatsView: View {
                 .background(Color.clear)
         }
     }
-    
+
     // MARK: - Insights
-    
+
     private var insightsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: 10) {
@@ -383,7 +383,7 @@ struct StatsView: View {
 
             let stats = settings.getAllStats()
             let insights = generateInsights(from: stats)
-            
+
             ForEach(insights, id: \.title) { insight in
                 InsightCard(
                     icon: insight.icon,
@@ -394,47 +394,47 @@ struct StatsView: View {
             }
         }
     }
-    
+
     // MARK: - Helper Methods
-    
+
     private func formatDuration(_ seconds: Int) -> String {
         let minutes = seconds / 60
         let secs = seconds % 60
-        
+
         if minutes > 0 {
             return "\(minutes)m \(secs)s"
         } else {
             return "\(secs)s"
         }
     }
-    
+
     private func getChartData() -> [ChartDataPoint] {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         let allStats = settings.getAllStats()
-        
+
         var data: [ChartDataPoint] = []
-        
+
         for i in 0..<selectedTimeRange.days {
             let date = calendar.date(byAdding: .day, value: -i, to: today)!
             let stats = allStats.first { calendar.isDate($0.date, inSameDayAs: date) }
-            
+
             data.append(ChartDataPoint(
                 date: date,
                 breaks: stats?.breaksCompleted ?? 0
             ))
         }
-        
+
         return data.reversed()
     }
-    
+
     private func generateInsights(from stats: [BreakStats]) -> [Insight] {
         var insights: [Insight] = []
-        
+
         // Calculate weekly average
         let recentStats = stats.prefix(7)
         let weeklyAverage = recentStats.map { $0.breaksCompleted }.reduce(0, +) / max(recentStats.count, 1)
-        
+
         if weeklyAverage >= settings.dailyBreakGoal {
             insights.append(Insight(
                 icon: "star.fill",
@@ -450,11 +450,11 @@ struct StatsView: View {
                 color: .orange
             ))
         }
-        
+
         // Check skip rate
         let totalBreaks = recentStats.map { $0.breaksCompleted }.reduce(0, +)
         let totalSkips = recentStats.map { $0.breaksSkipped }.reduce(0, +)
-        
+
         if totalSkips > totalBreaks / 4 {
             insights.append(Insight(
                 icon: "exclamationmark.triangle.fill",
@@ -463,7 +463,7 @@ struct StatsView: View {
                 color: .red
             ))
         }
-        
+
         // Streak
         let currentStreak = calculateStreak(from: stats)
         if currentStreak >= 3 {
@@ -474,17 +474,17 @@ struct StatsView: View {
                 color: .orange
             ))
         }
-        
+
         return insights
     }
-    
+
     private func calculateStreak(from stats: [BreakStats]) -> Int {
         let calendar = Calendar.current
         let sortedStats = stats.sorted { $0.date > $1.date }
-        
+
         var streak = 0
         var currentDate = calendar.startOfDay(for: Date())
-        
+
         for stat in sortedStats {
             if calendar.isDate(stat.date, inSameDayAs: currentDate) && stat.breaksCompleted > 0 {
                 streak += 1
@@ -493,7 +493,7 @@ struct StatsView: View {
                 break
             }
         }
-        
+
         return streak
     }
 }
@@ -553,16 +553,16 @@ struct StatBox: View {
     let value: String
     let icon: String
     let color: Color
-    
+
     var body: some View {
         VStack(spacing: 12) {
             Image(systemName: icon)
                 .font(.title)
                 .foregroundStyle(color)
-            
+
             Text(value)
                 .font(.system(size: 32, weight: .bold, design: .rounded))
-            
+
             Text(title)
                 .font(.caption)
                 .foregroundColor(.secondary)
@@ -646,10 +646,10 @@ struct EnhancedStatBox: View {
     let icon: String
     let color: Color
     let trend: Trend
-    
+
     enum Trend {
         case up, down, neutral
-        
+
         var icon: String {
             switch self {
             case .up: return "arrow.up.right"
@@ -657,7 +657,7 @@ struct EnhancedStatBox: View {
             case .neutral: return "minus"
             }
         }
-        
+
         var color: Color {
             switch self {
             case .up: return .green
@@ -666,9 +666,9 @@ struct EnhancedStatBox: View {
             }
         }
     }
-    
+
     @State private var animateValue = false
-    
+
     var body: some View {
         VStack(spacing: 16) {
             // Icon with gradient background
@@ -683,7 +683,7 @@ struct EnhancedStatBox: View {
                     )
                     .frame(width: 56, height: 56)
                     .shadow(color: color.opacity(0.2), radius: 8)
-                
+
                 Image(systemName: icon)
                     .font(.title2)
                     .foregroundStyle(
@@ -696,7 +696,7 @@ struct EnhancedStatBox: View {
             }
             .scaleEffect(animateValue ? 1.0 : 0.8)
             .animation(.spring(response: 0.5, dampingFraction: 0.6), value: animateValue)
-            
+
             VStack(spacing: 6) {
                 Text(value)
                     .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -708,14 +708,14 @@ struct EnhancedStatBox: View {
                         )
                     )
                     .contentTransition(.numericText())
-                
+
                 Text(title)
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
             }
-            
+
             // Trend indicator
             HStack(spacing: 4) {
                 Image(systemName: trend.icon)
