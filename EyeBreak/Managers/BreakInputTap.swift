@@ -5,9 +5,14 @@
 //  Holds the keyboard for the length of a break.
 //
 //  A full-screen overlay on every display stops the mouse, and making the
-//  overlay key gets ESC and clicks. macOS routes plenty of keyboard past all of
-//  that anyway: Cmd-Tab, Cmd-Q, Cmd-H, and every global hotkey any app has
+//  overlay key gets clicks. macOS routes plenty of keyboard past all of that
+//  anyway: Cmd-Tab, Cmd-Q, Cmd-H, and every global hotkey any app has
 //  registered. A break the user can type straight through is not a break.
+//
+//  ESC ends the break from here too. The overlay's own ESC monitor needs
+//  EyeBreak to be frontmost, and macOS does not promise that: cooperative
+//  activation can refuse an app that activates itself from a timer. The tap
+//  sees the key whichever app has focus.
 //
 //  This is the riskiest code in the app. A live process holding an active tap
 //  that no longer consumes correctly leaves the machine with no keyboard: no
@@ -48,11 +53,15 @@ final class BreakInputTap {
     /// returns nil without it. That is not an edge case: EyeBreak is ad-hoc
     /// signed, so macOS drops the grant on every update, which makes the
     /// grant-less path the normal state after each release. Without a tap the
-    /// break falls back to the overlay alone — covered, key, ESC and the first
-    /// click still working. Weaker than the tap, never worse than before it
-    /// existed. `AccessibilityPermission` is what watches for the grant and
-    /// surfaces a missing one in Settings.
-    func start(breakDuration: TimeInterval, onPanic: @escaping () -> Void) {
+    /// break falls back to the overlay alone — covered, the first click working,
+    /// and ESC working once EyeBreak is frontmost. Weaker than the tap, never
+    /// worse than before it existed. `AccessibilityPermission` is what watches
+    /// for the grant and surfaces a missing one in Settings.
+    ///
+    /// `onEndBreak` runs on the main thread for bare ESC and for the panic
+    /// chord. The chord tears the tap down first; ESC leaves that to the break's
+    /// own teardown.
+    func start(breakDuration: TimeInterval, onEndBreak: @escaping () -> Void) {
         lock.lock()
         guard tapPort == nil else {
             lock.unlock()
@@ -66,7 +75,7 @@ final class BreakInputTap {
 
         tapPort = port
         budget = TapReenableBudget()
-        panicHandler = onPanic
+        endBreakHandler = onEndBreak
         startWatchdog(after: BreakInputPolicy.watchdogDelay(forBreakOf: breakDuration))
         lock.unlock()
 
@@ -82,7 +91,7 @@ final class BreakInputTap {
             return
         }
         tapPort = nil
-        panicHandler = nil
+        endBreakHandler = nil
         watchdog?.cancel()
         watchdog = nil
         lock.unlock()
@@ -118,9 +127,31 @@ final class BreakInputTap {
             return nil
         case .pass:
             return Unmanaged.passUnretained(event)
+        case .endBreak:
+            // The release and any auto-repeat are consumed too, but only the
+            // first press ends the break. Once is enough, and the release lands
+            // after the break has already started tearing this tap down.
+            if type == .keyDown, event.getIntegerValueField(.keyboardEventAutorepeat) == 0 {
+                handleEscape()
+            }
+            return nil
         case .panic:
             handlePanicChord()
             return Unmanaged.passUnretained(event)
+        }
+    }
+
+    /// Asks the main thread to end the break. The tap stays up until the break's
+    /// teardown stops it, so the keys pressed between here and there are still
+    /// held. If the main thread is wedged this does nothing, and that is what the
+    /// panic chord is for.
+    private func handleEscape() {
+        lock.lock()
+        let handler = endBreakHandler
+        lock.unlock()
+
+        DispatchQueue.main.async {
+            handler?()
         }
     }
 
@@ -133,7 +164,7 @@ final class BreakInputTap {
     /// a tap already installed and quietly run without one.
     private func handlePanicChord() {
         lock.lock()
-        let handler = panicHandler
+        let handler = endBreakHandler
         lock.unlock()
 
         stop()
@@ -247,7 +278,7 @@ final class BreakInputTap {
 
     private var tapPort: CFMachPort?
     private var watchdog: DispatchSourceTimer?
-    private var panicHandler: (() -> Void)?
+    private var endBreakHandler: (() -> Void)?
     private var budget = TapReenableBudget()
 }
 

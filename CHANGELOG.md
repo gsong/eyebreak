@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### The Break Overlay Is Modal Again
 
 - **ESC ends the break** - It used to reach the app underneath instead, because EyeBreak never came to the front and its ESC handler only sees events macOS has already routed to it
+- **ESC works without a click first** - Bringing EyeBreak to the front is a request macOS can refuse, and when it did, ESC went nowhere until a click on the overlay. The keyboard hold now ends the break on ESC itself, whichever app has focus. Without the Accessibility grant there is no keyboard hold, and ESC still needs EyeBreak to be frontmost
 - **Skipping takes one click** - The first click was spent bringing EyeBreak forward, so a skip needed two
 - **Skip is a button** - With the first click no longer swallowed, click-anywhere-to-skip would have ended a break on any stray click
 - **Focus returns to the app you were using** - Every way out of a break hands it back: the timer running out, ESC, Skip, and Stop or Pause from the menu

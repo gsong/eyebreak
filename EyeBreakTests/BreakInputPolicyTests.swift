@@ -43,9 +43,10 @@ final class BreakInputPolicyTests: XCTestCase {
 
     // MARK: - Escape
 
-    func testEscapeAloneIsPassed() {
-        // It reaches the key overlay window, where the skip monitor ends the break.
-        XCTAssertEqual(BreakInputPolicy.decision(keyCode: 53, flags: []), .pass)
+    func testEscapeAloneEndsTheBreak() {
+        // From the tap, not the overlay's monitor. The monitor needs EyeBreak to
+        // be frontmost, and macOS can refuse the activation that would make it so.
+        XCTAssertEqual(BreakInputPolicy.decision(keyCode: 53, flags: []), .endBreak)
     }
 
     func testForceQuitIsPassed() {
@@ -67,7 +68,7 @@ final class BreakInputPolicyTests: XCTestCase {
         // user with caps lock on must still be able to reach every escape hatch.
         let noise: CGEventFlags = [.maskAlphaShift, .maskNumericPad, .maskSecondaryFn]
 
-        XCTAssertEqual(BreakInputPolicy.decision(keyCode: 53, flags: noise), .pass)
+        XCTAssertEqual(BreakInputPolicy.decision(keyCode: 53, flags: noise), .endBreak)
         XCTAssertEqual(
             BreakInputPolicy.decision(keyCode: 53, flags: noise.union([.maskCommand, .maskAlternate])),
             .pass
@@ -96,8 +97,9 @@ final class BreakInputPolicyTests: XCTestCase {
     // MARK: - Ending a break with ESC
 
     func testOnlyBareEscapeEndsTheBreak() {
-        // The overlay's own monitor asks this. The two chords the tap passes on
-        // purpose reach EyeBreak while it is frontmost, and neither is a skip.
+        // The overlay's own monitor asks this. It is the fallback for a break
+        // without a tap, and the two chords the tap passes on purpose reach
+        // EyeBreak while it is frontmost. Neither is a skip.
         XCTAssertTrue(BreakInputPolicy.isBreakEndingEscape(keyCode: 53, modifiers: []))
         XCTAssertTrue(BreakInputPolicy.isBreakEndingEscape(keyCode: 53, modifiers: [.maskAlphaShift]))
 

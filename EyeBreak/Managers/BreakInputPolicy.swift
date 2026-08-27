@@ -16,6 +16,8 @@ enum BreakKeyDecision: Equatable {
     case pass
     /// Drop the event. Nothing downstream ever sees it.
     case consume
+    /// Bare Escape. Drop the event and end the break.
+    case endBreak
     /// The panic chord. End the break, tear the tap down, and hand the event on.
     case panic
 }
@@ -51,7 +53,8 @@ enum BreakInputPolicy {
 
     // MARK: - Public Methods
 
-    /// Consume everything except the three ways out.
+    /// Consume everything except the three ways out, and end the break on the
+    /// first of them.
     ///
     /// The rule reads only the event in hand. It does not ask which app is
     /// frontmost or what the break is doing: that would be a race, and it would
@@ -65,8 +68,12 @@ enum BreakInputPolicy {
 
         switch flags.intersection(consideredModifiers) {
         case []:
-            // Reaches the key overlay window, where the skip monitor ends the break.
-            return .pass
+            // Ends the break from here rather than from the overlay's monitor.
+            // The monitor only sees keys macOS has routed to EyeBreak, and under
+            // cooperative activation (macOS 14+) a self-activation from a timer
+            // can be refused while another app is frontmost. The tap sees ESC
+            // whichever app has focus.
+            return .endBreak
         case [.maskCommand, .maskAlternate]:
             // Force Quit. It passes even though it also lets the user force-quit
             // an app mid-break.
@@ -94,8 +101,9 @@ enum BreakInputPolicy {
     /// Whether this is the bare Escape that ends a break.
     ///
     /// The overlay's own ESC monitor asks this rather than matching the key code
-    /// alone. Without it the two Escape chords the tap deliberately passes would
-    /// both end the break as a side effect of reaching EyeBreak.
+    /// alone. The monitor is the fallback for a break without a tap, and without
+    /// this the two Escape chords the tap deliberately passes would both end the
+    /// break as a side effect of reaching EyeBreak.
     static func isBreakEndingEscape(keyCode: Int64, modifiers: CGEventFlags) -> Bool {
         return keyCode == escapeKeyCode && modifiers.isDisjoint(with: consideredModifiers)
     }
