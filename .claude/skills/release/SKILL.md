@@ -44,11 +44,11 @@ git log "$LAST"..HEAD --format="%s%n%b"
 
 Bump from the conventional-commit types in that range:
 
-| Found | Bump |
-| --- | --- |
+| Found                                                | Bump  |
+| ---------------------------------------------------- | ----- |
 | `BREAKING CHANGE` in a body, or `!` before the colon | major |
-| any `feat:` | minor |
-| anything else | patch |
+| any `feat:`                                          | minor |
+| anything else                                        | patch |
 
 Now cross-check: read `[Unreleased]` in `CHANGELOG.md` and decide what bump
 **its entries** imply. Report both numbers.
