@@ -83,7 +83,7 @@ class BreakTimerManager: ObservableObject {
         remainingSeconds = settings.breakDurationSeconds
         state = .breaking(remainingSeconds: remainingSeconds)
         startTimer()
-        showBreakOverlay()
+        showBreakOverlay(duration: remainingSeconds)
         
         if settings.soundEnabled {
             SoundManager.shared.playSound(.breakStart)
@@ -104,7 +104,7 @@ class BreakTimerManager: ObservableObject {
         remainingSeconds = settings.breakDurationSeconds
         state = .breaking(remainingSeconds: remainingSeconds)
         startTimer()
-        showBreakOverlay()
+        showBreakOverlay(duration: remainingSeconds)
         
         if settings.soundEnabled {
             SoundManager.shared.playSound(.breakStart)
@@ -148,6 +148,15 @@ class BreakTimerManager: ObservableObject {
         timer = nil
         state = .paused(wasWorking: wasWorking, remainingSeconds: remainingSeconds)
         wasWorkingBeforePause = wasWorking
+        
+        // A paused break has to lose its overlay. The overlay counts down on a
+        // clock of its own, so left on screen it runs to zero and ends a break
+        // the manager still thinks is paused. `resume()` would then put the
+        // state back into `.breaking` with nothing on screen, and the invisible
+        // break would be credited as completed.
+        if !wasWorking && usesScreenOverlay {
+            ScreenBlurManager.shared.hideOverlay()
+        }
     }
     
     /// Resume from paused state
@@ -159,6 +168,11 @@ class BreakTimerManager: ObservableObject {
             state = .working(remainingSeconds: remainingSeconds)
         } else {
             state = .breaking(remainingSeconds: remainingSeconds)
+            
+            // Put the break back on screen for what is left of it.
+            if usesScreenOverlay {
+                showBreakOverlay(duration: remainingSeconds)
+            }
         }
         startTimer()
     }
@@ -239,7 +253,7 @@ class BreakTimerManager: ObservableObject {
         remainingSeconds = settings.breakDurationSeconds
         state = .breaking(remainingSeconds: remainingSeconds)
         
-        showBreakOverlay()
+        showBreakOverlay(duration: remainingSeconds)
         
         if settings.soundEnabled {
             SoundManager.shared.playSound(.breakStart)
@@ -268,18 +282,30 @@ class BreakTimerManager: ObservableObject {
         NotificationManager.shared.sendBreakCompleteNotification()
     }
     
-    private func showBreakOverlay() {
+    /// Whether the break style puts a full-screen overlay up. The Floating
+    /// Window style does not, and it runs its own timer, so pausing must leave
+    /// it alone.
+    private var usesScreenOverlay: Bool {
+        switch settings.breakStyle {
+        case .blurScreen, .eyeExercise:
+            return true
+        case .notificationOnly:
+            return false
+        }
+    }
+    
+    private func showBreakOverlay(duration: Int) {
         switch settings.breakStyle {
         case .blurScreen:
             ScreenBlurManager.shared.showBreakOverlay(
-                duration: settings.breakDurationSeconds,
+                duration: duration,
                 style: .blur
             ) { [weak self] in
                 self?.skipBreak()
             }
         case .eyeExercise:
             ScreenBlurManager.shared.showBreakOverlay(
-                duration: settings.breakDurationSeconds,
+                duration: duration,
                 style: .exercise
             ) { [weak self] in
                 self?.skipBreak()
@@ -288,7 +314,7 @@ class BreakTimerManager: ObservableObject {
             // Show floating window instead of notification only
             let window = FloatingBreakWindow()
             window.show(
-                duration: settings.breakDurationSeconds,
+                duration: duration,
                 onSkip: { [weak self] in
                     self?.skipBreak()
                 },
