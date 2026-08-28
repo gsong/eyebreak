@@ -110,20 +110,4 @@ extension BreakSettingsView {
                 .font(.caption)
         }
     }
-
-    var goalsSection: some View {
-        Section {
-            Stepper(
-                "Daily Break Goal: \(settings.dailyBreakGoal)",
-                value: $settings.dailyBreakGoal,
-                in: 1...100
-            )
-
-            Text("Set a target for breaks to take each day")
-                .font(.caption)
-                .foregroundColor(.secondary)
-        } header: {
-            SectionHeaderView(title: "Goals", icon: "target", color: .green)
-        }
-    }
 }

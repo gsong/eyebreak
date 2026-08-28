@@ -29,7 +29,7 @@ enum TimerState: Equatable {
     }
 
     /// Whether a break is on screen right now, running or served and waiting.
-    /// Starting a break on top of either would credit two for one rest.
+    /// Starting a break on top of either would announce two for one rest.
     var hasBreakOnScreen: Bool {
         switch self {
         case .breaking, .awaitingDismissal:
@@ -58,8 +58,8 @@ enum TimerState: Equatable {
 
     /// What reaching the end of a break's countdown should do from this state.
     ///
-    /// This is why a break is credited exactly once. Only `.breaking` yields an
-    /// action that credits, and the Floating Window style runs a clock alongside
+    /// This is why a break is announced exactly once. Only `.breaking` yields an
+    /// action that announces, and the Floating Window style runs a clock alongside
     /// the timer's: both reach zero, and the second one arrives to find the state
     /// already moved on.
     ///
@@ -82,9 +82,9 @@ enum TimerState: Equatable {
 enum BreakEndAction: Equatable {
     /// Nothing at all. This break has already ended.
     case ignore
-    /// Credit the break and start the next work interval now.
+    /// Announce the break and start the next work interval now.
     case endNow
-    /// Credit the break and hold it on screen until the user dismisses it.
+    /// Announce the break and hold it on screen until the user dismisses it.
     case awaitDismissal
 }
 
@@ -116,20 +116,5 @@ enum BreakStyle: String, CaseIterable, Identifiable {
         case .eyeExercise:
             return "figure.walk"
         }
-    }
-}
-
-/// Statistics for tracking break history
-struct BreakStats: Codable {
-    var date: Date
-    var breaksCompleted: Int
-    var breaksSkipped: Int
-    var totalBreakTime: Int // in seconds
-
-    init(date: Date = Date(), breaksCompleted: Int = 0, breaksSkipped: Int = 0, totalBreakTime: Int = 0) {
-        self.date = date
-        self.breaksCompleted = breaksCompleted
-        self.breaksSkipped = breaksSkipped
-        self.totalBreakTime = totalBreakTime
     }
 }

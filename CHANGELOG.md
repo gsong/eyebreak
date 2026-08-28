@@ -13,8 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **Requires macOS 26** - The deployment target moves from 14.0 to 26.0. This
-  is a personal build on a Tahoe machine, so nothing older needs to run it.
-  The macOS 13 availability guards around the statistics chart are gone with it
+  is a personal build on a Tahoe machine, so nothing older needs to run it
 - **Break Duration is set in minutes, and reaches 10** - The slider used to stop
   at 120 seconds while the Pomodoro preset had written 300, so one drag silently
   cut a 5-minute break to 2 minutes. It now runs 1 to 10 minutes in whole-minute
@@ -55,6 +54,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   alert that offered to take a break anyway. Seven guard sites across the timer
   and the two reminder managers go with it, along with `forceBreakNow()`, which
   existed only to answer that alert. Breaks now run whenever the timer says so
+
+- **Statistics** - The Statistics tab, the week and month chart, the insight
+  cards and streak count, and the Daily Break Goal stepper. Five files, 848
+  lines. The tab was never opened. The timer also stops writing the
+  `breakStatistics` history it kept behind that tab, so nothing records how many
+  breaks you take or skip
 
 ## [2.5.0] - 2026-08-27
 

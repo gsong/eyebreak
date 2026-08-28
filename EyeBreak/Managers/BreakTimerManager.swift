@@ -104,7 +104,6 @@ class BreakTimerManager: ObservableObject {
             return
         }
 
-        settings.updateStats(breaksSkipped: 1)
         endBreak()
 
         if settings.soundEnabled {
@@ -114,9 +113,8 @@ class BreakTimerManager: ObservableObject {
 
     /// End the wait after a served break and go back to work.
     ///
-    /// The next work interval is a full one. The break was credited when it was
-    /// served, so the minutes spent waiting were the user's, not the timer's, and
-    /// stats are not touched again here.
+    /// The next work interval is a full one. The minutes spent waiting were the
+    /// user's, not the timer's.
     func dismissBreak() {
         // Whichever style put the break on screen, this takes it back down —
         // before the state is checked, and even if Stop has already moved the
