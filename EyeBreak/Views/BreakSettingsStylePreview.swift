@@ -93,9 +93,10 @@ extension BreakSettingsView {
                     unit: "sec",
                     icon: "arrow.triangle.2.circlepath",
                     color: .cyan,
-                    range: 2...10
+                    range: 2...10,
+                    step: 1
                 ) { newValue in
-                    settings.exerciseIntervalSeconds = Int(newValue)
+                    settings.exerciseIntervalSeconds = newValue
                 }
 
                 EnhancedSliderCard(
@@ -104,9 +105,10 @@ extension BreakSettingsView {
                     unit: "min",
                     icon: "figure.walk",
                     color: .teal,
-                    range: 1...30
+                    range: 1...30,
+                    step: 1
                 ) { newValue in
-                    settings.eyeExerciseDurationSeconds = Int(newValue) * 60
+                    settings.eyeExerciseDurationSeconds = newValue * 60
                 }
 
                 HStack(spacing: 8) {

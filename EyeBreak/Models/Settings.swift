@@ -15,17 +15,46 @@ class AppSettings: ObservableObject {
 
     static let shared = AppSettings()
 
+    // MARK: - Slider Ranges
+
+    /// The stops the Work Interval slider offers, in minutes.
+    static let workIntervalRange = 15...45
+
+    /// The span a break may run, in seconds. Seconds are canonical because the
+    /// timer counts in them; the minutes range below derives from this one.
+    static let breakDurationRange = 60...600
+
+    /// The stops the Break Duration slider offers, in minutes.
+    static var breakDurationMinutesRange: ClosedRange<Int> {
+        (breakDurationRange.lowerBound / 60)...(breakDurationRange.upperBound / 60)
+    }
+
     // MARK: - Published Properties
 
-    @AppStorage("workIntervalMinutes") var workIntervalMinutes: Int = 20
-    @AppStorage("breakDurationSeconds") var breakDurationSeconds: Int = 20
+    // The two timing settings clamp on read, not on write. BreakTimerManager
+    // reads them at seven sites, so a clamp in the view would let Settings show
+    // 45 while the timer ran 50. Clamping the getter makes every reader agree.
+    // The setter stays open on purpose: a hand-written out-of-range value keeps
+    // its stored form and returns intact if a range ever widens back.
+
+    @AppStorage("workIntervalMinutes") private var storedWorkInterval: Int = 25
+    var workIntervalMinutes: Int {
+        get { Self.clamp(storedWorkInterval, to: Self.workIntervalRange) }
+        set { storedWorkInterval = newValue }
+    }
+
+    @AppStorage("breakDurationSeconds") private var storedBreakDuration: Int = 300
+    var breakDurationSeconds: Int {
+        get { Self.clamp(storedBreakDuration, to: Self.breakDurationRange) }
+        set { storedBreakDuration = newValue }
+    }
+
     @AppStorage("preBreakWarningSeconds") var preBreakWarningSeconds: Int = 30
     @AppStorage("breakStyle") private var breakStyleRaw: String = BreakStyle.blurScreen.rawValue
     // Whether a served break waits for the user to dismiss it before the work
     // timer restarts. On, because a break nobody was present for is not a break.
     @AppStorage("requireBreakDismissal") var requireBreakDismissal: Bool = true
     @AppStorage("soundEnabled") var soundEnabled: Bool = true
-    @AppStorage("sessionType") private var sessionTypeRaw: String = SessionType.standard.rawValue
     @AppStorage("idleDetectionEnabled") var idleDetectionEnabled: Bool = true
     @AppStorage("idleThresholdMinutes") var idleThresholdMinutes: Int = 5
     @AppStorage("launchAtLogin") var launchAtLogin: Bool = false
@@ -81,18 +110,6 @@ class AppSettings: ObservableObject {
         set { breakStyleRaw = newValue.rawValue }
     }
 
-    var sessionType: SessionType {
-        get { SessionType(rawValue: sessionTypeRaw) ?? .standard }
-        set {
-            sessionTypeRaw = newValue.rawValue
-            // Update intervals based on session type
-            if newValue != .custom {
-                workIntervalMinutes = newValue.workMinutes
-                breakDurationSeconds = newValue.breakSeconds
-            }
-        }
-    }
-
     var waterReminderStyle: WaterReminderStyle {
         get { WaterReminderStyle(rawValue: waterReminderStyleRaw) ?? .blurScreen }
         set { waterReminderStyleRaw = newValue.rawValue }
@@ -100,6 +117,13 @@ class AppSettings: ObservableObject {
 
     var workIntervalSeconds: Int {
         workIntervalMinutes * 60
+    }
+
+    /// The Break Duration slider's unit. Seconds stay canonical on disk, so a
+    /// stored 90 reads as 1 here and still runs the full 90 seconds.
+    var breakDurationMinutes: Int {
+        get { breakDurationSeconds / 60 }
+        set { breakDurationSeconds = newValue * 60 }
     }
 
     var idleThresholdSeconds: Int {
@@ -177,15 +201,23 @@ class AppSettings: ObservableObject {
 
     // MARK: - Helper Methods
 
+    /// Deliberately excludes `launchAtLogin`. Writing that key registers or
+    /// unregisters a macOS login item — real system state, not a preference.
     func resetToDefaults() {
-        workIntervalMinutes = 20
-        breakDurationSeconds = 20
+        workIntervalMinutes = 25
+        breakDurationSeconds = 300
         preBreakWarningSeconds = 30
         breakStyle = .blurScreen
+        requireBreakDismissal = true
         soundEnabled = true
-        sessionType = .standard
         idleDetectionEnabled = true
         idleThresholdMinutes = 5
         dailyBreakGoal = 24
+    }
+
+    // MARK: - Private
+
+    private static func clamp(_ value: Int, to range: ClosedRange<Int>) -> Int {
+        min(max(value, range.lowerBound), range.upperBound)
     }
 }

@@ -134,37 +134,6 @@ struct BreakStats: Codable {
     }
 }
 
-/// Session type for different work patterns
-enum SessionType: String, CaseIterable, Identifiable {
-    case standard = "20-20-20"
-    case pomodoro = "Pomodoro (25/5)"
-    case custom = "Custom"
-
-    var id: String { rawValue }
-
-    var workMinutes: Int {
-        switch self {
-        case .standard:
-            return 20
-        case .pomodoro:
-            return 25
-        case .custom:
-            return 20 // Default, will be overridden by user settings
-        }
-    }
-
-    var breakSeconds: Int {
-        switch self {
-        case .standard:
-            return 20
-        case .pomodoro:
-            return 300 // 5 minutes
-        case .custom:
-            return 20 // Default, will be overridden by user settings
-        }
-    }
-}
-
 /// Water reminder style options
 enum WaterReminderStyle: String, CaseIterable, Identifiable {
     case blurScreen = "Blur Screen"

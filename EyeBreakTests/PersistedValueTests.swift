@@ -37,24 +37,6 @@ final class PersistedValueTests: XCTestCase {
         }
     }
 
-    // MARK: - SessionType
-
-    func testSessionTypeRawValues() {
-        XCTAssertEqual(SessionType.standard.rawValue, "20-20-20")
-        XCTAssertEqual(SessionType.pomodoro.rawValue, "Pomodoro (25/5)")
-        XCTAssertEqual(SessionType.custom.rawValue, "Custom")
-    }
-
-    func testStandardSessionMatchesTheTwentyRule() {
-        XCTAssertEqual(SessionType.standard.workMinutes, 20)
-        XCTAssertEqual(SessionType.standard.breakSeconds, 20)
-    }
-
-    func testPomodoroSessionIsTwentyFiveOnFive() {
-        XCTAssertEqual(SessionType.pomodoro.workMinutes, 25)
-        XCTAssertEqual(SessionType.pomodoro.breakSeconds, 300)
-    }
-
     // MARK: - WaterReminderStyle
 
     func testWaterReminderStyleRawValues() {

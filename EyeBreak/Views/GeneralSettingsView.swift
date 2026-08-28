@@ -53,21 +53,6 @@ struct GeneralSettingsView: View {
             }
 
             Section {
-                Picker("Session Type", selection: $settings.sessionType) {
-                    ForEach(SessionType.allCases) { type in
-                        Text(type.rawValue).tag(type)
-                    }
-                }
-                .onChange(of: settings.sessionType) { _, _ in
-                    // Session type change will automatically update intervals
-                }
-            } header: {
-                SectionHeaderView(title: "Session Type", icon: "clock.badge.checkmark", color: .blue)
-            } footer: {
-                Text(sessionTypeDescription)
-            }
-
-            Section {
                 SmartScheduleView()
             } header: {
                 SectionHeaderView(title: "Smart Schedule", icon: "calendar.badge.clock", color: .purple)
@@ -92,16 +77,5 @@ struct GeneralSettingsView: View {
         }
         .formStyle(.grouped)
         .padding()
-    }
-
-    private var sessionTypeDescription: String {
-        switch settings.sessionType {
-        case .standard:
-            return "20-20-20 rule: Every 20 minutes, look 20 feet away for 20 seconds"
-        case .pomodoro:
-            return "Pomodoro technique: 25 minutes of work, 5 minutes break"
-        case .custom:
-            return "Customize your own work and break intervals"
-        }
     }
 }
