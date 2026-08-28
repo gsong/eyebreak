@@ -20,7 +20,6 @@
 		A1000000D /* ScreenBlurManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000C /* ScreenBlurManager.swift */; };
 		A10000091 /* AccessibilityPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000090 /* AccessibilityPermission.swift */; };
 		A100000B1 /* SettingsWindowHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000B0 /* SettingsWindowHost.swift */; };
-		A1000000F /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000E /* MenuBarView.swift */; };
 		A10000011 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010 /* SettingsView.swift */; };
 		A10000013 /* BreakOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000012 /* BreakOverlayView.swift */; };
 		A10000017 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000016 /* StatsView.swift */; };
@@ -55,8 +54,6 @@
 		30C95D47D6F717E6E3425919 /* AnimatedEyeExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAE8FF5D847207D650A5E2C /* AnimatedEyeExerciseView.swift */; };
 		3DA6CC3F2380D8BBF465981E /* StatsInsightsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8D1D0F4AC45D42AD82BB51 /* StatsInsightsSection.swift */; };
 		E4132E77AFEACC62B676EA55 /* StatsChartSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5580CB6C2F04A4DD0D5F85B /* StatsChartSection.swift */; };
-		E147E481AA0C15CAB3AD95A4 /* MenuBarStatusSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5D0908FEF773853E59F78D /* MenuBarStatusSection.swift */; };
-		351C779DABBF0160CC8DA8E1 /* MenuBarControlsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 968EED0D8718D3C3E25A8214 /* MenuBarControlsSection.swift */; };
 		0196CB232F68722039D49092 /* BreakOverlayContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6059A8030254621E6BB628 /* BreakOverlayContent.swift */; };
 		BFF4EF85B07AFD437A19D0BE /* BreakOverlayTimerDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0678129D3C7B6E5E6FA6BFFB /* BreakOverlayTimerDisplay.swift */; };
 		01E62675913B56A69240ADEC /* FloatingBreakContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8104C72960C125EFC054E5CE /* FloatingBreakContent.swift */; };
@@ -94,7 +91,6 @@
 		A1000000C /* ScreenBlurManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenBlurManager.swift; sourceTree = "<group>"; };
 		A10000090 /* AccessibilityPermission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPermission.swift; sourceTree = "<group>"; };
 		A100000B0 /* SettingsWindowHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowHost.swift; sourceTree = "<group>"; };
-		A1000000E /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
 		A10000010 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A10000012 /* BreakOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayView.swift; sourceTree = "<group>"; };
 		A10000016 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
@@ -128,8 +124,6 @@
 		4FAE8FF5D847207D650A5E2C /* AnimatedEyeExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedEyeExerciseView.swift; sourceTree = "<group>"; };
 		DA8D1D0F4AC45D42AD82BB51 /* StatsInsightsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsInsightsSection.swift; sourceTree = "<group>"; };
 		D5580CB6C2F04A4DD0D5F85B /* StatsChartSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsChartSection.swift; sourceTree = "<group>"; };
-		9A5D0908FEF773853E59F78D /* MenuBarStatusSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarStatusSection.swift; sourceTree = "<group>"; };
-		968EED0D8718D3C3E25A8214 /* MenuBarControlsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarControlsSection.swift; sourceTree = "<group>"; };
 		6E6059A8030254621E6BB628 /* BreakOverlayContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayContent.swift; sourceTree = "<group>"; };
 		0678129D3C7B6E5E6FA6BFFB /* BreakOverlayTimerDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayTimerDisplay.swift; sourceTree = "<group>"; };
 		8104C72960C125EFC054E5CE /* FloatingBreakContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingBreakContent.swift; sourceTree = "<group>"; };
@@ -223,8 +217,6 @@
 				8104C72960C125EFC054E5CE /* FloatingBreakContent.swift */,
 				0678129D3C7B6E5E6FA6BFFB /* BreakOverlayTimerDisplay.swift */,
 				6E6059A8030254621E6BB628 /* BreakOverlayContent.swift */,
-				968EED0D8718D3C3E25A8214 /* MenuBarControlsSection.swift */,
-				9A5D0908FEF773853E59F78D /* MenuBarStatusSection.swift */,
 				D5580CB6C2F04A4DD0D5F85B /* StatsChartSection.swift */,
 				DA8D1D0F4AC45D42AD82BB51 /* StatsInsightsSection.swift */,
 				4FAE8FF5D847207D650A5E2C /* AnimatedEyeExerciseView.swift */,
@@ -233,7 +225,6 @@
 				2FD44D6BCB136B4190685DD8 /* ColorPickerRow.swift */,
 				F84F7A22B8F5C9DCB1394350 /* QuickPresetsView.swift */,
 				99A7D5132E9EA7AB00466080 /* FloatingBreakWindow.swift */,
-				A1000000E /* MenuBarView.swift */,
 				A10000010 /* SettingsView.swift */,
 				A100000B0 /* SettingsWindowHost.swift */,
 				A10000012 /* BreakOverlayView.swift */,
@@ -405,8 +396,6 @@
 				01E62675913B56A69240ADEC /* FloatingBreakContent.swift in Sources */,
 				BFF4EF85B07AFD437A19D0BE /* BreakOverlayTimerDisplay.swift in Sources */,
 				0196CB232F68722039D49092 /* BreakOverlayContent.swift in Sources */,
-				351C779DABBF0160CC8DA8E1 /* MenuBarControlsSection.swift in Sources */,
-				E147E481AA0C15CAB3AD95A4 /* MenuBarStatusSection.swift in Sources */,
 				E4132E77AFEACC62B676EA55 /* StatsChartSection.swift in Sources */,
 				3DA6CC3F2380D8BBF465981E /* StatsInsightsSection.swift in Sources */,
 				30C95D47D6F717E6E3425919 /* AnimatedEyeExerciseView.swift in Sources */,
@@ -436,7 +425,6 @@
 				A10000101 /* BreakInputPolicy.swift in Sources */,
 				A10000103 /* BreakInputTap.swift in Sources */,
 				A100000B1 /* SettingsWindowHost.swift in Sources */,
-				A1000000F /* MenuBarView.swift in Sources */,
 				A10000011 /* SettingsView.swift in Sources */,
 				99A7D5142E9EA7AB00466080 /* FloatingBreakWindow.swift in Sources */,
 				A10000013 /* BreakOverlayView.swift in Sources */,
