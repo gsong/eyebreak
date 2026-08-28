@@ -20,9 +20,8 @@ class ScreenBlurManager {
     private var previousFrontmostApp: NSRunningApplication?
     /// The one clock behind every screen's overlay.
     var countdown: BreakCountdown?
-    /// The style and the skip closure of the break in progress. A rebuild needs
-    /// both, and only `showBreakOverlay` is given them.
-    var overlayStyle: OverlayStyle = .blur
+    /// The skip closure of the break in progress. A rebuild needs it, and only
+    /// `showBreakOverlay` is given it.
     var skipHandler: (() -> Void)?
     /// The overlay on the screen that held the pointer when the windows were
     /// built. Only one window can be key, and only one should claim VoiceOver.
@@ -35,11 +34,6 @@ class ScreenBlurManager {
     private var escapeMonitor: Any?
     private let windowQueue = DispatchQueue(label: "com.eyebreak.window", qos: .userInteractive)
 
-    enum OverlayStyle {
-        case blur
-        case exercise
-    }
-
     private init() {}
 
     // MARK: - Public Methods
@@ -50,7 +44,6 @@ class ScreenBlurManager {
     ///   Settings preview never waits.
     func showBreakOverlay(
         duration: Int,
-        style: OverlayStyle,
         awaitsDismissal: Bool,
         onSkip: @escaping () -> Void
     ) {
@@ -59,7 +52,6 @@ class ScreenBlurManager {
         if Thread.isMainThread {
             self.showOverlayOnMainThread(
                 duration: duration,
-                style: style,
                 awaitsDismissal: awaitsDismissal,
                 onSkip: onSkip
             )
@@ -67,7 +59,6 @@ class ScreenBlurManager {
             DispatchQueue.main.async { [weak self] in
                 self?.showOverlayOnMainThread(
                     duration: duration,
-                    style: style,
                     awaitsDismissal: awaitsDismissal,
                     onSkip: onSkip
                 )
@@ -78,8 +69,7 @@ class ScreenBlurManager {
     /// Swaps the overlay to its completion state and leaves it up.
     ///
     /// The keyboard tap stays installed, so the ways out of a break are still the
-    /// ways out of this. A break style with no overlay has nothing to swap, which
-    /// is what the guard inside the countdown covers.
+    /// ways out of this.
     func awaitBreakDismissal() {
         if Thread.isMainThread {
             self.countdown?.awaitDismissal()
@@ -106,7 +96,6 @@ class ScreenBlurManager {
 
     private func showOverlayOnMainThread(
         duration: Int,
-        style: OverlayStyle,
         awaitsDismissal: Bool,
         onSkip: @escaping () -> Void
     ) {
@@ -120,7 +109,6 @@ class ScreenBlurManager {
         self.countdown?.stop()
         BreakInputTap.shared.stop()
 
-        self.overlayStyle = style
         self.skipHandler = {
             // Ensure onSkip is called on main thread safely
             if Thread.isMainThread {

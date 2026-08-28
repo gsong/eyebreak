@@ -56,65 +56,9 @@ enum TimerState: Equatable {
         }
     }
 
-    /// What reaching the end of a break's countdown should do from this state.
-    ///
-    /// This is why a break is announced exactly once. Only `.breaking` yields an
-    /// action that announces, and the Floating Window style runs a clock alongside
-    /// the timer's: both reach zero, and the second one arrives to find the state
-    /// already moved on.
-    ///
-    /// - Parameter awaitsDismissal: What the break was started under, not what
-    ///   the setting says now. The keyboard watchdog was armed from the same
-    ///   value, so the two cannot disagree.
-    func breakEndAction(awaitsDismissal: Bool) -> BreakEndAction {
-        guard case .breaking = self else { return .ignore }
-        return awaitsDismissal ? .awaitDismissal : .endNow
-    }
-
     private func formatTime(_ totalSeconds: Int) -> String {
         let minutes = totalSeconds / 60
         let seconds = totalSeconds % 60
         return String(format: "%d:%02d", minutes, seconds)
-    }
-}
-
-/// What the end of a break's countdown does. See `TimerState.breakEndAction`.
-enum BreakEndAction: Equatable {
-    /// Nothing at all. This break has already ended.
-    case ignore
-    /// Announce the break and start the next work interval now.
-    case endNow
-    /// Announce the break and hold it on screen until the user dismisses it.
-    case awaitDismissal
-}
-
-/// Break style options
-enum BreakStyle: String, CaseIterable, Identifiable {
-    case blurScreen = "Blur Screen"
-    case notificationOnly = "Floating Window"
-    case eyeExercise = "Eye Exercise"
-
-    var id: String { rawValue }
-
-    var description: String {
-        switch self {
-        case .blurScreen:
-            return "Blur your screen during breaks"
-        case .notificationOnly:
-            return "Show a small floating reminder window"
-        case .eyeExercise:
-            return "Guided eye exercise instructions"
-        }
-    }
-
-    var icon: String {
-        switch self {
-        case .blurScreen:
-            return "eye.slash.fill"
-        case .notificationOnly:
-            return "rectangle.inset.filled.and.person.filled"
-        case .eyeExercise:
-            return "figure.walk"
-        }
     }
 }

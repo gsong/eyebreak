@@ -50,7 +50,6 @@ class AppSettings: ObservableObject {
     }
 
     @AppStorage("preBreakWarningSeconds") var preBreakWarningSeconds: Int = 30
-    @AppStorage("breakStyle") private var breakStyleRaw: String = BreakStyle.blurScreen.rawValue
     // Whether a served break waits for the user to dismiss it before the work
     // timer restarts. On, because a break nobody was present for is not a break.
     @AppStorage("requireBreakDismissal") var requireBreakDismissal: Bool = true
@@ -59,8 +58,6 @@ class AppSettings: ObservableObject {
     @AppStorage("idleThresholdMinutes") var idleThresholdMinutes: Int = 5
     @AppStorage("launchAtLogin") var launchAtLogin: Bool = false
     @AppStorage("autoStartTimer") var autoStartTimer: Bool = true // Auto-start timer when app launches
-    @AppStorage("eyeExerciseDurationSeconds") var eyeExerciseDurationSeconds: Int = 300 // 5 minutes default
-    @AppStorage("exerciseIntervalSeconds") var exerciseIntervalSeconds: Int = 3 // Change direction every 3 seconds
 
     // Color Theme Settings
     @AppStorage("ambientReminderThemeType") var ambientReminderThemeTypeRaw: String = ColorThemeType.defaultTheme.rawValue
@@ -76,11 +73,6 @@ class AppSettings: ObservableObject {
     var cachedWaterReminderRandomTheme: ColorTheme?
 
     // MARK: - Computed Properties
-
-    var breakStyle: BreakStyle {
-        get { BreakStyle(rawValue: breakStyleRaw) ?? .blurScreen }
-        set { breakStyleRaw = newValue.rawValue }
-    }
 
     var workIntervalSeconds: Int {
         workIntervalMinutes * 60
@@ -109,7 +101,6 @@ class AppSettings: ObservableObject {
         workIntervalMinutes = 25
         breakDurationSeconds = 300
         preBreakWarningSeconds = 30
-        breakStyle = .blurScreen
         requireBreakDismissal = true
         soundEnabled = true
         idleDetectionEnabled = true

@@ -25,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   seconds. It also restores "Wait for me to dismiss the break", and deliberately
   leaves Launch at Login alone, because that key registers a macOS login item
   rather than storing a preference
+- **"Wait for me to dismiss the break" now sits under Timing** - It lived in the
+  Break Style section, which no longer exists. The keyboard note that sat under
+  it moved with it
 
 ### Removed
 
@@ -60,6 +63,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   lines. The tab was never opened. The timer also stops writing the
   `breakStatistics` history it kept behind that tab, so nothing records how many
   breaks you take or skip
+
+- **The Floating Window and Eye Exercise break styles** - Both are gone, and with
+  them the Break Style picker, the Preview Break Style button, and the Exercise
+  Interval and Exercise Duration sliders. Every break is now the full-screen
+  overlay. Six files and 1,043 lines out. The setting was never moved off Blur
+  Screen
+
+  The Floating Window's second clock went with it, so the timer no longer needs
+  the `BreakEndAction` guard that kept one break to one announcement, and the
+  overlay no longer carries a style to switch on
 
 ## [2.5.0] - 2026-08-27
 

@@ -107,8 +107,6 @@ struct SettingsView: View {
 
 // MARK: - Settings Section Card
 
-// MARK: - Break Style Option Card
-
 // MARK: - Enhanced Slider Card Component
 
 // MARK: - Custom Icon Picker View

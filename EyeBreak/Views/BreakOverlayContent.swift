@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// What the overlay shows: the break itself, the eye exercise, and the completion state.
+// What the overlay shows: the break itself and the completion state.
 
 extension BreakOverlayView {
     /// What a served break looks like while it waits. No countdown, because
@@ -136,12 +136,5 @@ extension BreakOverlayView {
             // Enhanced timer display
             timerDisplay
         }
-    }
-
-    var eyeExerciseContent: some View {
-        AnimatedEyeExerciseView(
-            remainingSeconds: countdown.remainingSeconds,
-            totalDuration: countdown.totalSeconds
-        )
     }
 }
