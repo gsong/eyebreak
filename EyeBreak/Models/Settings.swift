@@ -29,7 +29,6 @@ class AppSettings: ObservableObject {
     @AppStorage("idleDetectionEnabled") var idleDetectionEnabled: Bool = true
     @AppStorage("idleThresholdMinutes") var idleThresholdMinutes: Int = 5
     @AppStorage("launchAtLogin") var launchAtLogin: Bool = false
-    @AppStorage("hasLaunchedBefore") var hasLaunchedBefore: Bool = false
     @AppStorage("autoStartTimer") var autoStartTimer: Bool = true // Auto-start timer when app launches
     @AppStorage("dailyBreakGoal") var dailyBreakGoal: Int = 24 // Roughly every 20 min for 8 hours
     @AppStorage("eyeExerciseDurationSeconds") var eyeExerciseDurationSeconds: Int = 300 // 5 minutes default
@@ -188,9 +187,5 @@ class AppSettings: ObservableObject {
         idleDetectionEnabled = true
         idleThresholdMinutes = 5
         dailyBreakGoal = 24
-    }
-
-    func completeOnboarding() {
-        hasLaunchedBefore = true
     }
 }
