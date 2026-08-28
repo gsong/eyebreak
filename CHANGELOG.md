@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-08-27
+
 ### Added
 
 #### Breaks Wait for You
@@ -69,6 +71,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   | Running | 38.3% | 13.5% |
 
   The 13.5% that remains is Settings re-rendering for the once-a-second countdown, which is real work rather than an animation
+
+### Changed
+
+#### The About Tab Points at This Repo
+
+- **GitHub and Report Issue now open `gsong/eyebreak`** - They opened `cheat2001/eyebreak`, so "Report an Issue" sent you to a repo nobody here can triage
+
+#### The Version Reads Plainly
+
+- **The `-dev.<sha>` suffix is gone** - About showed `2.4.1-dev.eeabb54` and now shows `2.4.1`. Local builds are the only builds, so marking one as local said nothing
 
 ### Removed
 
@@ -657,7 +669,8 @@ None! Zero external dependencies. Pure Swift and native frameworks only.
 - **Icons**: SF Symbols
 - **License**: MIT (commercial use allowed)
 
-[Unreleased]: https://github.com/gsong/eyebreak/compare/v2.4.1...HEAD
+[Unreleased]: https://github.com/gsong/eyebreak/compare/v2.5.0...HEAD
+[2.5.0]: https://github.com/gsong/eyebreak/compare/v2.4.1...v2.5.0
 [2.3.0]: https://github.com/gsong/eyebreak/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/gsong/eyebreak/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/gsong/eyebreak/compare/v2.0.0...v2.1.0
