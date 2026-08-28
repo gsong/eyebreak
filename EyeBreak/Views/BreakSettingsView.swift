@@ -18,8 +18,6 @@ struct BreakSettingsView: View {
     var body: some View {
         Form {
             timingSection
-            breakStyleSection
-            eyeExerciseSection
             colorThemesSection
         }
         .formStyle(.grouped)
@@ -66,12 +64,43 @@ struct BreakSettingsView: View {
                 ) { newValue in
                     settings.preBreakWarningSeconds = newValue
                 }
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Toggle("Wait for me to dismiss the break", isOn: $settings.requireBreakDismissal)
+                        .toggleStyle(.switch)
+
+                    Text("The break is counted when it ends, but the screen stays up and your next work interval does not start until you dismiss it.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
         } header: {
             SectionHeaderView(title: "Timing", icon: "clock.fill", color: .blue)
+        } footer: {
+            // The panic chord has to be written down somewhere a user can
+            // find it, because the moment they need it is the moment the
+            // keyboard is doing something they did not expect. The claim is
+            // gated on the grant, which is missing after every update.
+            if accessibility.isTrusted {
+                Text("""
+                A break covers every display and holds the keyboard for its length, so \
+                shortcuts in other apps stay quiet. Press \u{238B} to end a break early. \
+                \u{2303}\u{2325}\u{2318}\u{238B} releases the keyboard and ends the break if \
+                anything goes wrong. \u{2318}\u{2325}\u{238B} still reaches Force Quit, but it \
+                opens behind the overlay.
+                """)
+                    .font(.caption)
+            } else {
+                Text("""
+                A break covers every display, and \u{238B} ends it early. Holding the \
+                keyboard as well needs Accessibility permission, which macOS resets on \
+                every update — see Keyboard Shortcuts under About. Until then, shortcuts \
+                in other apps still work during a break.
+                """)
+                    .font(.caption)
+            }
         }
     }
-
-    // MARK: - Preview Function
-
 }

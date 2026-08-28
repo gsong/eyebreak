@@ -26,17 +26,14 @@ extension BreakTimerManager {
     /// The break ran its length. Announce it, then either go straight back to work
     /// or hold the overlay until the user says they are back.
     ///
-    /// Called twice in the Floating Window style, which runs a clock of its own
-    /// alongside this one. `breakEndAction` is what keeps that to one announcement.
+    /// Reads what the break was started under, not what the setting says now. The
+    /// keyboard watchdog was armed from the same value, so the two cannot disagree.
     func serveBreak() {
-        switch state.breakEndAction(awaitsDismissal: breakAwaitsDismissal) {
-        case .ignore:
-            return
-        case .endNow:
-            endBreak()
-        case .awaitDismissal:
+        if breakAwaitsDismissal {
             announceBreakServed()
             awaitDismissal()
+        } else {
+            endBreak()
         }
     }
 
@@ -84,57 +81,17 @@ extension BreakTimerManager {
         startTimer()
     }
 
-    /// Whether the break style puts a full-screen overlay up. The Floating
-    /// Window style does not, and it runs its own timer, so pausing must leave
-    /// it alone.
-    var usesScreenOverlay: Bool {
-        switch settings.breakStyle {
-        case .blurScreen, .eyeExercise:
-            return true
-        case .notificationOnly:
-            return false
-        }
-    }
-
     func showBreakOverlay(duration: Int) {
         // One read of the setting for this break, shared by the overlay, the
         // keyboard watchdog and the end of the countdown. Toggling it mid-break
         // applies to the next break rather than to this one.
         breakAwaitsDismissal = settings.requireBreakDismissal
 
-        switch settings.breakStyle {
-        case .blurScreen:
-            ScreenBlurManager.shared.showBreakOverlay(
-                duration: duration,
-                style: .blur,
-                awaitsDismissal: breakAwaitsDismissal
-            ) { [weak self] in
-                self?.skipBreak()
-            }
-        case .eyeExercise:
-            ScreenBlurManager.shared.showBreakOverlay(
-                duration: duration,
-                style: .exercise,
-                awaitsDismissal: breakAwaitsDismissal
-            ) { [weak self] in
-                self?.skipBreak()
-            }
-        case .notificationOnly:
-            // Show floating window instead of notification only
-            let window = FloatingBreakWindow()
-            window.show(
-                duration: duration,
-                awaitsDismissal: breakAwaitsDismissal,
-                onSkip: { [weak self] in
-                    self?.skipBreak()
-                },
-                onComplete: { [weak self] in
-                    self?.serveBreak()
-                },
-                onDismiss: { [weak self] in
-                    self?.dismissBreak()
-                }
-            )
+        ScreenBlurManager.shared.showBreakOverlay(
+            duration: duration,
+            awaitsDismissal: breakAwaitsDismissal
+        ) { [weak self] in
+            self?.skipBreak()
         }
     }
 }

@@ -8,11 +8,10 @@
 import SwiftUI
 import AppKit
 
-/// The frosted backing behind every overlay: the break screen, the eye
-/// exercise, the floating break panel, and the water reminder.
+/// The frosted backing behind the break overlay, its one remaining caller.
 ///
-/// The defaults are what all four use. They are parameters rather than
-/// constants only because `NSVisualEffectView` is meaningless without them.
+/// The defaults are what it uses. They are parameters rather than constants
+/// only because `NSVisualEffectView` is meaningless without them.
 struct VisualEffectView: NSViewRepresentable {
     var material: NSVisualEffectView.Material = .hudWindow
     var blendingMode: NSVisualEffectView.BlendingMode = .behindWindow

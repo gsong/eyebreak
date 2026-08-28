@@ -116,13 +116,10 @@ class BreakTimerManager: ObservableObject {
     /// The next work interval is a full one. The minutes spent waiting were the
     /// user's, not the timer's.
     func dismissBreak() {
-        // Whichever style put the break on screen, this takes it back down —
-        // before the state is checked, and even if Stop has already moved the
-        // timer on. The Floating Window panel does not close itself on the way
-        // here, and a panel whose only button had stopped working would have no
-        // way to close at all.
+        // Takes the overlay back down before the state is checked, and even if
+        // Stop has already moved the timer on. An overlay left up holds the
+        // keyboard until its watchdog gives it back.
         ScreenBlurManager.shared.hideOverlay()
-        FloatingBreakWindow.shared?.hide()
 
         guard case .awaitingDismissal = state else { return }
 
@@ -151,7 +148,7 @@ class BreakTimerManager: ObservableObject {
         // any more, and an overlay left up holds the keyboard until its watchdog
         // gives it back. `resume()` puts the overlay back for what is left of
         // the break.
-        if !wasWorking && usesScreenOverlay {
+        if !wasWorking {
             ScreenBlurManager.shared.hideOverlay()
         }
     }
@@ -167,9 +164,7 @@ class BreakTimerManager: ObservableObject {
             state = .breaking(remainingSeconds: remainingSeconds)
 
             // Put the break back on screen for what is left of it.
-            if usesScreenOverlay {
-                showBreakOverlay(duration: remainingSeconds)
-            }
+            showBreakOverlay(duration: remainingSeconds)
         }
         startTimer()
     }

@@ -12,7 +12,6 @@ struct BreakOverlayView: View {
     /// screen. The view owns no timer of its own; N views counting separately
     /// would drift, and rebuilding the set on a display change would restart them.
     @ObservedObject var countdown: BreakCountdown
-    let style: ScreenBlurManager.OverlayStyle
     let onSkip: () -> Void
     /// Whether this copy of the overlay takes VoiceOver focus. Every screen runs
     /// one, and only the screen the user was working on should claim it.
@@ -31,12 +30,10 @@ struct BreakOverlayView: View {
 
     init(
         countdown: BreakCountdown,
-        style: ScreenBlurManager.OverlayStyle,
         onSkip: @escaping () -> Void,
         claimsAccessibilityFocus: Bool
     ) {
         self.countdown = countdown
-        self.style = style
         self.onSkip = onSkip
         self.claimsAccessibilityFocus = claimsAccessibilityFocus
     }
@@ -62,18 +59,10 @@ struct BreakOverlayView: View {
             VStack(spacing: 40) {
                 Spacer()
 
-                // The break is either running or served. A served one shows the
-                // same completion state whichever style ran it: the exercise is
-                // over, so the dot and its instructions have nothing left to say.
                 if countdown.isAwaitingDismissal {
                     completionContent
                 } else {
-                    switch style {
-                    case .blur:
-                        standardBreakContent
-                    case .exercise:
-                        eyeExerciseContent
-                    }
+                    standardBreakContent
                 }
 
                 Spacer()
@@ -107,8 +96,6 @@ struct BreakOverlayView: View {
 
     // MARK: - Standard Break Content
 
-    // MARK: - Eye Exercise Content
-
     // MARK: - Timer Display
 
     // MARK: - Dismiss Hint
@@ -136,8 +123,6 @@ struct BreakOverlayView: View {
     }
 
 }
-
-// MARK: - Animated Eye Exercise View
 
 // MARK: - Visual Effect View (for blur)
 

@@ -119,60 +119,6 @@ struct SettingsSectionCard<Content: View>: View {
     }
 }
 
-struct BreakStyleOptionCard: View {
-    let style: BreakStyle
-    let isSelected: Bool
-    let onSelect: () -> Void
-
-    var body: some View {
-        Button(action: onSelect) {
-            HStack(spacing: 14) {
-                // Icon
-                ZStack {
-                    Circle()
-                        .fill(isSelected ? Color.purple.opacity(0.15) : Color.secondary.opacity(0.08))
-                        .frame(width: 44, height: 44)
-
-                    Image(systemName: style.icon)
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(isSelected ? .purple : .secondary)
-                }
-
-                // Text
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(style.rawValue)
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(isSelected ? .primary : .secondary)
-
-                    Text(style.description)
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-                }
-
-                Spacer()
-
-                // Checkmark
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 20))
-                        .foregroundColor(.purple)
-                }
-            }
-            .padding(12)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(isSelected ? Color.purple.opacity(0.08) : Color.secondary.opacity(0.04))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(isSelected ? Color.purple.opacity(0.3) : Color.clear, lineWidth: 1.5)
-            )
-        }
-        .buttonStyle(.plain)
-    }
-}
-
 struct EnhancedSliderCard: View {
     let title: String
     let value: Int

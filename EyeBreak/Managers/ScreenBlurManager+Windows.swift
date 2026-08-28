@@ -35,7 +35,6 @@ extension ScreenBlurManager {
             // overlay holds focus.
             let overlayView = BreakOverlayView(
                 countdown: countdown,
-                style: self.overlayStyle,
                 onSkip: onSkip,
                 claimsAccessibilityFocus: screen == pointerScreen
             )
