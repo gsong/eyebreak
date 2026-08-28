@@ -38,20 +38,24 @@ struct BreakSettingsView: View {
                     unit: "min",
                     icon: "desktopcomputer",
                     color: .blue,
-                    range: 10...60
+                    range: AppSettings.workIntervalRange,
+                    step: 5
                 ) { newValue in
-                    settings.workIntervalMinutes = Int(newValue)
+                    settings.workIntervalMinutes = newValue
                 }
 
+                // Minutes, not seconds. A 60...600 second slider gives under a
+                // point per second, so the thumb cannot land on a round number.
                 EnhancedSliderCard(
                     title: "Break Duration",
-                    value: settings.breakDurationSeconds,
-                    unit: "sec",
+                    value: settings.breakDurationMinutes,
+                    unit: "min",
                     icon: "eye.slash",
                     color: .green,
-                    range: 10...120
+                    range: AppSettings.breakDurationMinutesRange,
+                    step: 1
                 ) { newValue in
-                    settings.breakDurationSeconds = Int(newValue)
+                    settings.breakDurationMinutes = newValue
                 }
 
                 EnhancedSliderCard(
@@ -60,9 +64,10 @@ struct BreakSettingsView: View {
                     unit: "sec",
                     icon: "bell.fill",
                     color: .orange,
-                    range: 10...60
+                    range: 10...60,
+                    step: 1
                 ) { newValue in
-                    settings.preBreakWarningSeconds = Int(newValue)
+                    settings.preBreakWarningSeconds = newValue
                 }
             }
         } header: {

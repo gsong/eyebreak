@@ -91,9 +91,10 @@ extension BreakSettingsView {
                         unit: "min",
                         icon: "clock.fill",
                         color: .blue,
-                        range: 1...15
+                        range: 1...15,
+                        step: 1
                     ) { newValue in
-                        settings.ambientReminderIntervalMinutes = Int(newValue)
+                        settings.ambientReminderIntervalMinutes = newValue
                     }
 
                     // Enhanced duration slider
@@ -103,9 +104,10 @@ extension BreakSettingsView {
                         unit: "sec",
                         icon: "timer",
                         color: .green,
-                        range: 3...15
+                        range: 3...15,
+                        step: 1
                     ) { newValue in
-                        settings.ambientReminderDurationSeconds = Int(newValue)
+                        settings.ambientReminderDurationSeconds = newValue
                     }
 
                     // Enhanced test button

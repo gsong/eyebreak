@@ -10,7 +10,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Break Duration is set in minutes, and reaches 10** - The slider used to stop
+  at 120 seconds while the Pomodoro preset had written 300, so one drag silently
+  cut a 5-minute break to 2 minutes. It now runs 1 to 10 minutes in whole-minute
+  stops. The setting is still stored in seconds, so nothing on disk moved
+- **Work Interval runs 15 to 45 minutes in 5-minute stops** - Narrowed from 10 to
+  60. Both timing settings now clamp to their range when read, so the timer and
+  Settings can never disagree
+- **Reset to Defaults writes 25 minutes and 5 minutes** - Was 20 minutes and 20
+  seconds. It also restores "Wait for me to dismiss the break", and deliberately
+  leaves Launch at Login alone, because that key registers a macOS login item
+  rather than storing a preference
+
 ### Removed
+
+- **The Session Type picker** - 20-20-20, Pomodoro, and Custom were three ways to
+  write two numbers the sliders already set, and picking one silently overwrote
+  both. The work interval and break duration are now plain settings
 
 - **The onboarding flow** - Four view files totalling 650 lines that nothing had
   constructed since before this fork. The welcome, 20-20-20 rule, features, and

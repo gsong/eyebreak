@@ -179,8 +179,9 @@ struct EnhancedSliderCard: View {
     let unit: String
     let icon: String
     let color: Color
-    let range: ClosedRange<Double>
-    let onChange: (Double) -> Void
+    let range: ClosedRange<Int>
+    let step: Int
+    let onChange: (Int) -> Void
 
     @State private var animateValue = false
 
@@ -244,15 +245,15 @@ struct EnhancedSliderCard: View {
                 value: Binding(
                     get: { Double(value) },
                     set: { newValue in
-                        onChange(newValue)
+                        onChange(Int(newValue.rounded()))
                         animateValue = true
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                             animateValue = false
                         }
                     }
                 ),
-                in: range,
-                step: 1
+                in: Double(range.lowerBound)...Double(range.upperBound),
+                step: Double(step)
             )
             .tint(color)
         }
