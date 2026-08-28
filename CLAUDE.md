@@ -49,3 +49,20 @@ did.
 Multi-part work lands as a `gh-stack` of stacked pull requests, one concern per
 layer. Isolate any build-affecting change in its own layer so a red CI run is
 unambiguous.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in `gsong/eyebreak` GitHub Issues, driven by the `gh` CLI. See
+`docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five canonical triage roles, each label string equal to its name. See
+`docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `CONTEXT.md` and `docs/adr/` at the repo root. See
+`docs/agents/domain.md`.
