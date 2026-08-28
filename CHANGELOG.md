@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- **The onboarding flow** - Four view files totalling 650 lines that nothing had
+  constructed since before this fork. The welcome, 20-20-20 rule, features, and
+  permissions pages are gone, along with the `hasLaunchedBefore` setting and
+  `completeOnboarding()` that tracked a flow no one could reach
+
 ## [2.5.0] - 2026-08-27
 
 ### Added
