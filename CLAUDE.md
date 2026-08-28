@@ -46,9 +46,17 @@ did.
 
 ## Pull requests
 
-Multi-part work lands as a `gh-stack` of stacked pull requests, one concern per
-layer. Isolate any build-affecting change in its own layer so a red CI run is
-unambiguous.
+Multi-part work lands one concern per layer, one pull request per layer, merged
+when CI is green before the next layer starts. Use a `gh-stack` when layers are
+genuinely in flight together; a chain of tickets worked one session at a time does
+not need one, and `main` stays installable at every step.
+
+**Build-affecting means project-level**: deployment target, scheme, dependencies.
+Isolate those in their own layer so a red CI run is unambiguous. Adding or removing
+source files does not count — `project.pbxproj` carries a reference per file, so
+nearly every layer touches it and the rule would separate nothing.
+
+Settled 2026-08-28 in [#56](https://github.com/gsong/eyebreak/issues/56).
 
 ## Agent skills
 
