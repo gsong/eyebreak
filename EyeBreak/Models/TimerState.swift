@@ -133,20 +133,3 @@ struct BreakStats: Codable {
         self.totalBreakTime = totalBreakTime
     }
 }
-
-/// Water reminder style options
-enum WaterReminderStyle: String, CaseIterable, Identifiable {
-    case blurScreen = "Blur Screen"
-    case ambient = "Ambient Pop-up"
-
-    var id: String { rawValue }
-
-    var description: String {
-        switch self {
-        case .blurScreen:
-            return "Full screen blur overlay with water reminder"
-        case .ambient:
-            return "Gentle floating reminder window at top of screen"
-        }
-    }
-}

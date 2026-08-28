@@ -11,14 +11,6 @@ import Foundation
 
 extension BreakTimerManager {
     func startBreak() {
-        // Check if Smart Schedule allows breaks now
-        if settings.smartScheduleEnabled && !settings.shouldShowBreaksNow {
-            // Skip to next work session instead of showing break
-            remainingSeconds = settings.workIntervalSeconds
-            state = .working(remainingSeconds: remainingSeconds)
-            return
-        }
-
         remainingSeconds = settings.breakDurationSeconds
         state = .breaking(remainingSeconds: remainingSeconds)
 
@@ -43,9 +35,6 @@ extension BreakTimerManager {
         case .endNow:
             endBreak()
         case .awaitDismissal:
-            // Reset forced break flag
-            isForcedBreak = false
-
             creditBreak()
             awaitDismissal()
         }
@@ -55,9 +44,6 @@ extension BreakTimerManager {
     /// wait turned off, or the user skipped it — a skip is already a deliberate
     /// act, so it does not ask for a second one.
     func endBreak() {
-        // Reset forced break flag
-        isForcedBreak = false
-
         creditBreak()
 
         ScreenBlurManager.shared.hideOverlay()

@@ -20,8 +20,6 @@ struct BreakSettingsView: View {
             timingSection
             breakStyleSection
             eyeExerciseSection
-            ambientRemindersSection
-            waterRemindersSection
             colorThemesSection
             goalsSection
         }

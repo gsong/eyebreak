@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		997554F82EA3776C00D0AEE1 /* WaterReminderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 997554F72EA3776C00D0AEE1 /* WaterReminderManager.swift */; };
 		99A7D5142E9EA7AB00466080 /* FloatingBreakWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99A7D5132E9EA7AB00466080 /* FloatingBreakWindow.swift */; };
 		99BD678B2E92516200D6FF8C /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BD678A2E92516200D6FF8C /* StatusBarController.swift */; };
 		99EB42272EACA748003A7CDA /* LaunchAtLoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99EB42262EACA748003A7CDA /* LaunchAtLoginManager.swift */; };
@@ -24,8 +23,6 @@
 		A10000013 /* BreakOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000012 /* BreakOverlayView.swift */; };
 		A10000017 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000016 /* StatsView.swift */; };
 		A10000019 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A10000018 /* Assets.xcassets */; };
-		A1000001D /* AmbientReminderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001C /* AmbientReminderManager.swift */; };
-		A1000001F /* AmbientReminderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001E /* AmbientReminderView.swift */; };
 		A10000023 /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000021 /* ColorTheme.swift */; };
 		A10000026 /* BreakCountdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000025 /* BreakCountdown.swift */; };
 		A10000101 /* BreakInputPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000100 /* BreakInputPolicy.swift */; };
@@ -41,10 +38,6 @@
 		A20000014 /* BreakInputPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000100 /* BreakInputPolicy.swift */; };
 		A20000009 /* BreakInputPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000008 /* BreakInputPolicyTests.swift */; };
 		A20000007 /* BreakCountdownTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000006 /* BreakCountdownTests.swift */; };
-		8BF73246C7384D65C7FB538F /* ReminderType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4DD990800F60CB974EB399 /* ReminderType.swift */; };
-		B2275D936ECAB48734F93D53 /* WaterReminderViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B56DB9A6379E9C3C282B110 /* WaterReminderViews.swift */; };
-		0FA06A6CB0A9C83FCF426FD9 /* WaterMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BA14D6B8020FD343ABF8DF /* WaterMessage.swift */; };
-		55D4652195A03C1D36211785 /* WaterReminderManager+Pausing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D3C869A776923107000D26 /* WaterReminderManager+Pausing.swift */; };
 		1E25122978258ECDAE8473D5 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1111B6FE9F816B497AC899D3 /* SoundManager.swift */; };
 		DA35B4CFD82C9E4B6C2945BF /* BreakOverlayWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E20054B505D04DEEAFCBEC /* BreakOverlayWindow.swift */; };
 		97B6705C596B5A145BE6721B /* QuickPresetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F84F7A22B8F5C9DCB1394350 /* QuickPresetsView.swift */; };
@@ -63,22 +56,17 @@
 		B981AD9518E7AE8A34B57FDC /* AppSettings+Themes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB9FFA02D21C54F0E5FCBF8 /* AppSettings+Themes.swift */; };
 		01DAFD725FA797299F2FE589 /* AppSettings+Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65217B2F84779429440937F /* AppSettings+Statistics.swift */; };
 		A05F6BD9DC4FB75F70E0FD94 /* SettingsComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710FE3BF2F1DB48C20C0E946 /* SettingsComponents.swift */; };
-		1BDFCF869681C54EA2367011 /* SettingsIconPickers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453E143DECE667A92D015EC5 /* SettingsIconPickers.swift */; };
-		A99D1A9E68C75ECF19F31076 /* SmartScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69475CA160679CF3E0BAD0AF /* SmartScheduleView.swift */; };
 		8E0A253269E5B76762339334 /* TimerStatusBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60FC3767A779F1C5F49A03E /* TimerStatusBanner.swift */; };
 		882D9B102CEB5B88B175AA11 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABD3A2BEA778F8771F41474C /* AboutView.swift */; };
 		E2BE58DAEC5DB7498BBF9035 /* UnifiedCountdownCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6CE3C421125866CF99B009 /* UnifiedCountdownCard.swift */; };
 		BCB43827D78D9BE740C85290 /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC152E86318450BAA3F983BA /* GeneralSettingsView.swift */; };
 		7F68689E694F07B089DB0CFF /* BreakSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FCF7449772244E6A52768F /* BreakSettingsView.swift */; };
-		D6D899D573FAA4076568E972 /* BreakSettingsAmbientSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B542F55510038CDB6DA03C8 /* BreakSettingsAmbientSection.swift */; };
-		92EEE9B391DD06F8B5C2FAB1 /* BreakSettingsWaterSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4603881EBB0BE43E31F7964 /* BreakSettingsWaterSection.swift */; };
 		F897CB0D1A95264C76D9D69C /* BreakSettingsAppearanceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304592FDB20DEA3FFEA217E5 /* BreakSettingsAppearanceSection.swift */; };
 		30276BAFC88B604B51044572 /* BreakSettingsStylePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2174A190C94E5FF17E2BAC3A /* BreakSettingsStylePreview.swift */; };
 		A46807A81CD8CD0D299CAB6E /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0D07EE568D00A62BEA5BB1 /* VisualEffectView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		997554F72EA3776C00D0AEE1 /* WaterReminderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterReminderManager.swift; sourceTree = "<group>"; };
 		99A7D5132E9EA7AB00466080 /* FloatingBreakWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingBreakWindow.swift; sourceTree = "<group>"; };
 		99BD678A2E92516200D6FF8C /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
 		99EB42262EACA748003A7CDA /* LaunchAtLoginManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginManager.swift; sourceTree = "<group>"; };
@@ -97,8 +85,6 @@
 		A10000018 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1000001A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1000001B /* EyeBreak.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EyeBreak.entitlements; sourceTree = "<group>"; };
-		A1000001C /* AmbientReminderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmbientReminderManager.swift; sourceTree = "<group>"; };
-		A1000001E /* AmbientReminderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmbientReminderView.swift; sourceTree = "<group>"; };
 		A10000021 /* ColorTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTheme.swift; sourceTree = "<group>"; };
 		A10000025 /* BreakCountdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakCountdown.swift; sourceTree = "<group>"; };
 		A10000100 /* BreakInputPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakInputPolicy.swift; sourceTree = "<group>"; };
@@ -111,10 +97,6 @@
 		A20000006 /* BreakCountdownTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakCountdownTests.swift; sourceTree = "<group>"; };
 		A20000008 /* BreakInputPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakInputPolicyTests.swift; sourceTree = "<group>"; };
 		A2FFFFFF1 /* EyeBreakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EyeBreakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		3A4DD990800F60CB974EB399 /* ReminderType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderType.swift; sourceTree = "<group>"; };
-		5B56DB9A6379E9C3C282B110 /* WaterReminderViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterReminderViews.swift; sourceTree = "<group>"; };
-		86BA14D6B8020FD343ABF8DF /* WaterMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterMessage.swift; sourceTree = "<group>"; };
-		17D3C869A776923107000D26 /* WaterReminderManager+Pausing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaterReminderManager+Pausing.swift"; sourceTree = "<group>"; };
 		1111B6FE9F816B497AC899D3 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
 		31E20054B505D04DEEAFCBEC /* BreakOverlayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayWindow.swift; sourceTree = "<group>"; };
 		F84F7A22B8F5C9DCB1394350 /* QuickPresetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickPresetsView.swift; sourceTree = "<group>"; };
@@ -133,15 +115,11 @@
 		9EB9FFA02D21C54F0E5FCBF8 /* AppSettings+Themes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppSettings+Themes.swift"; sourceTree = "<group>"; };
 		B65217B2F84779429440937F /* AppSettings+Statistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppSettings+Statistics.swift"; sourceTree = "<group>"; };
 		710FE3BF2F1DB48C20C0E946 /* SettingsComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsComponents.swift; sourceTree = "<group>"; };
-		453E143DECE667A92D015EC5 /* SettingsIconPickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsIconPickers.swift; sourceTree = "<group>"; };
-		69475CA160679CF3E0BAD0AF /* SmartScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartScheduleView.swift; sourceTree = "<group>"; };
 		B60FC3767A779F1C5F49A03E /* TimerStatusBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerStatusBanner.swift; sourceTree = "<group>"; };
 		ABD3A2BEA778F8771F41474C /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		6B6CE3C421125866CF99B009 /* UnifiedCountdownCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnifiedCountdownCard.swift; sourceTree = "<group>"; };
 		AC152E86318450BAA3F983BA /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
 		94FCF7449772244E6A52768F /* BreakSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakSettingsView.swift; sourceTree = "<group>"; };
-		0B542F55510038CDB6DA03C8 /* BreakSettingsAmbientSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakSettingsAmbientSection.swift; sourceTree = "<group>"; };
-		C4603881EBB0BE43E31F7964 /* BreakSettingsWaterSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakSettingsWaterSection.swift; sourceTree = "<group>"; };
 		304592FDB20DEA3FFEA217E5 /* BreakSettingsAppearanceSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakSettingsAppearanceSection.swift; sourceTree = "<group>"; };
 		2174A190C94E5FF17E2BAC3A /* BreakSettingsStylePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakSettingsStylePreview.swift; sourceTree = "<group>"; };
 		2C0D07EE568D00A62BEA5BB1 /* VisualEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectView.swift; sourceTree = "<group>"; };
@@ -161,8 +139,6 @@
 		A10000020 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				3A4DD990800F60CB974EB399 /* ReminderType.swift */,
-				86BA14D6B8020FD343ABF8DF /* WaterMessage.swift */,
 				B65217B2F84779429440937F /* AppSettings+Statistics.swift */,
 				9EB9FFA02D21C54F0E5FCBF8 /* AppSettings+Themes.swift */,
 				A10000002 /* TimerState.swift */,
@@ -181,9 +157,7 @@
 				6AF0789BBB5FF132491F1663 /* BreakTimerManager+Break.swift */,
 				31E20054B505D04DEEAFCBEC /* BreakOverlayWindow.swift */,
 				1111B6FE9F816B497AC899D3 /* SoundManager.swift */,
-				17D3C869A776923107000D26 /* WaterReminderManager+Pausing.swift */,
 				99EB42262EACA748003A7CDA /* LaunchAtLoginManager.swift */,
-				997554F72EA3776C00D0AEE1 /* WaterReminderManager.swift */,
 				99BD678A2E92516200D6FF8C /* StatusBarController.swift */,
 				A10000006 /* BreakTimerManager.swift */,
 				A10000008 /* IdleDetector.swift */,
@@ -192,7 +166,6 @@
 				A10000090 /* AccessibilityPermission.swift */,
 				A10000100 /* BreakInputPolicy.swift */,
 				A10000102 /* BreakInputTap.swift */,
-				A1000001C /* AmbientReminderManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -201,18 +174,13 @@
 			isa = PBXGroup;
 			children = (
 				2C0D07EE568D00A62BEA5BB1 /* VisualEffectView.swift */,
-				5B56DB9A6379E9C3C282B110 /* WaterReminderViews.swift */,
 				2174A190C94E5FF17E2BAC3A /* BreakSettingsStylePreview.swift */,
 				304592FDB20DEA3FFEA217E5 /* BreakSettingsAppearanceSection.swift */,
-				C4603881EBB0BE43E31F7964 /* BreakSettingsWaterSection.swift */,
-				0B542F55510038CDB6DA03C8 /* BreakSettingsAmbientSection.swift */,
 				94FCF7449772244E6A52768F /* BreakSettingsView.swift */,
 				AC152E86318450BAA3F983BA /* GeneralSettingsView.swift */,
 				6B6CE3C421125866CF99B009 /* UnifiedCountdownCard.swift */,
 				ABD3A2BEA778F8771F41474C /* AboutView.swift */,
 				B60FC3767A779F1C5F49A03E /* TimerStatusBanner.swift */,
-				69475CA160679CF3E0BAD0AF /* SmartScheduleView.swift */,
-				453E143DECE667A92D015EC5 /* SettingsIconPickers.swift */,
 				710FE3BF2F1DB48C20C0E946 /* SettingsComponents.swift */,
 				8104C72960C125EFC054E5CE /* FloatingBreakContent.swift */,
 				0678129D3C7B6E5E6FA6BFFB /* BreakOverlayTimerDisplay.swift */,
@@ -229,7 +197,6 @@
 				A100000B0 /* SettingsWindowHost.swift */,
 				A10000012 /* BreakOverlayView.swift */,
 				A10000016 /* StatsView.swift */,
-				A1000001E /* AmbientReminderView.swift */,
 				A10000022 /* ColorThemeSettingsView.swift */,
 			);
 			path = Views;
@@ -378,15 +345,11 @@
 				A46807A81CD8CD0D299CAB6E /* VisualEffectView.swift in Sources */,
 				30276BAFC88B604B51044572 /* BreakSettingsStylePreview.swift in Sources */,
 				F897CB0D1A95264C76D9D69C /* BreakSettingsAppearanceSection.swift in Sources */,
-				92EEE9B391DD06F8B5C2FAB1 /* BreakSettingsWaterSection.swift in Sources */,
-				D6D899D573FAA4076568E972 /* BreakSettingsAmbientSection.swift in Sources */,
 				7F68689E694F07B089DB0CFF /* BreakSettingsView.swift in Sources */,
 				BCB43827D78D9BE740C85290 /* GeneralSettingsView.swift in Sources */,
 				E2BE58DAEC5DB7498BBF9035 /* UnifiedCountdownCard.swift in Sources */,
 				882D9B102CEB5B88B175AA11 /* AboutView.swift in Sources */,
 				8E0A253269E5B76762339334 /* TimerStatusBanner.swift in Sources */,
-				A99D1A9E68C75ECF19F31076 /* SmartScheduleView.swift in Sources */,
-				1BDFCF869681C54EA2367011 /* SettingsIconPickers.swift in Sources */,
 				A05F6BD9DC4FB75F70E0FD94 /* SettingsComponents.swift in Sources */,
 				01DAFD725FA797299F2FE589 /* AppSettings+Statistics.swift in Sources */,
 				B981AD9518E7AE8A34B57FDC /* AppSettings+Themes.swift in Sources */,
@@ -405,10 +368,6 @@
 				97B6705C596B5A145BE6721B /* QuickPresetsView.swift in Sources */,
 				DA35B4CFD82C9E4B6C2945BF /* BreakOverlayWindow.swift in Sources */,
 				1E25122978258ECDAE8473D5 /* SoundManager.swift in Sources */,
-				55D4652195A03C1D36211785 /* WaterReminderManager+Pausing.swift in Sources */,
-				0FA06A6CB0A9C83FCF426FD9 /* WaterMessage.swift in Sources */,
-				B2275D936ECAB48734F93D53 /* WaterReminderViews.swift in Sources */,
-				8BF73246C7384D65C7FB538F /* ReminderType.swift in Sources */,
 				A10000001 /* EyeBreakApp.swift in Sources */,
 				A10000003 /* TimerState.swift in Sources */,
 				A10000005 /* Settings.swift in Sources */,
@@ -417,7 +376,6 @@
 				99BD678B2E92516200D6FF8C /* StatusBarController.swift in Sources */,
 				99EB42272EACA748003A7CDA /* LaunchAtLoginManager.swift in Sources */,
 				A10000007 /* BreakTimerManager.swift in Sources */,
-				997554F82EA3776C00D0AEE1 /* WaterReminderManager.swift in Sources */,
 				A10000009 /* IdleDetector.swift in Sources */,
 				A1000000B /* NotificationManager.swift in Sources */,
 				A1000000D /* ScreenBlurManager.swift in Sources */,
@@ -429,8 +387,6 @@
 				99A7D5142E9EA7AB00466080 /* FloatingBreakWindow.swift in Sources */,
 				A10000013 /* BreakOverlayView.swift in Sources */,
 				A10000017 /* StatsView.swift in Sources */,
-				A1000001D /* AmbientReminderManager.swift in Sources */,
-				A1000001F /* AmbientReminderView.swift in Sources */,
 				A10000024 /* ColorThemeSettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

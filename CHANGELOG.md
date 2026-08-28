@@ -43,6 +43,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the status bar has always been an AppKit `NSMenu`. The stat badges, the hover
   effect, and the popover's button wrapper go with them
 
+- **Water reminders** - The hourly drink-water overlay, its pop-up variant, the
+  custom icon and message, and the settings section behind them. Five files,
+  1,043 lines. The feature was never switched on
+
+- **Ambient reminders** - The floating blink-and-stretch pop-up, its interval and
+  duration settings, the custom emoji and message, and the two SF Symbol pickers
+  both reminders shared. Four files, 943 lines. It was explicitly switched off
+
+- **Smart Schedule** - Work hours, active days, and the "Outside Work Hours"
+  alert that offered to take a break anyway. Seven guard sites across the timer
+  and the two reminder managers go with it, along with `forceBreakNow()`, which
+  existed only to answer that alert. Breaks now run whenever the timer says so
+
 ## [2.5.0] - 2026-08-27
 
 ### Added
