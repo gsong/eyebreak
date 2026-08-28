@@ -37,13 +37,6 @@ final class PersistedValueTests: XCTestCase {
         }
     }
 
-    // MARK: - WaterReminderStyle
-
-    func testWaterReminderStyleRawValues() {
-        XCTAssertEqual(WaterReminderStyle.blurScreen.rawValue, "Blur Screen")
-        XCTAssertEqual(WaterReminderStyle.ambient.rawValue, "Ambient Pop-up")
-    }
-
     // MARK: - BreakStats
 
     func testBreakStatsDefaultsToAnEmptyDay() {

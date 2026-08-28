@@ -53,14 +53,6 @@ struct GeneralSettingsView: View {
             }
 
             Section {
-                SmartScheduleView()
-            } header: {
-                SectionHeaderView(title: "Smart Schedule", icon: "calendar.badge.clock", color: .purple)
-            } footer: {
-                Text("Automatically pause breaks outside your work hours")
-            }
-
-            Section {
                 Button {
                     settings.resetToDefaults()
                 } label: {

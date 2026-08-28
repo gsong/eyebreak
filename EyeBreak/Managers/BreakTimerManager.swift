@@ -26,8 +26,6 @@ class BreakTimerManager: ObservableObject {
     var remainingSeconds: Int = 0
     var idleDetector: IdleDetector?
     var cancellables = Set<AnyCancellable>()
-    private var wasWorkingBeforePause = false
-    var isForcedBreak = false // Flag to bypass Smart Schedule during forced breaks
     /// Whether the break now on screen will wait to be dismissed. Read once,
     /// when the break goes up, because the keyboard watchdog is armed from the
     /// same value: a setting toggled mid-break would otherwise leave the
@@ -74,30 +72,6 @@ class BreakTimerManager: ObservableObject {
     func takeBreakNow() {
         // A served break waiting to be dismissed is still a break on screen.
         guard !state.hasBreakOnScreen else { return }
-
-        // Check if Smart Schedule allows breaks now
-        if settings.smartScheduleEnabled && !settings.shouldShowBreaksNow {
-            showOutsideWorkHoursAlert()
-            return
-        }
-
-        stop()
-        remainingSeconds = settings.breakDurationSeconds
-        state = .breaking(remainingSeconds: remainingSeconds)
-        startTimer()
-        showBreakOverlay(duration: remainingSeconds)
-
-        if settings.soundEnabled {
-            SoundManager.shared.playSound(.breakStart)
-        }
-    }
-
-    /// Force a break even if outside work hours (from alert "Take Break Anyway")
-    func forceBreakNow() {
-        guard !state.hasBreakOnScreen else { return }
-
-        // Set flag to bypass Smart Schedule checks during this break
-        isForcedBreak = true
 
         stop()
         remainingSeconds = settings.breakDurationSeconds
@@ -174,7 +148,6 @@ class BreakTimerManager: ObservableObject {
         timer?.invalidate()
         timer = nil
         state = .paused(wasWorking: wasWorking, remainingSeconds: remainingSeconds)
-        wasWorkingBeforePause = wasWorking
 
         // A paused break has to lose its overlay. Nothing behind it is counting
         // any more, and an overlay left up holds the keyboard until its watchdog
@@ -226,14 +199,6 @@ class BreakTimerManager: ObservableObject {
 
     private func tick() {
         remainingSeconds -= 1
-
-        // Check smart schedule - pause if outside work hours (UNLESS it's a forced break)
-        if !isForcedBreak && !settings.shouldShowBreaksNow {
-            if state.isActive && state != .paused(wasWorking: wasWorkingBeforePause, remainingSeconds: remainingSeconds) {
-                pause()
-                return
-            }
-        }
 
         switch state {
         case .working(let seconds):

@@ -9,7 +9,7 @@ import Foundation
 import Combine
 import AppKit
 
-// Everything outside the app that moves the timer: going idle, the screen locking, sleep, and the Smart Schedule override.
+// Everything outside the app that moves the timer: going idle, the screen locking, and sleep.
 
 extension BreakTimerManager {
     func setupIdleDetection() {
@@ -84,38 +84,6 @@ extension BreakTimerManager {
             if case .paused = self?.state {
                 self?.resume()
             }
-        }
-    }
-
-    func showOutsideWorkHoursAlert() {
-        let alert = NSAlert()
-        alert.messageText = "Outside Work Hours"
-        alert.informativeText = """
-            Your Smart Schedule is active and breaks are currently paused.
-
-            Work Hours: \(settings.timeString(from: settings.workHoursStart)) - \
-            \(settings.timeString(from: settings.workHoursEnd))
-
-            Would you like to take a break anyway or adjust your schedule?
-            """
-        alert.alertStyle = .informational
-        alert.icon = NSImage(systemSymbolName: "clock.badge.exclamationmark", accessibilityDescription: "Schedule")
-
-        alert.addButton(withTitle: "Take Break Anyway")
-        alert.addButton(withTitle: "Open Settings")
-        alert.addButton(withTitle: "Cancel")
-
-        let response = alert.runModal()
-
-        switch response {
-        case .alertFirstButtonReturn:
-            // Take break anyway - use forceBreakNow method
-            forceBreakNow()
-        case .alertSecondButtonReturn:
-            // Open settings
-            NotificationCenter.default.post(name: NSNotification.Name("OpenSettings"), object: nil)
-        default:
-            break
         }
     }
 }

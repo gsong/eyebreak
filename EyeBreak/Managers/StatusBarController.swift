@@ -164,10 +164,6 @@ class StatusBarController: NSObject, ObservableObject {
         menu.addItem(makeMenuItem(title: "Stop Timer", action: #selector(stopTimer), key: "x", chord: true))
         menu.addItem(.separator())
 
-        menu.addItem(makeMenuItem(title: "Show Reminder", action: #selector(showReminder), key: "r", chord: true))
-        menu.addItem(.separator())
-
-        menu.addItem(makeMenuItem(title: "Show Water Reminder", action: #selector(showWaterReminder), key: "w", chord: true))
         menu.addItem(makeMenuItem(title: "Quit EyeBreak", action: #selector(quit), key: "q"))
 
         return menu
@@ -229,14 +225,6 @@ class StatusBarController: NSObject, ObservableObject {
 
     @objc private func stopTimer() {
         BreakTimerManager.shared.stop()
-    }
-
-    @objc private func showReminder() {
-        AmbientReminderManager.shared.showAmbientReminder()
-    }
-
-    @objc private func showWaterReminder() {
-        WaterReminderManager.shared.showWaterReminderNow()
     }
 
     @objc private func quit() {

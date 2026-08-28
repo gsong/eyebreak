@@ -40,18 +40,6 @@ struct EyeBreakApp: App {
                     BreakTimerManager.shared.stop()
                 }
                 .keyboardShortcut("x", modifiers: [.command, .shift])
-
-                Divider()
-
-                Button("Show Ambient Reminder") {
-                    AmbientReminderManager.shared.showAmbientReminder()
-                }
-                .keyboardShortcut("r", modifiers: [.command, .shift])
-
-                Button("Show Water Reminder") {
-                    WaterReminderManager.shared.showWaterReminderNow()
-                }
-                .keyboardShortcut("w", modifiers: [.command, .shift])
             }
         }
     }
@@ -87,16 +75,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // letting the shortcuts fail silently.
         AccessibilityPermission.shared.promptIfNeededOnLaunch()
 
-        // Start ambient reminders if enabled
-        if AppSettings.shared.ambientRemindersEnabled {
-            AmbientReminderManager.shared.startAmbientReminders()
-        }
-
-        // Start water reminders if enabled
-        if AppSettings.shared.waterReminderEnabled {
-            WaterReminderManager.shared.startWaterReminders()
-        }
-
         // Auto-start timer if enabled
         if AppSettings.shared.autoStartTimer {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -131,8 +109,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         "b": { BreakTimerManager.shared.takeBreakNow() },
         "s": { BreakTimerManager.shared.start() },
         "x": { BreakTimerManager.shared.stop() },
-        "r": { AmbientReminderManager.shared.showAmbientReminder() },
-        "w": { WaterReminderManager.shared.showWaterReminderNow() },
         "o": { NSApp.sendAction(#selector(StatusBarController.openSettings), to: nil, from: nil) }
     ]
 

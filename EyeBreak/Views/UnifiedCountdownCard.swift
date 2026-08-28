@@ -11,9 +11,6 @@ import SwiftUI
 
 struct UnifiedCountdownCard: View {
     @EnvironmentObject var timerManager: BreakTimerManager
-    @EnvironmentObject var settings: AppSettings
-    @ObservedObject var ambientManager = AmbientReminderManager.shared
-    @ObservedObject var waterManager = WaterReminderManager.shared
 
     var body: some View {
         VStack(spacing: 20) {
@@ -63,32 +60,6 @@ struct UnifiedCountdownCard: View {
                     countdown: eyeBreakCountdown,
                     isActive: eyeBreakIsActive,
                     status: eyeBreakStatus
-                )
-
-                Divider()
-                    .padding(.horizontal, 8)
-
-                // Ambient Reminder Timer
-                CountdownRow(
-                    icon: "sparkles",
-                    title: "Ambient Reminder",
-                    color: .orange,
-                    countdown: ambientCountdown,
-                    isActive: ambientManager.isEnabled,
-                    status: ambientStatus
-                )
-
-                Divider()
-                    .padding(.horizontal, 8)
-
-                // Water Reminder Timer
-                CountdownRow(
-                    icon: "drop.fill",
-                    title: "Water Reminder",
-                    color: .cyan,
-                    countdown: waterCountdown,
-                    isActive: waterManager.isEnabled,
-                    status: waterStatus
                 )
             }
         }
@@ -145,50 +116,6 @@ struct UnifiedCountdownCard: View {
         case .awaitingDismissal:
             return "--:--"
         }
-    }
-
-    // MARK: - Ambient Reminder Computed Properties
-
-    private var ambientStatus: String {
-        if !ambientManager.isEnabled {
-            return "Disabled"
-        } else if ambientManager.isPausedDueToScreenLock {
-            return "Paused (Screen locked)"
-        } else if settings.smartScheduleEnabled && !settings.shouldShowBreaksNow {
-            return "Paused (Outside work hours)"
-        } else {
-            return "Active"
-        }
-    }
-
-    private var ambientCountdown: String {
-        if !ambientManager.isEnabled {
-            return "--:--"
-        }
-        // Use actual countdown from manager
-        return formatTime(ambientManager.secondsUntilNextReminder)
-    }
-
-    // MARK: - Water Reminder Computed Properties
-
-    private var waterStatus: String {
-        if !waterManager.isEnabled {
-            return "Disabled"
-        } else if waterManager.isPausedDueToScreenLock {
-            return "Paused (Screen locked)"
-        } else if settings.smartScheduleEnabled && !settings.shouldShowBreaksNow {
-            return "Paused (Outside work hours)"
-        } else {
-            return "Active"
-        }
-    }
-
-    private var waterCountdown: String {
-        if !waterManager.isEnabled {
-            return "--:--"
-        }
-        // Use actual countdown from manager
-        return formatTime(waterManager.secondsUntilNextReminder)
     }
 
     // MARK: - Helper Methods
