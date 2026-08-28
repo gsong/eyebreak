@@ -54,48 +54,38 @@ extension StatsView {
             }
 
             // Chart container with card styling
-            if #available(macOS 13.0, *) {
-                VStack(spacing: 12) {
-                    // Legend
-                    HStack(spacing: 16) {
-                        LegendItem(color: .green, secondaryColor: .mint, label: "Goal Met")
-                        LegendItem(color: .blue, secondaryColor: .cyan, label: "Below Goal")
-                        Spacer()
-                    }
-                    .padding(.horizontal, 4)
-
-                    chartView
-                        .frame(height: 220)
+            VStack(spacing: 12) {
+                // Legend
+                HStack(spacing: 16) {
+                    LegendItem(color: .green, secondaryColor: .mint, label: "Goal Met")
+                    LegendItem(color: .blue, secondaryColor: .cyan, label: "Below Goal")
+                    Spacer()
                 }
-                .padding(20)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color(NSColor.controlBackgroundColor))
-                        .shadow(color: .black.opacity(0.05), radius: 10)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(
-                            LinearGradient(
-                                colors: [Color.blue.opacity(0.2), Color.cyan.opacity(0.1)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1
-                        )
-                )
-            } else {
-                Text("Charts require macOS 13.0 or later")
-                    .foregroundColor(.secondary)
-                    .frame(height: 250)
-                    .frame(maxWidth: .infinity)
-                    .background(Color.secondary.opacity(0.1))
-                    .cornerRadius(12)
+                .padding(.horizontal, 4)
+
+                chartView
+                    .frame(height: 220)
             }
+            .padding(20)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color(NSColor.controlBackgroundColor))
+                    .shadow(color: .black.opacity(0.05), radius: 10)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(
+                        LinearGradient(
+                            colors: [Color.blue.opacity(0.2), Color.cyan.opacity(0.1)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            )
         }
     }
 
-    @available(macOS 13.0, *)
     private var chartView: some View {
         let data = getChartData()
 
