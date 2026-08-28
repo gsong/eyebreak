@@ -21,7 +21,6 @@ struct BreakSettingsView: View {
             breakStyleSection
             eyeExerciseSection
             colorThemesSection
-            goalsSection
         }
         .formStyle(.grouped)
         .padding()

@@ -17,14 +17,12 @@ struct SettingsView: View {
     enum Tab: String, CaseIterable {
         case general = "General"
         case breaks = "Breaks"
-        case statistics = "Statistics"
         case about = "About"
 
         var icon: String {
             switch self {
             case .general: return "gearshape.fill"
             case .breaks: return "timer"
-            case .statistics: return "chart.bar.fill"
             case .about: return "info.circle.fill"
             }
         }
@@ -33,7 +31,6 @@ struct SettingsView: View {
             switch self {
             case .general: return .gray
             case .breaks: return .blue
-            case .statistics: return .green
             case .about: return .purple
             }
         }
@@ -78,8 +75,6 @@ struct SettingsView: View {
                         GeneralSettingsView()
                     case .breaks:
                         BreakSettingsView()
-                    case .statistics:
-                        StatsView()
                     case .about:
                         AboutView()
                     }

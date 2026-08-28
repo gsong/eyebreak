@@ -7,7 +7,7 @@
 
 import Foundation
 
-// The break itself: starting it, crediting it, waiting for dismissal, and the overlay it shows.
+// The break itself: starting it, announcing it, waiting for dismissal, and the overlay it shows.
 
 extension BreakTimerManager {
     func startBreak() {
@@ -23,11 +23,11 @@ extension BreakTimerManager {
         NotificationManager.shared.sendBreakStartNotification()
     }
 
-    /// The break ran its length. Credit it, then either go straight back to work
+    /// The break ran its length. Announce it, then either go straight back to work
     /// or hold the overlay until the user says they are back.
     ///
     /// Called twice in the Floating Window style, which runs a clock of its own
-    /// alongside this one. `breakEndAction` is what keeps that to one credit.
+    /// alongside this one. `breakEndAction` is what keeps that to one announcement.
     func serveBreak() {
         switch state.breakEndAction(awaitsDismissal: breakAwaitsDismissal) {
         case .ignore:
@@ -35,7 +35,7 @@ extension BreakTimerManager {
         case .endNow:
             endBreak()
         case .awaitDismissal:
-            creditBreak()
+            announceBreakServed()
             awaitDismissal()
         }
     }
@@ -44,18 +44,17 @@ extension BreakTimerManager {
     /// wait turned off, or the user skipped it — a skip is already a deliberate
     /// act, so it does not ask for a second one.
     func endBreak() {
-        creditBreak()
+        announceBreakServed()
 
         ScreenBlurManager.shared.hideOverlay()
 
         startNextWorkInterval()
     }
 
-    /// Records the break as taken. This is the moment the rest was served, which
-    /// is not the moment the user comes back to the machine.
-    private func creditBreak() {
-        settings.updateStats(breaksCompleted: 1, breakTime: settings.breakDurationSeconds)
-
+    /// Says the rest was served, with a sound and a notification. This is the
+    /// moment the break ran out, which is not the moment the user comes back to
+    /// the machine.
+    private func announceBreakServed() {
         if settings.soundEnabled {
             SoundManager.shared.playSound(.breakEnd)
         }

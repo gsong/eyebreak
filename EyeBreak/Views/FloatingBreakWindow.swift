@@ -234,7 +234,7 @@ struct FloatingBreakContentView: View {
             } else {
                 stopTimer()
 
-                // `onComplete` is what credits the break, at zero, whether or
+                // `onComplete` is what announces the break, at zero, whether or
                 // not the panel then waits. Only the closing differs.
                 if awaitsDismissal {
                     isAwaitingDismissal = true

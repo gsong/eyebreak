@@ -21,7 +21,6 @@
 		A100000B1 /* SettingsWindowHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000B0 /* SettingsWindowHost.swift */; };
 		A10000011 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010 /* SettingsView.swift */; };
 		A10000013 /* BreakOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000012 /* BreakOverlayView.swift */; };
-		A10000017 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000016 /* StatsView.swift */; };
 		A10000019 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A10000018 /* Assets.xcassets */; };
 		A10000023 /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000021 /* ColorTheme.swift */; };
 		A10000026 /* BreakCountdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000025 /* BreakCountdown.swift */; };
@@ -42,11 +41,8 @@
 		DA35B4CFD82C9E4B6C2945BF /* BreakOverlayWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E20054B505D04DEEAFCBEC /* BreakOverlayWindow.swift */; };
 		97B6705C596B5A145BE6721B /* QuickPresetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F84F7A22B8F5C9DCB1394350 /* QuickPresetsView.swift */; };
 		3902FD331CE625006ECFC7F6 /* ColorPickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD44D6BCB136B4190685DD8 /* ColorPickerRow.swift */; };
-		7553FAA25EA8BEB18671997C /* StatsComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC190A6B7A3FAB18607700D /* StatsComponents.swift */; };
 		ACC1A608EDB0933D1457D33C /* MenuBarComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3238854CB0DD19082D6F3F16 /* MenuBarComponents.swift */; };
 		30C95D47D6F717E6E3425919 /* AnimatedEyeExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAE8FF5D847207D650A5E2C /* AnimatedEyeExerciseView.swift */; };
-		3DA6CC3F2380D8BBF465981E /* StatsInsightsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8D1D0F4AC45D42AD82BB51 /* StatsInsightsSection.swift */; };
-		E4132E77AFEACC62B676EA55 /* StatsChartSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5580CB6C2F04A4DD0D5F85B /* StatsChartSection.swift */; };
 		0196CB232F68722039D49092 /* BreakOverlayContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6059A8030254621E6BB628 /* BreakOverlayContent.swift */; };
 		BFF4EF85B07AFD437A19D0BE /* BreakOverlayTimerDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0678129D3C7B6E5E6FA6BFFB /* BreakOverlayTimerDisplay.swift */; };
 		01E62675913B56A69240ADEC /* FloatingBreakContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8104C72960C125EFC054E5CE /* FloatingBreakContent.swift */; };
@@ -54,7 +50,6 @@
 		AC8973888A122AA324C370BD /* BreakTimerManager+SystemEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A021A3DBE04B36BDC62B232 /* BreakTimerManager+SystemEvents.swift */; };
 		DAB715AB0C6562FEEEA1DEE0 /* ScreenBlurManager+Windows.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE255DFE4A8592542004144D /* ScreenBlurManager+Windows.swift */; };
 		B981AD9518E7AE8A34B57FDC /* AppSettings+Themes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB9FFA02D21C54F0E5FCBF8 /* AppSettings+Themes.swift */; };
-		01DAFD725FA797299F2FE589 /* AppSettings+Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65217B2F84779429440937F /* AppSettings+Statistics.swift */; };
 		A05F6BD9DC4FB75F70E0FD94 /* SettingsComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710FE3BF2F1DB48C20C0E946 /* SettingsComponents.swift */; };
 		8E0A253269E5B76762339334 /* TimerStatusBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60FC3767A779F1C5F49A03E /* TimerStatusBanner.swift */; };
 		882D9B102CEB5B88B175AA11 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABD3A2BEA778F8771F41474C /* AboutView.swift */; };
@@ -81,7 +76,6 @@
 		A100000B0 /* SettingsWindowHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowHost.swift; sourceTree = "<group>"; };
 		A10000010 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A10000012 /* BreakOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayView.swift; sourceTree = "<group>"; };
-		A10000016 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		A10000018 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1000001A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1000001B /* EyeBreak.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EyeBreak.entitlements; sourceTree = "<group>"; };
@@ -101,11 +95,8 @@
 		31E20054B505D04DEEAFCBEC /* BreakOverlayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayWindow.swift; sourceTree = "<group>"; };
 		F84F7A22B8F5C9DCB1394350 /* QuickPresetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickPresetsView.swift; sourceTree = "<group>"; };
 		2FD44D6BCB136B4190685DD8 /* ColorPickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerRow.swift; sourceTree = "<group>"; };
-		1BC190A6B7A3FAB18607700D /* StatsComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsComponents.swift; sourceTree = "<group>"; };
 		3238854CB0DD19082D6F3F16 /* MenuBarComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarComponents.swift; sourceTree = "<group>"; };
 		4FAE8FF5D847207D650A5E2C /* AnimatedEyeExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedEyeExerciseView.swift; sourceTree = "<group>"; };
-		DA8D1D0F4AC45D42AD82BB51 /* StatsInsightsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsInsightsSection.swift; sourceTree = "<group>"; };
-		D5580CB6C2F04A4DD0D5F85B /* StatsChartSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsChartSection.swift; sourceTree = "<group>"; };
 		6E6059A8030254621E6BB628 /* BreakOverlayContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayContent.swift; sourceTree = "<group>"; };
 		0678129D3C7B6E5E6FA6BFFB /* BreakOverlayTimerDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayTimerDisplay.swift; sourceTree = "<group>"; };
 		8104C72960C125EFC054E5CE /* FloatingBreakContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingBreakContent.swift; sourceTree = "<group>"; };
@@ -113,7 +104,6 @@
 		2A021A3DBE04B36BDC62B232 /* BreakTimerManager+SystemEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BreakTimerManager+SystemEvents.swift"; sourceTree = "<group>"; };
 		AE255DFE4A8592542004144D /* ScreenBlurManager+Windows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScreenBlurManager+Windows.swift"; sourceTree = "<group>"; };
 		9EB9FFA02D21C54F0E5FCBF8 /* AppSettings+Themes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppSettings+Themes.swift"; sourceTree = "<group>"; };
-		B65217B2F84779429440937F /* AppSettings+Statistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppSettings+Statistics.swift"; sourceTree = "<group>"; };
 		710FE3BF2F1DB48C20C0E946 /* SettingsComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsComponents.swift; sourceTree = "<group>"; };
 		B60FC3767A779F1C5F49A03E /* TimerStatusBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerStatusBanner.swift; sourceTree = "<group>"; };
 		ABD3A2BEA778F8771F41474C /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
@@ -139,7 +129,6 @@
 		A10000020 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				B65217B2F84779429440937F /* AppSettings+Statistics.swift */,
 				9EB9FFA02D21C54F0E5FCBF8 /* AppSettings+Themes.swift */,
 				A10000002 /* TimerState.swift */,
 				A10000004 /* Settings.swift */,
@@ -185,18 +174,14 @@
 				8104C72960C125EFC054E5CE /* FloatingBreakContent.swift */,
 				0678129D3C7B6E5E6FA6BFFB /* BreakOverlayTimerDisplay.swift */,
 				6E6059A8030254621E6BB628 /* BreakOverlayContent.swift */,
-				D5580CB6C2F04A4DD0D5F85B /* StatsChartSection.swift */,
-				DA8D1D0F4AC45D42AD82BB51 /* StatsInsightsSection.swift */,
 				4FAE8FF5D847207D650A5E2C /* AnimatedEyeExerciseView.swift */,
 				3238854CB0DD19082D6F3F16 /* MenuBarComponents.swift */,
-				1BC190A6B7A3FAB18607700D /* StatsComponents.swift */,
 				2FD44D6BCB136B4190685DD8 /* ColorPickerRow.swift */,
 				F84F7A22B8F5C9DCB1394350 /* QuickPresetsView.swift */,
 				99A7D5132E9EA7AB00466080 /* FloatingBreakWindow.swift */,
 				A10000010 /* SettingsView.swift */,
 				A100000B0 /* SettingsWindowHost.swift */,
 				A10000012 /* BreakOverlayView.swift */,
-				A10000016 /* StatsView.swift */,
 				A10000022 /* ColorThemeSettingsView.swift */,
 			);
 			path = Views;
@@ -351,7 +336,6 @@
 				882D9B102CEB5B88B175AA11 /* AboutView.swift in Sources */,
 				8E0A253269E5B76762339334 /* TimerStatusBanner.swift in Sources */,
 				A05F6BD9DC4FB75F70E0FD94 /* SettingsComponents.swift in Sources */,
-				01DAFD725FA797299F2FE589 /* AppSettings+Statistics.swift in Sources */,
 				B981AD9518E7AE8A34B57FDC /* AppSettings+Themes.swift in Sources */,
 				DAB715AB0C6562FEEEA1DEE0 /* ScreenBlurManager+Windows.swift in Sources */,
 				AC8973888A122AA324C370BD /* BreakTimerManager+SystemEvents.swift in Sources */,
@@ -359,11 +343,8 @@
 				01E62675913B56A69240ADEC /* FloatingBreakContent.swift in Sources */,
 				BFF4EF85B07AFD437A19D0BE /* BreakOverlayTimerDisplay.swift in Sources */,
 				0196CB232F68722039D49092 /* BreakOverlayContent.swift in Sources */,
-				E4132E77AFEACC62B676EA55 /* StatsChartSection.swift in Sources */,
-				3DA6CC3F2380D8BBF465981E /* StatsInsightsSection.swift in Sources */,
 				30C95D47D6F717E6E3425919 /* AnimatedEyeExerciseView.swift in Sources */,
 				ACC1A608EDB0933D1457D33C /* MenuBarComponents.swift in Sources */,
-				7553FAA25EA8BEB18671997C /* StatsComponents.swift in Sources */,
 				3902FD331CE625006ECFC7F6 /* ColorPickerRow.swift in Sources */,
 				97B6705C596B5A145BE6721B /* QuickPresetsView.swift in Sources */,
 				DA35B4CFD82C9E4B6C2945BF /* BreakOverlayWindow.swift in Sources */,
@@ -386,7 +367,6 @@
 				A10000011 /* SettingsView.swift in Sources */,
 				99A7D5142E9EA7AB00466080 /* FloatingBreakWindow.swift in Sources */,
 				A10000013 /* BreakOverlayView.swift in Sources */,
-				A10000017 /* StatsView.swift in Sources */,
 				A10000024 /* ColorThemeSettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
