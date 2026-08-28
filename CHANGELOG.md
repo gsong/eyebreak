@@ -38,6 +38,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   permissions pages are gone, along with the `hasLaunchedBefore` setting and
   `completeOnboarding()` that tracked a flow no one could reach
 
+- **The SwiftUI menu-bar popover** - Three view files totalling 504 lines that
+  nothing had constructed: the app has no `MenuBarExtra` and no `NSPopover`, so
+  the status bar has always been an AppKit `NSMenu`. The stat badges, the hover
+  effect, and the popover's button wrapper go with them
+
 ## [2.5.0] - 2026-08-27
 
 ### Added
