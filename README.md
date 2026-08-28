@@ -10,7 +10,7 @@ cask, no release asset, and no update check. A release is a tag, a
 
 ## Requirements
 
-- macOS 14.0 (Sonoma) or later
+- macOS 26.0 (Tahoe) or later
 - Xcode 15.0 or later
 - Swift 5.9 or later
 - [mise](https://mise.jdx.dev) — pins SwiftLint to the version CI uses
