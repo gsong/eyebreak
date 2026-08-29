@@ -24,7 +24,6 @@ final class TimerStateTests: XCTestCase {
 
     func testRunningStatesAreActive() {
         XCTAssertTrue(TimerState.working(remainingSeconds: 1200).isActive)
-        XCTAssertTrue(TimerState.preBreak(remainingSeconds: 30).isActive)
         XCTAssertTrue(TimerState.breaking(remainingSeconds: 20).isActive)
     }
 
@@ -37,7 +36,6 @@ final class TimerStateTests: XCTestCase {
         XCTAssertTrue(TimerState.awaitingDismissal.hasBreakOnScreen)
         XCTAssertFalse(TimerState.idle.hasBreakOnScreen)
         XCTAssertFalse(TimerState.working(remainingSeconds: 1200).hasBreakOnScreen)
-        XCTAssertFalse(TimerState.preBreak(remainingSeconds: 30).hasBreakOnScreen)
         XCTAssertFalse(TimerState.paused(wasWorking: false, remainingSeconds: 10).hasBreakOnScreen)
     }
 
@@ -67,9 +65,7 @@ final class TimerStateTests: XCTestCase {
                        "Next break in 90:00")
     }
 
-    func testPreBreakAndBreakingUseBareSeconds() {
-        XCTAssertEqual(TimerState.preBreak(remainingSeconds: 30).displayText,
-                       "Break starting in 30s")
+    func testBreakingUsesBareSeconds() {
         XCTAssertEqual(TimerState.breaking(remainingSeconds: 20).displayText,
                        "Break time! 20s remaining")
     }

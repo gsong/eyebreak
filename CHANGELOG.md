@@ -94,6 +94,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the `BreakEndAction` guard that kept one break to one announcement, and the
   overlay no longer carries a style to switch on
 
+- **Notifications** - The four banners for a break starting soon, a break
+  starting, a break finishing, and the timer pausing on idle, plus the whole
+  `NotificationManager`. None of them has ever been able to appear: the only
+  call that asked macOS for permission sat in the onboarding flow, which
+  nothing could reach. The app no longer links `UserNotifications` at all
+
+- **The pre-break warning** - The 30-second heads-up before a break, its slider,
+  and the `preBreak` timer state behind both. The warning's only output was one
+  of the notifications above, so all it did was change a menu-bar label for the
+  last half minute of every work interval. The timer now runs work, break,
+  dismissal, work
+
+- **The Auto-Start Timer toggle** - Behaviour is unchanged: the timer still
+  starts on launch, now unconditionally. The switch was a way to open the app
+  with the clock stopped, which is the app doing nothing
+
 ## [2.5.0] - 2026-08-27
 
 ### Added

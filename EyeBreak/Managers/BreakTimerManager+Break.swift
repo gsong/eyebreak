@@ -19,8 +19,6 @@ extension BreakTimerManager {
         if settings.soundEnabled {
             SoundManager.shared.playSound(.breakStart)
         }
-
-        NotificationManager.shared.sendBreakStartNotification()
     }
 
     /// The break ran its length. Announce it, then either go straight back to work
@@ -48,15 +46,12 @@ extension BreakTimerManager {
         startNextWorkInterval()
     }
 
-    /// Says the rest was served, with a sound and a notification. This is the
-    /// moment the break ran out, which is not the moment the user comes back to
-    /// the machine.
+    /// Says the rest was served, with a sound. This is the moment the break ran
+    /// out, which is not the moment the user comes back to the machine.
     private func announceBreakServed() {
         if settings.soundEnabled {
             SoundManager.shared.playSound(.breakEnd)
         }
-
-        NotificationManager.shared.sendBreakCompleteNotification()
     }
 
     /// Holds the overlay on screen with nothing counting behind it. No timer runs

@@ -11,7 +11,6 @@ import Foundation
 enum TimerState: Equatable {
     case idle              // Timer not started
     case working(remainingSeconds: Int)  // Working period
-    case preBreak(remainingSeconds: Int) // Warning period before break
     case breaking(remainingSeconds: Int) // Break period
     case paused(wasWorking: Bool, remainingSeconds: Int) // Paused due to idle
     case awaitingDismissal // Break served, waiting for the user to dismiss it
@@ -23,7 +22,7 @@ enum TimerState: Equatable {
             // `pause()` guards on this, which is what makes sleep, screen lock
             // and idle detection leave the waiting overlay where it is.
             return false
-        case .working, .preBreak, .breaking:
+        case .working, .breaking:
             return true
         }
     }
@@ -34,7 +33,7 @@ enum TimerState: Equatable {
         switch self {
         case .breaking, .awaitingDismissal:
             return true
-        case .idle, .working, .preBreak, .paused:
+        case .idle, .working, .paused:
             return false
         }
     }
@@ -45,8 +44,6 @@ enum TimerState: Equatable {
             return "Ready to start"
         case .working(let seconds):
             return "Next break in \(formatTime(seconds))"
-        case .preBreak(let seconds):
-            return "Break starting in \(seconds)s"
         case .breaking(let seconds):
             return "Break time! \(seconds)s remaining"
         case .paused(_, let seconds):

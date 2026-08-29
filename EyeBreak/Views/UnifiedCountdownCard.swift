@@ -94,8 +94,6 @@ struct UnifiedCountdownCard: View {
             return "Not started"
         case .working:
             return "Working"
-        case .preBreak:
-            return "Break soon"
         case .breaking:
             return "On break"
         case .paused:
@@ -109,7 +107,7 @@ struct UnifiedCountdownCard: View {
         switch timerManager.state {
         case .idle:
             return "--:--"
-        case .working(let seconds), .preBreak(let seconds), .breaking(let seconds):
+        case .working(let seconds), .breaking(let seconds):
             return formatTime(seconds)
         case .paused(_, let seconds):
             return formatTime(seconds)

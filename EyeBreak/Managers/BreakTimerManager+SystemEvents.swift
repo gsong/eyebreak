@@ -21,7 +21,6 @@ extension BreakTimerManager {
             if isIdle && self.state.isActive {
                 // User went idle, pause timer
                 self.pause()
-                NotificationManager.shared.sendIdlePausedNotification()
             } else if !isIdle, case .paused = self.state {
                 // User returned, resume timer
                 self.resume()

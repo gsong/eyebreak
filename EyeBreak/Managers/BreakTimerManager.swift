@@ -64,8 +64,6 @@ class BreakTimerManager: ObservableObject {
         timer = nil
         state = .idle
         idleDetector?.stop()
-
-        NotificationManager.shared.cancelAllNotifications()
     }
 
     /// Trigger an immediate break
@@ -132,7 +130,7 @@ class BreakTimerManager: ObservableObject {
 
         let wasWorking: Bool
         switch state {
-        case .working, .preBreak:
+        case .working:
             wasWorking = true
         case .breaking:
             wasWorking = false
@@ -194,23 +192,11 @@ class BreakTimerManager: ObservableObject {
         remainingSeconds -= 1
 
         switch state {
-        case .working(let seconds):
-            if remainingSeconds <= settings.preBreakWarningSeconds && seconds > settings.preBreakWarningSeconds {
-                // Transition to pre-break warning
-                state = .preBreak(remainingSeconds: remainingSeconds)
-                NotificationManager.shared.sendPreBreakNotification(seconds: remainingSeconds)
-            } else if remainingSeconds <= 0 {
-                // Start break
-                startBreak()
-            } else {
-                state = .working(remainingSeconds: remainingSeconds)
-            }
-
-        case .preBreak:
+        case .working:
             if remainingSeconds <= 0 {
                 startBreak()
             } else {
-                state = .preBreak(remainingSeconds: remainingSeconds)
+                state = .working(remainingSeconds: remainingSeconds)
             }
 
         case .breaking:

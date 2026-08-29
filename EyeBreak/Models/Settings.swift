@@ -49,7 +49,6 @@ class AppSettings: ObservableObject {
         set { storedBreakDuration = newValue }
     }
 
-    @AppStorage("preBreakWarningSeconds") var preBreakWarningSeconds: Int = 30
     // Whether a served break waits for the user to dismiss it before the work
     // timer restarts. On, because a break nobody was present for is not a break.
     @AppStorage("requireBreakDismissal") var requireBreakDismissal: Bool = true
@@ -57,7 +56,6 @@ class AppSettings: ObservableObject {
     @AppStorage("idleDetectionEnabled") var idleDetectionEnabled: Bool = true
     @AppStorage("idleThresholdMinutes") var idleThresholdMinutes: Int = 5
     @AppStorage("launchAtLogin") var launchAtLogin: Bool = false
-    @AppStorage("autoStartTimer") var autoStartTimer: Bool = true // Auto-start timer when app launches
 
     // MARK: - Computed Properties
 
@@ -83,7 +81,6 @@ class AppSettings: ObservableObject {
     func resetToDefaults() {
         workIntervalMinutes = 25
         breakDurationSeconds = 300
-        preBreakWarningSeconds = 30
         requireBreakDismissal = true
         soundEnabled = true
         idleDetectionEnabled = true

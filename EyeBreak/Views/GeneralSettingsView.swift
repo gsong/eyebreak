@@ -33,9 +33,6 @@ struct GeneralSettingsView: View {
                 ))
                 .help("Automatically start EyeBreak when you log in to your Mac")
 
-                Toggle("Auto-Start Timer", isOn: $settings.autoStartTimer)
-                    .help("Automatically start the break timer when the app launches")
-
                 Toggle("Enable Sound Effects", isOn: $settings.soundEnabled)
 
                 Toggle("Idle Detection", isOn: $settings.idleDetectionEnabled)
