@@ -53,9 +53,9 @@ final class BreakInputTap {
     /// Starts holding the keyboard. Does nothing if a tap is already installed.
     ///
     /// Creating the tap needs the Accessibility grant, and `CGEvent.tapCreate`
-    /// returns nil without it. That is not an edge case: EyeBreak is ad-hoc
-    /// signed, so macOS drops the grant on every update, which makes the
-    /// grant-less path the normal state after each release. Without a tap the
+    /// returns nil without it. `dev-install.sh` signs with a stable certificate,
+    /// so the grant survives an update and the grant-less path is the exception,
+    /// not the rule. It still has to work: without a tap the
     /// break falls back to the overlay alone — covered, the first click working,
     /// and ESC working once EyeBreak is frontmost. Weaker than the tap, never
     /// worse than before it existed. `AccessibilityPermission` is what watches

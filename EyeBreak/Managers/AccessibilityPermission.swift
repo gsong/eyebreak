@@ -102,16 +102,6 @@ final class AccessibilityPermission: ObservableObject {
         }
     }
 
-    /// Explicit request, e.g. from a button in Settings. Always shows something.
-    func requestAccess() {
-        refresh()
-        if isTrusted {
-            presentAlreadyGrantedAlert()
-        } else {
-            presentPrompt(afterUpdate: false)
-        }
-    }
-
     private func presentPrompt(afterUpdate: Bool) {
         NSApp.activate(ignoringOtherApps: true)
 
@@ -143,16 +133,6 @@ final class AccessibilityPermission: ObservableObject {
         if alert.runModal() == .alertFirstButtonReturn {
             openAccessibilitySettings()
         }
-    }
-
-    private func presentAlreadyGrantedAlert() {
-        NSApp.activate(ignoringOtherApps: true)
-        let alert = NSAlert()
-        alert.alertStyle = .informational
-        alert.messageText = "Keyboard shortcuts are enabled"
-        alert.informativeText = "EyeBreak already has Accessibility permission."
-        alert.addButton(withTitle: "OK")
-        alert.runModal()
     }
 
     /// Opens System Settings directly on Privacy & Security › Accessibility.

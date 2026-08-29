@@ -7,7 +7,6 @@
 
 import Foundation
 import IOKit
-import AppKit
 
 /// Detects user idle time using IOKit
 class IdleDetector {
@@ -82,19 +81,5 @@ class IdleDetector {
         }
 
         return idleTime
-    }
-}
-
-// MARK: - Alternative Implementation Using CGEventSource
-
-/// Backup idle detector using CGEventSource (requires accessibility permissions)
-class CGEventIdleDetector {
-
-    static func getIdleTime() -> TimeInterval {
-        let idleTimeNanos = CGEventSource.secondsSinceLastEventType(
-            .combinedSessionState,
-            eventType: .mouseMoved
-        )
-        return TimeInterval(idleTimeNanos)
     }
 }

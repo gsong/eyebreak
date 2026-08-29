@@ -18,7 +18,7 @@ class BreakTimerManager: ObservableObject {
     // MARK: - Published Properties
 
     @Published var state: TimerState = .idle
-    @Published var settings = AppSettings.shared
+    let settings = AppSettings.shared
 
     // MARK: - Private Properties
 
@@ -210,11 +210,5 @@ class BreakTimerManager: ObservableObject {
             break
         }
     }
-
-    // MARK: - Idle Detection Setup
-
-    // MARK: - Screen Lock and Sleep Handling
-
-    // MARK: - Smart Schedule Alert
 
 }

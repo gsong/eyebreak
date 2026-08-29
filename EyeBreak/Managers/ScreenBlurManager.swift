@@ -6,7 +6,6 @@
 //
 
 import AppKit
-import SwiftUI
 
 /// Manages full-screen blur overlay during breaks
 class ScreenBlurManager {
@@ -14,7 +13,6 @@ class ScreenBlurManager {
     static let shared = ScreenBlurManager()
 
     var overlayWindows: [NSWindow] = []
-    var hostingViews: [NSHostingView<BreakOverlayView>] = []
     /// The app that was frontmost when the break started. The overlay activates
     /// EyeBreak to take keyboard focus, so it has to hand focus back on the way out.
     private var previousFrontmostApp: NSRunningApplication?
@@ -40,8 +38,7 @@ class ScreenBlurManager {
 
     /// - Parameter awaitsDismissal: Whether this break will wait to be dismissed
     ///   once it has been served. All it does here is lengthen the keyboard
-    ///   watchdog, and the caller decides it: a break reads the setting, and the
-    ///   Settings preview never waits.
+    ///   watchdog. The caller decides it, by reading the setting.
     func showBreakOverlay(
         duration: Int,
         awaitsDismissal: Bool,
@@ -125,8 +122,8 @@ class ScreenBlurManager {
         self.countdown = countdown
 
         // Remember who had focus so the break can hand it back. Ignore EyeBreak
-        // itself, or a preview started from Settings would make us the app we
-        // return to.
+        // itself, or a break started while Settings was frontmost would make us
+        // the app we return to.
         let frontmost = NSWorkspace.shared.frontmostApplication
         if frontmost?.processIdentifier != ProcessInfo.processInfo.processIdentifier {
             self.previousFrontmostApp = frontmost
@@ -188,10 +185,6 @@ class ScreenBlurManager {
         }
     }
 
-    // MARK: - Overlay Windows
-
-    // MARK: - Display Changes
-
     // MARK: - Escape Key
 
     /// One ESC monitor for the whole overlay set. It used to live in the SwiftUI
@@ -242,9 +235,3 @@ class ScreenBlurManager {
         self.escapeMonitor = nil
     }
 }
-
-// MARK: - Custom Content View
-
-// MARK: - Custom Window Class
-
-// MARK: - Sound Manager
