@@ -29,11 +29,13 @@ The four signing flags are required. Without them this machine fails with
 `com.eyebreak.app`. Changing a setting to reach a state changes it for the
 installed app too, so note what you changed and put it back.
 
-**A scratchpad build can never hold the Accessibility grant.** macOS pins the
-grant to the code-signing hash, and a throwaway build has a new one. So a test
-build gets no keyboard hold and no working ⌃⌥B. To see the granted-permission UI,
-build a throwaway with `AXIsProcessTrusted()` forced true. To test the real
-behaviour, install with `./scripts/dev-install.sh` and re-grant Accessibility.
+**A scratchpad build can never hold the Accessibility grant.** A throwaway
+`xcodebuild` build is signed ad-hoc, so macOS pins its designated requirement to
+a `cdhash` that changes every build. The test build therefore gets no keyboard
+hold and no working ⌃⌥B. To see the granted-permission UI, build a throwaway with
+`AXIsProcessTrusted()` forced true. To test the real behaviour, install with
+`./scripts/dev-install.sh` — that build is signed with the stable certificate, so
+it keeps a grant you have already given.
 
 **Quit the installed app first** if you are running a second copy. Two status
 items and two timers is not a useful test.

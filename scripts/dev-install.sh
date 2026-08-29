@@ -107,6 +107,6 @@ open "$INSTALLED"
 echo
 echo "Installed $SHORT_VERSION (build $BUILD) to $INSTALLED"
 echo
-echo "The menu bar icon should be back. If macOS asks for Accessibility or"
-echo "Screen Recording again, grant it once; the stable certificate keeps the"
-echo "grant across later runs of this script."
+echo "The menu bar icon should be back. If macOS asks for Accessibility, grant"
+echo "it once; the stable certificate keeps the grant across later runs of this"
+echo "script."

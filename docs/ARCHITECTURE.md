@@ -230,11 +230,18 @@ and the app records nothing about how many breaks you take or skip.
 **Accessibility** is the only grant. `BreakInputTap` needs it to create the
 `CGEvent` tap, and the ⌃⌥B global monitor needs it too.
 
-EyeBreak is signed with a local certificate, so its designated requirement is
-pinned to the build's `cdhash`. Every build produces a different hash, so macOS
-treats each install as a different program and drops the grant.
-`AccessibilityPermission` watches for that and the Settings window shows a
-warning row with a button to the right pane.
+macOS binds the grant to the app's designated requirement, and how the build was
+signed decides what that requirement is. `create-cert.sh` gives EyeBreak a stable
+certificate, so an installed build's requirement reads
+`identifier "com.eyebreak.app" and certificate leaf = H"…"` and the grant
+survives every `dev-install.sh`. A throwaway `xcodebuild` build is signed ad-hoc,
+so its requirement is `cdhash H"…"`, which changes every build — that one can
+never hold the grant.
+
+`AccessibilityPermission` watches for a missing grant and the Settings window
+shows a warning row with a button to the right pane. It covers the cases that do
+still revoke: a recreated certificate, a grant cleared by hand, and the first
+install.
 
 The app requests **no other permission**. It does not link `UserNotifications`
 and never asks for Screen Recording — the overlay is a plain window, and drawing

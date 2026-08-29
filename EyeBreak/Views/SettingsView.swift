@@ -13,8 +13,8 @@ struct SettingsView: View {
     @EnvironmentObject var timerManager: BreakTimerManager
     @EnvironmentObject var settings: AppSettings
 
-    /// Whether a break can hold the keyboard at all. macOS drops this grant on
-    /// every update, so the answer changes under the user without warning.
+    /// Whether a break can hold the keyboard at all. The grant can go away
+    /// without warning, so the view asks rather than assuming.
     @StateObject private var accessibility = AccessibilityPermission.shared
 
     /// Read from the bundle so this never drifts from the shipped version.
@@ -98,7 +98,7 @@ struct SettingsView: View {
             // The panic chord has to be written down somewhere a user can
             // find it, because the moment they need it is the moment the
             // keyboard is doing something they did not expect. The claim is
-            // gated on the grant, which is missing after every update.
+            // gated on the grant, because without it the hold does not happen.
             if accessibility.isTrusted {
                 Text("""
                 A break covers every display and holds the keyboard for its length, so \
@@ -143,8 +143,8 @@ struct SettingsView: View {
     }
 
     /// One quiet row while the grant holds; the full warning when it does not.
-    /// macOS revokes this on every reinstall, so a silent row would let ⌃⌥B and
-    /// break-time keyboard holding fail with no visible cause.
+    /// A silent row would let ⌃⌥B and break-time keyboard holding fail with no
+    /// visible cause.
     @ViewBuilder
     private var permissionRow: some View {
         if accessibility.isTrusted {
@@ -164,8 +164,8 @@ struct SettingsView: View {
                 }
 
                 Text("""
-                macOS resets this permission whenever EyeBreak is reinstalled, which \
-                stops \u{2303}\u{2325}B and stops breaks from holding the keyboard.
+                Without it \u{2303}\u{2325}B does nothing and breaks cannot hold the \
+                keyboard. Granting it once is enough; the signing certificate keeps it.
                 """)
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)

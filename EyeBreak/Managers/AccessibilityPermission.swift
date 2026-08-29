@@ -5,20 +5,26 @@
 //  Watches the Accessibility (input monitoring) permission that the global
 //  keyboard shortcuts depend on.
 //
-//  This matters more than it looks. EyeBreak is distributed with an ad-hoc code
-//  signature, which means its designated requirement is pinned to the build's
-//  cdhash:
+//  macOS binds the grant to the app's designated requirement. What that
+//  requirement is depends on how the build was signed, and the two cases behave
+//  oppositely:
 //
-//      designated => cdhash H"e39f52e1…"
+//      ad-hoc      designated => cdhash H"e39f52e1…"
+//      certificate designated => identifier "com.eyebreak.app"
+//                                 and certificate leaf = H"1f6dc175…"
 //
-//  Every build produces a different cdhash, so macOS treats each update as a
-//  different program and drops any Accessibility grant the user had given. The
-//  global shortcut ⌃⌥B then stops working with no error and no prompt, which
-//  reads as "the update broke the app".
+//  An ad-hoc signature pins the requirement to the build's cdhash, which changes
+//  every build, so macOS treats each install as a different program and drops the
+//  grant. A certificate pins it to the certificate, which does not change, so the
+//  grant survives. `scripts/create-cert.sh` exists for exactly this, and
+//  `dev-install.sh` re-signs with it — so an installed build keeps its grant
+//  across updates, and a throwaway `xcodebuild` build (signed ad-hoc, or not at
+//  all) can never hold one.
 //
-//  Rather than leave people guessing, we detect the missing grant and offer to
-//  open the right settings pane. A Developer ID signature would make the grant
-//  survive updates and render this unnecessary.
+//  So this watcher is not for the ordinary update path any more. It covers the
+//  cases that still revoke: the certificate being recreated, the user clearing
+//  the grant, and a first install before the grant is given. Without it ⌃⌥B and
+//  the break-time keyboard hold fail with no error and no prompt.
 //
 
 import Foundation
@@ -115,8 +121,8 @@ final class AccessibilityPermission: ObservableObject {
 
         if afterUpdate {
             alert.informativeText = """
-            macOS reset EyeBreak's Accessibility permission when it updated, so ⌃⌥B \
-            has stopped working and a break can no longer hold the keyboard.
+            EyeBreak no longer has Accessibility permission, so ⌃⌥B has stopped \
+            working and a break can no longer hold the keyboard.
 
             Re-enabling EyeBreak under Accessibility restores both. Everything else — \
             the timer, the break overlay and the menu bar — works normally either way.

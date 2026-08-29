@@ -80,11 +80,16 @@ It buys two things — the ⌃⌥B shortcut, and the keyboard hold that makes a 
 a break. Without it the app still runs and breaks still cover every display, but
 shortcuts in other apps keep working during a break and ⌃⌥B does nothing.
 
-macOS drops the grant on every reinstall, because EyeBreak is signed with a
-local certificate and each build has a different code-signing hash. So after
-`dev-install.sh`, re-enable EyeBreak under **System Settings** > **Privacy &
-Security** > **Accessibility**. The Settings window shows a warning row with a
-button to that pane whenever the grant is missing.
+**The grant survives updates, as long as you installed with the scripts.** macOS
+binds it to the app's designated requirement, and `create-cert.sh` gives EyeBreak
+a stable certificate that `dev-install.sh` re-signs with every time, so the
+requirement does not change. Grant it once.
+
+Two things still revoke it: recreating the certificate, and clearing the grant by
+hand. A throwaway `xcodebuild` build can never hold it at all — that one is
+signed ad-hoc, so its requirement is pinned to a hash that changes every build.
+Whenever the grant is missing, the Settings window shows a warning row with a
+button to **System Settings** > **Privacy & Security** > **Accessibility**.
 
 ## Keyboard shortcuts
 
@@ -131,7 +136,8 @@ MVVM with SwiftUI and Combine. See
 ## Troubleshooting
 
 **⌃⌥B does nothing, or breaks stop holding the keyboard** — re-grant
-Accessibility. macOS drops it on every reinstall.
+Accessibility. This should be rare; check whether the signing certificate was
+recreated.
 
 **A break is on screen and something is wrong** — press ⌃⌥⌘⎋. It releases the
 keyboard and ends the break, and it works inside the tap's own callback, so it

@@ -10,6 +10,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **What the app and its docs say about the Accessibility grant** - Five places
+  claimed macOS drops the grant on every update or reinstall, including the
+  warning row in Settings and the alert shown after an update. It does not.
+  macOS binds the grant to the app's designated requirement, and
+  `scripts/create-cert.sh` gives EyeBreak a stable certificate that
+  `dev-install.sh` re-signs with, so the requirement does not change and the
+  grant survives. Grant it once. The claim was true before that script existed,
+  and only a throwaway `xcodebuild` build - signed ad-hoc, so pinned to a hash
+  that changes every build - still cannot hold a grant. `scripts/README.md` had
+  it right all along
+
+
 3.0.0 removes about 5,800 lines of Swift - roughly half the app - and adds no
 feature. What is left is one timer: work 25 minutes, break 5 minutes, hold the
 break on screen until it is dismissed. Six settings, one window, one keyboard
