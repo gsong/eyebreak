@@ -46,7 +46,6 @@ extension ScreenBlurManager {
             window.orderFrontRegardless()
 
             self.overlayWindows.append(window)
-            self.hostingViews.append(hostingView)
 
             if screen == pointerScreen {
                 self.keyOverlayWindow = window
@@ -61,7 +60,6 @@ extension ScreenBlurManager {
 
         // Clear arrays
         self.overlayWindows.removeAll()
-        self.hostingViews.removeAll()
         self.coveredFrames.removeAll()
         self.keyOverlayWindow = nil
     }
@@ -135,7 +133,6 @@ extension ScreenBlurManager {
         // whatever is underneath and stops being modal.
         let stale = self.overlayWindows
         self.overlayWindows.removeAll()
-        self.hostingViews.removeAll()
         self.keyOverlayWindow = nil
 
         self.buildOverlayWindows()

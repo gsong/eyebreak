@@ -10,6 +10,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Dead code the 3.0.0 cut left behind: `CGEventIdleDetector`, an unused backup
+  idle detector; `LaunchAtLoginManager.statusDescription` and `requiresApproval`;
+  `AccessibilityPermission.requestAccess` and the already-granted alert it alone
+  showed; and `ScreenBlurManager.hostingViews`, an array written and cleared but
+  never read. None had a call site anywhere, tests included.
+- `Info.plist` keys for capabilities the app does not have -
+  `NSUserNotificationAlertStyle`, `NSAppleEventsUsageDescription`, and
+  `NSSystemExtensionUsageDescription`.
+- Three entitlements that were inert with `app-sandbox` set to false.
+
+### Fixed
+
+- `BreakInputTap` still described the app as ad-hoc signed and said macOS drops
+  the Accessibility grant on every update. 3e280c2 corrected that claim in two
+  other files and missed this one.
+- Two comments in `ScreenBlurManager` referenced a Settings preview that 3.0.0
+  removed.
+
 ## [3.0.0] - 2026-08-29
 
 3.0.0 removes about 5,800 lines of Swift - roughly half the app - and adds no

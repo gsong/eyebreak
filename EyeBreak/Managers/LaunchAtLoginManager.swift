@@ -59,27 +59,6 @@ class LaunchAtLoginManager {
         }
     }
 
-    /// Get the current status of the app service
-    var statusDescription: String {
-        switch appService.status {
-        case .notRegistered:
-            return "Not registered"
-        case .enabled:
-            return "Enabled"
-        case .requiresApproval:
-            return "Requires approval in System Settings"
-        case .notFound:
-            return "Service not found"
-        @unknown default:
-            return "Unknown status"
-        }
-    }
-
-    /// Check if the service requires user approval
-    var requiresApproval: Bool {
-        return appService.status == .requiresApproval
-    }
-
     /// Sync the app service status with the user settings
     /// - Parameter settings: The app settings to sync with
     func syncWithSettings(_ settings: AppSettings) {
