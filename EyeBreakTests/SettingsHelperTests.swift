@@ -16,16 +16,19 @@ final class SettingsHelperTests: XCTestCase {
 
     private var savedWorkInterval: Int = 0
     private var savedBreakDuration: Int = 0
+    private var savedIdleThreshold: Int = 0
 
     override func setUp() {
         super.setUp()
         savedWorkInterval = settings.workIntervalMinutes
         savedBreakDuration = settings.breakDurationSeconds
+        savedIdleThreshold = settings.idleThresholdMinutes
     }
 
     override func tearDown() {
         settings.workIntervalMinutes = savedWorkInterval
         settings.breakDurationSeconds = savedBreakDuration
+        settings.idleThresholdMinutes = savedIdleThreshold
         super.tearDown()
     }
 
@@ -78,5 +81,21 @@ final class SettingsHelperTests: XCTestCase {
         // BreakTimerManager reads this, so it must not see the raw 50.
         settings.workIntervalMinutes = 50
         XCTAssertEqual(settings.workIntervalSeconds, 45 * 60)
+    }
+
+    func testIdleThresholdClampsAboveTheRange() {
+        settings.idleThresholdMinutes = 30
+        XCTAssertEqual(settings.idleThresholdMinutes, 15)
+    }
+
+    func testIdleThresholdClampsBelowTheRange() {
+        settings.idleThresholdMinutes = 0
+        XCTAssertEqual(settings.idleThresholdMinutes, 1)
+    }
+
+    func testIdleThresholdSecondsUsesTheClampedMinutes() {
+        // setupIdleDetection reads this, so it must not see the raw 30.
+        settings.idleThresholdMinutes = 30
+        XCTAssertEqual(settings.idleThresholdSeconds, 15 * 60)
     }
 }

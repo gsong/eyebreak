@@ -43,19 +43,13 @@ enum TimerState: Equatable {
         case .idle:
             return "Ready to start"
         case .working(let seconds):
-            return "Next break in \(formatTime(seconds))"
+            return "Next break in \(TimeFormat.compact(seconds))"
         case .breaking(let seconds):
-            return "Break time! \(seconds)s remaining"
+            return "Break time! \(TimeFormat.compact(seconds)) remaining"
         case .paused(_, let seconds):
-            return "Paused - \(formatTime(seconds)) remaining"
+            return "Paused - \(TimeFormat.compact(seconds)) remaining"
         case .awaitingDismissal:
             return "Break complete — dismiss to continue"
         }
-    }
-
-    private func formatTime(_ totalSeconds: Int) -> String {
-        let minutes = totalSeconds / 60
-        let seconds = totalSeconds % 60
-        return String(format: "%d:%02d", minutes, seconds)
     }
 }

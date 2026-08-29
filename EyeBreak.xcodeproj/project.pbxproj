@@ -27,6 +27,7 @@
 		A20000001 /* TimerStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000 /* TimerStateTests.swift */; };
 		A20000005 /* SettingsHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000004 /* SettingsHelperTests.swift */; };
 		A20000010 /* TimerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000002 /* TimerState.swift */; };
+		A20000030 /* TimeFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000028 /* TimeFormat.swift */; };
 		A20000011 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000004 /* Settings.swift */; };
 		A20000013 /* BreakCountdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000025 /* BreakCountdown.swift */; };
 		A20000014 /* BreakInputPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000100 /* BreakInputPolicy.swift */; };
@@ -41,10 +42,6 @@
 		DAB715AB0C6562FEEEA1DEE0 /* ScreenBlurManager+Windows.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE255DFE4A8592542004144D /* ScreenBlurManager+Windows.swift */; };
 		A05F6BD9DC4FB75F70E0FD94 /* SettingsComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710FE3BF2F1DB48C20C0E946 /* SettingsComponents.swift */; };
 		8E0A253269E5B76762339334 /* TimerStatusBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60FC3767A779F1C5F49A03E /* TimerStatusBanner.swift */; };
-		882D9B102CEB5B88B175AA11 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABD3A2BEA778F8771F41474C /* AboutView.swift */; };
-		E2BE58DAEC5DB7498BBF9035 /* UnifiedCountdownCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6CE3C421125866CF99B009 /* UnifiedCountdownCard.swift */; };
-		BCB43827D78D9BE740C85290 /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC152E86318450BAA3F983BA /* GeneralSettingsView.swift */; };
-		7F68689E694F07B089DB0CFF /* BreakSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FCF7449772244E6A52768F /* BreakSettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -82,10 +79,6 @@
 		AE255DFE4A8592542004144D /* ScreenBlurManager+Windows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScreenBlurManager+Windows.swift"; sourceTree = "<group>"; };
 		710FE3BF2F1DB48C20C0E946 /* SettingsComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsComponents.swift; sourceTree = "<group>"; };
 		B60FC3767A779F1C5F49A03E /* TimerStatusBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerStatusBanner.swift; sourceTree = "<group>"; };
-		ABD3A2BEA778F8771F41474C /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
-		6B6CE3C421125866CF99B009 /* UnifiedCountdownCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnifiedCountdownCard.swift; sourceTree = "<group>"; };
-		AC152E86318450BAA3F983BA /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
-		94FCF7449772244E6A52768F /* BreakSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakSettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,10 +126,6 @@
 		A10000040 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				94FCF7449772244E6A52768F /* BreakSettingsView.swift */,
-				AC152E86318450BAA3F983BA /* GeneralSettingsView.swift */,
-				6B6CE3C421125866CF99B009 /* UnifiedCountdownCard.swift */,
-				ABD3A2BEA778F8771F41474C /* AboutView.swift */,
 				B60FC3767A779F1C5F49A03E /* TimerStatusBanner.swift */,
 				710FE3BF2F1DB48C20C0E946 /* SettingsComponents.swift */,
 				0678129D3C7B6E5E6FA6BFFB /* BreakOverlayTimerDisplay.swift */,
@@ -287,10 +276,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7F68689E694F07B089DB0CFF /* BreakSettingsView.swift in Sources */,
-				BCB43827D78D9BE740C85290 /* GeneralSettingsView.swift in Sources */,
-				E2BE58DAEC5DB7498BBF9035 /* UnifiedCountdownCard.swift in Sources */,
-				882D9B102CEB5B88B175AA11 /* AboutView.swift in Sources */,
 				8E0A253269E5B76762339334 /* TimerStatusBanner.swift in Sources */,
 				A05F6BD9DC4FB75F70E0FD94 /* SettingsComponents.swift in Sources */,
 				DAB715AB0C6562FEEEA1DEE0 /* ScreenBlurManager+Windows.swift in Sources */,
@@ -326,6 +311,7 @@
 				A20000001 /* TimerStateTests.swift in Sources */,
 				A20000005 /* SettingsHelperTests.swift in Sources */,
 				A20000010 /* TimerState.swift in Sources */,
+				A20000030 /* TimeFormat.swift in Sources */,
 				A20000011 /* Settings.swift in Sources */,
 				A20000013 /* BreakCountdown.swift in Sources */,
 				A20000007 /* BreakCountdownTests.swift in Sources */,

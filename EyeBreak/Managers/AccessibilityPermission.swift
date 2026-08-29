@@ -13,8 +13,8 @@
 //
 //  Every build produces a different cdhash, so macOS treats each update as a
 //  different program and drops any Accessibility grant the user had given. The
-//  global shortcuts (Cmd+Shift+B and friends) then stop working with no error
-//  and no prompt, which reads as "the update broke the app".
+//  global shortcut ⌃⌥B then stops working with no error and no prompt, which
+//  reads as "the update broke the app".
 //
 //  Rather than leave people guessing, we detect the missing grant and offer to
 //  open the right settings pane. A Developer ID signature would make the grant

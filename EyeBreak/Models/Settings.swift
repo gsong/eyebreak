@@ -29,10 +29,14 @@ class AppSettings: ObservableObject {
         (breakDurationRange.lowerBound / 60)...(breakDurationRange.upperBound / 60)
     }
 
+    /// The stops the Idle Threshold slider offers, in minutes. One minute fires
+    /// during ordinary reading, which George chose knowingly — see #53.
+    static let idleThresholdRange = 1...15
+
     // MARK: - Published Properties
 
-    // The two timing settings clamp on read, not on write. BreakTimerManager
-    // reads them at seven sites, so a clamp in the view would let Settings show
+    // The three slider settings clamp on read, not on write. BreakTimerManager
+    // reads them at eight sites, so a clamp in the view would let Settings show
     // 45 while the timer ran 50. Clamping the getter makes every reader agree.
     // The setter stays open on purpose: a hand-written out-of-range value keeps
     // its stored form and returns intact if a range ever widens back.
@@ -54,8 +58,15 @@ class AppSettings: ObservableObject {
     @AppStorage("requireBreakDismissal") var requireBreakDismissal: Bool = true
     @AppStorage("soundEnabled") var soundEnabled: Bool = true
     @AppStorage("idleDetectionEnabled") var idleDetectionEnabled: Bool = true
-    @AppStorage("idleThresholdMinutes") var idleThresholdMinutes: Int = 5
     @AppStorage("launchAtLogin") var launchAtLogin: Bool = false
+
+    // A slider cannot refuse an out-of-range stored value the way the picker it
+    // replaced could, so this clamps like the two above it.
+    @AppStorage("idleThresholdMinutes") private var storedIdleThreshold: Int = 5
+    var idleThresholdMinutes: Int {
+        get { Self.clamp(storedIdleThreshold, to: Self.idleThresholdRange) }
+        set { storedIdleThreshold = newValue }
+    }
 
     // MARK: - Computed Properties
 

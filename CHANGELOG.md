@@ -42,6 +42,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   is available, because `start()` only works from idle and `stop()` only returns
   there. The menu bar menu is now Open Settings, that one item, Take Break Now,
   and Quit
+- **Settings is one scrolling form** - The 160pt sidebar and the General /
+  Breaks / About tabs are gone. What is left is a Timer section holding three
+  sliders and four toggles, then an untitled tail with the permission row, Reset
+  to Defaults, and the version. A grouped form charges about 80pt at every
+  section seam, so four headers cost more than any of them was worth
+- **The timer strip above the form is one row** - A dot, the state, and Stop and
+  Break Now - or Start when the timer is idle. The three-ring status indicator,
+  the gradient progress bar, and the five per-state button sets go
+- **Each slider is one row** - Icon, title, track, value on a single line. The
+  card each one used to sit in spent about 200pt restating, in a 24pt gradient
+  numeral, the number the track already showed
+- **Idle Threshold is a slider over 1 to 15 minutes** - It was a picker offering
+  3, 5, 10 and 15, which nobody chose; it was inherited. A slider cannot refuse
+  an out-of-range stored value the way a picker could, so this setting now
+  clamps when read, like the two sliders above it
+- **Every countdown in the app reads `M:SS`** - The timer strip said "Break
+  time! 287s remaining" and the menu bar tooltip said "287 seconds remaining"
+  while the status button showed `4:47` for the same instant. All three now
+  share the one formatter
 
 ### Removed
 
@@ -130,6 +149,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **A dead second Settings window** - `openSettings()` built a whole `NSWindow`
   for the case where the scan for the existing window failed. The SwiftUI
   `Window` scene is in the window list from launch, so that case never happened
+
+- **The About tab** - The app icon, the version badge, the 20-20-20 description,
+  the Key Features card and the GitHub and Report Issue buttons. 239 lines. The
+  standard About panel already showed the icon, version and copyright, and the
+  features card had become a lie: it still advertised Water Reminders, Ambient
+  Reminders and Smart Schedule, all deleted here. What replaces it is one row -
+  `Version <n>` with a GitHub link. The Keyboard Shortcuts card survives as a
+  plain row that expands into the warning only when the permission is missing
+
+- **The Active Timers card** - It listed one timer and printed the same
+  countdown as the strip directly above it. The rows that justified a card -
+  Ambient Reminder and Water Reminder - were deleted earlier in this line of
+  work. 223 lines, plus the `CountdownRow` it was built from
+
+- **Two unused settings components** - The feature row the Key Features card was
+  built from, and a section card that no view had ever called
 
 ## [2.5.0] - 2026-08-27
 
