@@ -10,19 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-
-- **What the app and its docs say about the Accessibility grant** - Five places
-  claimed macOS drops the grant on every update or reinstall, including the
-  warning row in Settings and the alert shown after an update. It does not.
-  macOS binds the grant to the app's designated requirement, and
-  `scripts/create-cert.sh` gives EyeBreak a stable certificate that
-  `dev-install.sh` re-signs with, so the requirement does not change and the
-  grant survives. Grant it once. The claim was true before that script existed,
-  and only a throwaway `xcodebuild` build - signed ad-hoc, so pinned to a hash
-  that changes every build - still cannot hold a grant. `scripts/README.md` had
-  it right all along
-
+## [3.0.0] - 2026-08-29
 
 3.0.0 removes about 5,800 lines of Swift - roughly half the app - and adds no
 feature. What is left is one timer: work 25 minutes, break 5 minutes, hold the
@@ -230,6 +218,19 @@ call site in this fork or its parent.
   notarization steps for an app that ships to nobody, over a file tree of
   deleted files. `README.md`, `docs/ARCHITECTURE.md` and `docs/TESTING.md` are
   rewritten against the app that is actually here
+
+### Fixed
+
+- **What the app and its docs say about the Accessibility grant** - Five places
+  claimed macOS drops the grant on every update or reinstall, including the
+  warning row in Settings and the alert shown after an update. It does not.
+  macOS binds the grant to the app's designated requirement, and
+  `scripts/create-cert.sh` gives EyeBreak a stable certificate that
+  `dev-install.sh` re-signs with, so the requirement does not change and the
+  grant survives. Grant it once. The claim was true before that script existed,
+  and only a throwaway `xcodebuild` build - signed ad-hoc, so pinned to a hash
+  that changes every build - still cannot hold a grant. `scripts/README.md` had
+  it right all along
 
 ## [2.5.0] - 2026-08-27
 
@@ -890,7 +891,8 @@ None! Zero external dependencies. Pure Swift and native frameworks only.
 - **Icons**: SF Symbols
 - **License**: MIT (commercial use allowed)
 
-[Unreleased]: https://github.com/gsong/eyebreak/compare/v2.5.0...HEAD
+[Unreleased]: https://github.com/gsong/eyebreak/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/gsong/eyebreak/compare/v2.5.0...v3.0.0
 [2.5.0]: https://github.com/gsong/eyebreak/compare/v2.4.1...v2.5.0
 [2.3.0]: https://github.com/gsong/eyebreak/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/gsong/eyebreak/compare/v2.1.0...v2.2.0
