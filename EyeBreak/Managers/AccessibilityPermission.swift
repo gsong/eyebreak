@@ -115,18 +115,18 @@ final class AccessibilityPermission: ObservableObject {
 
         if afterUpdate {
             alert.informativeText = """
-            macOS reset EyeBreak's Accessibility permission when it updated, so the \
-            keyboard shortcuts (⌘⇧B and the others) have stopped working.
+            macOS reset EyeBreak's Accessibility permission when it updated, so ⌃⌥B \
+            has stopped working and a break can no longer hold the keyboard.
 
-            Re-enabling EyeBreak under Accessibility restores them. Everything else — \
-            timers, break reminders and the menu bar — works normally either way.
+            Re-enabling EyeBreak under Accessibility restores both. Everything else — \
+            the timer, the break overlay and the menu bar — works normally either way.
             """
         } else {
             alert.informativeText = """
-            EyeBreak needs Accessibility permission to use its keyboard shortcuts \
-            (⌘⇧B to take a break, ⌘⇧S to start, and the rest).
+            EyeBreak needs Accessibility permission for ⌃⌥B, its one keyboard \
+            shortcut, and to hold the keyboard while a break waits to be dismissed.
 
-            Everything else — timers, break reminders and the menu bar — works \
+            Everything else — the timer, the break overlay and the menu bar — works \
             normally without it.
             """
         }

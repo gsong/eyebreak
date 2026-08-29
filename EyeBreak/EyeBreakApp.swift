@@ -24,23 +24,6 @@ struct EyeBreakApp: App {
                     NSApplication.shared.orderFrontStandardAboutPanel()
                 }
             }
-
-            CommandGroup(after: .appSettings) {
-                Button("Start Timer") {
-                    BreakTimerManager.shared.start()
-                }
-                .keyboardShortcut("s", modifiers: [.command, .shift])
-
-                Button("Take Break Now") {
-                    BreakTimerManager.shared.takeBreakNow()
-                }
-                .keyboardShortcut("b", modifiers: [.command, .shift])
-
-                Button("Stop Timer") {
-                    BreakTimerManager.shared.stop()
-                }
-                .keyboardShortcut("x", modifiers: [.command, .shift])
-            }
         }
     }
 }
@@ -63,16 +46,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             NSApp.setActivationPolicy(.accessory)
         }
 
-        // Setup global keyboard shortcuts
+        // Setup the global keyboard shortcut
         setupGlobalKeyboardShortcuts()
 
         // Sync launch at login status with settings
         LaunchAtLoginManager.shared.syncWithSettings(AppSettings.shared)
 
-        // The global shortcuts below need Accessibility permission. macOS drops
+        // The global shortcut below needs Accessibility permission. macOS drops
         // that grant whenever the app's code signature changes, which happens on
         // every dev-install.sh run, so check and offer to restore it instead of
-        // letting the shortcuts fail silently.
+        // letting the shortcut fail silently.
         AccessibilityPermission.shared.promptIfNeededOnLaunch()
 
         // The timer always runs. There is no launch where the app is open and
@@ -99,19 +82,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return false
     }
 
-    /// The ⌘⇧ chords EyeBreak claims, keyed by the character the key produces
-    /// with the modifiers ignored. macOS reports these lowercase even with
-    /// Shift held.
+    /// The one chord EyeBreak claims, keyed by the character the key produces
+    /// with the modifiers ignored. ⌃⌥B rather than ⌘⇧B, because ⌘⇧ chords
+    /// collide with what other apps use.
     private static let shortcutActions: [String: () -> Void] = [
-        "b": { BreakTimerManager.shared.takeBreakNow() },
-        "s": { BreakTimerManager.shared.start() },
-        "x": { BreakTimerManager.shared.stop() },
-        "o": { NSApp.sendAction(#selector(StatusBarController.openSettings), to: nil, from: nil) }
+        "b": { BreakTimerManager.shared.takeBreakNow() }
     ]
 
     /// The action this event triggers, or nil when the event is not one of ours.
     private static func shortcutAction(for event: NSEvent) -> (() -> Void)? {
-        guard event.modifierFlags.contains([.command, .shift]),
+        guard event.modifierFlags.contains([.control, .option]),
               let key = event.charactersIgnoringModifiers else { return nil }
         return shortcutActions[key]
     }

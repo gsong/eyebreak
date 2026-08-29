@@ -13,6 +13,8 @@ class StatusBarController: NSObject, ObservableObject {
     private(set) var statusItem: NSStatusItem?
     private var cancellables = Set<AnyCancellable>()
     private var timerManager = BreakTimerManager.shared
+    /// Held because `menuNeedsUpdate` retitles it; every other item is static.
+    private var startStopItem: NSMenuItem?
 
     override init() {
         super.init()
@@ -122,7 +124,10 @@ class StatusBarController: NSObject, ObservableObject {
         item.isVisible = true
         item.behavior = []                        // Empty means the user cannot remove it.
         item.autosaveName = "EyeBreakStatusItem"  // Persist the position across launches.
-        item.menu = makeMenu()
+
+        let menu = makeMenu()
+        menu.delegate = self
+        item.menu = menu
     }
 
     private func configureStatusButton(_ button: NSStatusBarButton) {
@@ -143,12 +148,17 @@ class StatusBarController: NSObject, ObservableObject {
         let menu = NSMenu()
         menu.autoenablesItems = true
 
-        menu.addItem(makeMenuItem(title: "Open Settings...", action: #selector(openSettings), key: ","))
+        menu.addItem(makeMenuItem(title: "Open Settings\u{2026}", action: #selector(openSettings)))
         menu.addItem(.separator())
 
-        menu.addItem(makeMenuItem(title: "Start Timer", action: #selector(startTimer), key: "s", chord: true))
-        menu.addItem(makeMenuItem(title: "Take Break Now", action: #selector(takeBreak), key: "b", chord: true))
-        menu.addItem(makeMenuItem(title: "Stop Timer", action: #selector(stopTimer), key: "x", chord: true))
+        let startStop = makeMenuItem(title: startStopTitle, action: #selector(toggleTimer))
+        startStopItem = startStop
+        menu.addItem(startStop)
+
+        menu.addItem(makeMenuItem(title: "Take Break Now",
+                                  action: #selector(takeBreak),
+                                  key: "b",
+                                  modifiers: [.control, .option]))
         menu.addItem(.separator())
 
         menu.addItem(makeMenuItem(title: "Quit EyeBreak", action: #selector(quit), key: "q"))
@@ -156,65 +166,55 @@ class StatusBarController: NSObject, ObservableObject {
         return menu
     }
 
-    /// `chord: true` gives the item ⌘⇧ instead of the default ⌘, matching the
-    /// global shortcuts in AppDelegate.
-    private func makeMenuItem(title: String, action: Selector, key: String, chord: Bool = false) -> NSMenuItem {
+    /// A status-item menu's key equivalents never dispatch — they are labels.
+    /// The chords that work are AppDelegate's two `NSEvent` monitors and the
+    /// standard app menu's own Quit, so only items those two cover carry a key.
+    private func makeMenuItem(title: String,
+                              action: Selector,
+                              key: String = "",
+                              modifiers: NSEvent.ModifierFlags = [.command]) -> NSMenuItem {
         let menuItem = NSMenuItem(title: title, action: action, keyEquivalent: key)
-        if chord {
-            menuItem.keyEquivalentModifierMask = [.command, .shift]
-        }
+        menuItem.keyEquivalentModifierMask = modifiers
         menuItem.target = self
         return menuItem
     }
 
-    @objc func openSettings() {
-
-        // Check if settings window already exists
-        var settingsWindowExists = false
-        for window in NSApp.windows where window.title == "EyeBreak Settings" {
-            // Window exists, just bring it to front
-            window.makeKeyAndOrderFront(nil)
-            NSApp.activate(ignoringOtherApps: true)
-            settingsWindowExists = true
-            break
-        }
-
-        // If no settings window exists, open a new one using the SwiftUI Window API
-        if !settingsWindowExists {
-            // Use NSWorkspace to open the window via the app's URL scheme or environment
-            // This will trigger the SwiftUI Window("settings") to open
-            NSApp.activate(ignoringOtherApps: true)
-
-            // Create the settings window through SwiftUI Window scene
-            let settingsView = SettingsView()
-                .environmentObject(BreakTimerManager.shared)
-                .environmentObject(AppSettings.shared)
-
-            let hostingController = NSHostingController(rootView: settingsView)
-            let window = NSWindow(contentViewController: hostingController)
-            window.title = "EyeBreak Settings"
-            window.setContentSize(NSSize(width: 700, height: 600))
-            window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
-            window.center()
-            window.isReleasedWhenClosed = false
-
-            window.makeKeyAndOrderFront(nil)
-        }
+    /// One item covers both directions: `start()` guards on `.idle` and `stop()`
+    /// always returns there, so the state names the only move available.
+    private var startStopTitle: String {
+        timerManager.state == .idle ? "Start Timer" : "Stop Timer"
     }
 
-    @objc private func startTimer() {
-        BreakTimerManager.shared.start()
+    @objc private func openSettings() {
+        // The SwiftUI `Window` scene is in `NSApp.windows` from launch, so this
+        // scan always finds the window — closing it orders it out rather than
+        // releasing it.
+        guard let window = NSApp.windows.first(where: { $0.title == "EyeBreak Settings" }) else { return }
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    @objc private func toggleTimer() {
+        if timerManager.state == .idle {
+            timerManager.start()
+        } else {
+            timerManager.stop()
+        }
     }
 
     @objc private func takeBreak() {
         BreakTimerManager.shared.takeBreakNow()
     }
 
-    @objc private func stopTimer() {
-        BreakTimerManager.shared.stop()
-    }
-
     @objc private func quit() {
         NSApplication.shared.terminate(nil)
+    }
+}
+
+extension StatusBarController: NSMenuDelegate {
+    /// AppKit calls this just before the menu opens, which is the only moment
+    /// the start/stop title has to be right.
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        startStopItem?.title = startStopTitle
     }
 }
