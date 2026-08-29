@@ -52,18 +52,6 @@ struct BreakSettingsView: View {
                     settings.breakDurationMinutes = newValue
                 }
 
-                EnhancedSliderCard(
-                    title: "Pre-Break Warning",
-                    value: settings.preBreakWarningSeconds,
-                    unit: "sec",
-                    icon: "bell.fill",
-                    color: .orange,
-                    range: 10...60,
-                    step: 1
-                ) { newValue in
-                    settings.preBreakWarningSeconds = newValue
-                }
-
                 VStack(alignment: .leading, spacing: 6) {
                     Toggle("Wait for me to dismiss the break", isOn: $settings.requireBreakDismissal)
                         .toggleStyle(.switch)

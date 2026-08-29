@@ -66,11 +66,6 @@ struct TimerStatusBanner: View {
                                 .font(.system(.subheadline, design: .monospaced))
                                 .foregroundColor(.secondary)
                                 .contentTransition(.numericText())
-                        } else if case .preBreak(let seconds) = timerManager.state {
-                            Text("Break in \(seconds)s")
-                                .font(.system(.subheadline, design: .monospaced))
-                                .foregroundColor(.orange)
-                                .contentTransition(.numericText())
                         } else {
                             Text("Start your healthy eye habit")
                                 .font(.subheadline)
@@ -163,7 +158,6 @@ struct TimerStatusBanner: View {
         switch timerManager.state {
         case .working: return "desktopcomputer"
         case .breaking: return "eye.slash.fill"
-        case .preBreak: return "bell.fill"
         default: return "timer"
         }
     }
@@ -174,8 +168,6 @@ struct TimerStatusBanner: View {
             return .gray
         case .working:
             return .blue
-        case .preBreak:
-            return .orange
         case .breaking:
             return .green
         case .paused:
@@ -204,8 +196,6 @@ struct TimerStatusBanner: View {
             return "Idle"
         case .working:
             return "Next break in:"
-        case .preBreak:
-            return "Break starting soon:"
         case .breaking:
             return "Break time remaining:"
         case .paused:
@@ -219,7 +209,7 @@ struct TimerStatusBanner: View {
         switch timerManager.state {
         case .idle:
             return "--:--"
-        case .working(let remainingSeconds), .preBreak(let remainingSeconds), .breaking(let remainingSeconds):
+        case .working(let remainingSeconds), .breaking(let remainingSeconds):
             let minutes = remainingSeconds / 60
             let seconds = remainingSeconds % 60
             return String(format: "%02d:%02d", minutes, seconds)
@@ -240,7 +230,7 @@ struct TimerStatusBanner: View {
                 .buttonStyle(.borderedProminent)
                 .keyboardShortcut("s", modifiers: [.command, .shift])
 
-            case .working, .preBreak:
+            case .working:
                 Button {
                     timerManager.takeBreakNow()
                 } label: {

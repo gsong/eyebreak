@@ -75,14 +75,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // letting the shortcuts fail silently.
         AccessibilityPermission.shared.promptIfNeededOnLaunch()
 
-        // Auto-start timer if enabled
-        if AppSettings.shared.autoStartTimer {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                BreakTimerManager.shared.start()
-            }
-        } else {
+        // The timer always runs. There is no launch where the app is open and
+        // the clock is not counting.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            BreakTimerManager.shared.start()
         }
-
     }
 
     func applicationWillTerminate(_ notification: Notification) {

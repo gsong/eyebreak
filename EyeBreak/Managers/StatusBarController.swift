@@ -73,7 +73,7 @@ class StatusBarController: NSObject, ObservableObject {
         switch state {
         case .idle:
             return "eye"
-        case .working, .preBreak:
+        case .working:
             return "eye.fill"
         case .breaking:
             return "eye.slash.fill"
@@ -91,7 +91,7 @@ class StatusBarController: NSObject, ObservableObject {
         switch state {
         case .idle, .awaitingDismissal:
             return ""
-        case .working(let seconds), .preBreak(let seconds), .breaking(let seconds):
+        case .working(let seconds), .breaking(let seconds):
             return TimeFormat.compact(seconds)
         case .paused(_, let seconds):
             return TimeFormat.compact(seconds)
@@ -104,8 +104,6 @@ class StatusBarController: NSObject, ObservableObject {
             return "EyeBreak - Click to start"
         case .working(let seconds):
             return "Working - Break in \(TimeFormat.compact(seconds))"
-        case .preBreak(let seconds):
-            return "Break starting in \(seconds) seconds"
         case .breaking(let seconds):
             return "On break - \(seconds) seconds remaining"
         case .paused:

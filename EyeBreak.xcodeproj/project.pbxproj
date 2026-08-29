@@ -15,7 +15,6 @@
 		A10000005 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000004 /* Settings.swift */; };
 		A10000007 /* BreakTimerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000006 /* BreakTimerManager.swift */; };
 		A10000009 /* IdleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000008 /* IdleDetector.swift */; };
-		A1000000B /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000A /* NotificationManager.swift */; };
 		A1000000D /* ScreenBlurManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000C /* ScreenBlurManager.swift */; };
 		A10000091 /* AccessibilityPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000090 /* AccessibilityPermission.swift */; };
 		A100000B1 /* SettingsWindowHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000B0 /* SettingsWindowHost.swift */; };
@@ -57,7 +56,6 @@
 		A10000004 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		A10000006 /* BreakTimerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakTimerManager.swift; sourceTree = "<group>"; };
 		A10000008 /* IdleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdleDetector.swift; sourceTree = "<group>"; };
-		A1000000A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		A1000000C /* ScreenBlurManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenBlurManager.swift; sourceTree = "<group>"; };
 		A10000090 /* AccessibilityPermission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPermission.swift; sourceTree = "<group>"; };
 		A100000B0 /* SettingsWindowHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowHost.swift; sourceTree = "<group>"; };
@@ -124,7 +122,6 @@
 				99BD678A2E92516200D6FF8C /* StatusBarController.swift */,
 				A10000006 /* BreakTimerManager.swift */,
 				A10000008 /* IdleDetector.swift */,
-				A1000000A /* NotificationManager.swift */,
 				A1000000C /* ScreenBlurManager.swift */,
 				A10000090 /* AccessibilityPermission.swift */,
 				A10000100 /* BreakInputPolicy.swift */,
@@ -312,7 +309,6 @@
 				99EB42272EACA748003A7CDA /* LaunchAtLoginManager.swift in Sources */,
 				A10000007 /* BreakTimerManager.swift in Sources */,
 				A10000009 /* IdleDetector.swift in Sources */,
-				A1000000B /* NotificationManager.swift in Sources */,
 				A1000000D /* ScreenBlurManager.swift in Sources */,
 				A10000091 /* AccessibilityPermission.swift in Sources */,
 				A10000101 /* BreakInputPolicy.swift in Sources */,
