@@ -35,6 +35,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **The break overlay counts down in `M:SS`** - It showed raw seconds, so a
   five-minute break opened on `287` while the menu bar showed `4:47` for the same
   instant. Both surfaces now share one formatter
+- **Take Break Now is `⌃⌥B`** - Rebound from `⌘⇧B`. It is the only global
+  shortcut left, so it no longer has to share a modifier pattern with four
+  others
+- **Start Timer and Stop Timer are one menu item** - Its title says which move
+  is available, because `start()` only works from idle and `stop()` only returns
+  there. The menu bar menu is now Open Settings, that one item, Take Break Now,
+  and Quit
 
 ### Removed
 
@@ -109,6 +116,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **The Auto-Start Timer toggle** - Behaviour is unchanged: the timer still
   starts on launch, now unconditionally. The switch was a way to open the app
   with the clock stopped, which is the app doing nothing
+
+- **Four of the five global shortcuts** - Start `⌘⇧S`, Stop `⌘⇧X`, and Open
+  Settings `⌘⇧O` are gone, and Take Break Now is rebound. There is one chord,
+  and Settings opens by clicking the menu bar icon. The Start, Break Now, and
+  Stop buttons in Settings lose their key equivalents too, so no `⌘⇧` chord
+  drives the timer from anywhere
+
+- **The app's Start / Take Break / Stop menu commands** - The three items
+  EyeBreak added to the standard app menu, which only appeared while the
+  Settings window had focus and duplicated the menu bar menu
+
+- **A dead second Settings window** - `openSettings()` built a whole `NSWindow`
+  for the case where the scan for the existing window failed. The SwiftUI
+  `Window` scene is in the window list from launch, so that case never happened
 
 ## [2.5.0] - 2026-08-27
 

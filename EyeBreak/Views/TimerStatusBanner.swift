@@ -228,7 +228,6 @@ struct TimerStatusBanner: View {
                     Label("Start", systemImage: "play.fill")
                 }
                 .buttonStyle(.borderedProminent)
-                .keyboardShortcut("s", modifiers: [.command, .shift])
 
             case .working:
                 Button {
@@ -237,7 +236,6 @@ struct TimerStatusBanner: View {
                     Label("Break Now", systemImage: "pause.fill")
                 }
                 .buttonStyle(.bordered)
-                .keyboardShortcut("b", modifiers: [.command, .shift])
 
                 Button {
                     timerManager.stop()
@@ -245,7 +243,6 @@ struct TimerStatusBanner: View {
                     Label("Stop", systemImage: "stop.fill")
                 }
                 .buttonStyle(.bordered)
-                .keyboardShortcut("x", modifiers: [.command, .shift])
 
             case .breaking:
                 Button {
