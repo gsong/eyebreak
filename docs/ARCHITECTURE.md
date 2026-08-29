@@ -1,442 +1,258 @@
 # EyeBreak Architecture
 
-This document describes the architecture and technical design of EyeBreak.
-
-## Table of Contents
+How the app is put together, as of 3.0.0. About 2,950 lines of Swift across 25
+files, plus 500 lines of tests across 4.
 
 - [Overview](#overview)
-- [Design Patterns](#design-patterns)
-- [Core Components](#core-components)
-- [Data Flow](#data-flow)
-- [State Management](#state-management)
+- [The loop](#the-loop)
+- [Models](#models)
+- [Managers](#managers)
+- [Views](#views)
+- [Settings and persistence](#settings-and-persistence)
 - [Permissions](#permissions)
+- [Tests](#tests)
 
 ## Overview
 
-EyeBreak is built using modern macOS development practices:
+- **Language**: Swift 5.9
+- **UI**: SwiftUI, with AppKit where SwiftUI cannot reach — the status item, the
+  overlay windows, the keyboard tap
+- **Reactive**: Combine
+- **Minimum target**: macOS 26.0 (Tahoe)
 
-- **Language**: Swift 5.9+
-- **UI Framework**: SwiftUI
-- **Architecture**: MVVM (Model-View-ViewModel)
-- **Reactive Programming**: Combine framework
-- **Minimum Target**: macOS 14.0 (Sonoma)
+The app has no Dock icon (`LSUIElement`). Two things are on screen: the status
+item in the menu bar, and the Settings window. A third appears during a break —
+one overlay window per display.
 
-## Design Patterns
+`EyeBreakApp.swift` owns the entry point. It declares a single SwiftUI `Window`
+scene for Settings, installs two `NSEvent` monitors for ⌃⌥B, and starts the
+timer unconditionally at launch.
 
-### MVVM (Model-View-ViewModel)
+Most managers are singletons reached through `.shared`. That is inherited, not
+chosen; there is no dependency-injection container.
+
+## The loop
+
+There is one loop and one clock.
 
 ```
-┌─────────────┐         ┌──────────────────┐         ┌─────────────┐
-│    Views    │────────▶│    Managers      │────────▶│   Models    │
-│  (SwiftUI)  │◀────────│  (ViewModel)     │◀────────│   (Data)    │
-└─────────────┘         └──────────────────┘         └─────────────┘
-     │                          │                          │
-     │                          │                          │
-  User Input            Business Logic              State & Data
+launch
+  │
+  ▼
+BreakTimerManager.start()          state: .idle → .working
+  │
+  ▼
+tick() every second                remainingSeconds counts down
+  │
+  ├──▶ idle past threshold ──▶ .paused(wasWorking:) ──▶ activity ──▶ .working
+  │
+  ▼
+remainingSeconds == 0
+  │
+  ▼
+startBreak()                       state: .working → .breaking
+  │                                ScreenBlurManager puts one overlay on
+  │                                every display, all driven by one
+  │                                BreakCountdown
+  │                                BreakInputTap takes the keyboard
+  ▼
+serveBreak()                       the break is over
+  │
+  ├── requireBreakDismissal off ──▶ endBreak() ──▶ .working
+  │
+  ▼
+awaitDismissal()                   state: .awaitingDismissal
+  │                                overlay stays up, nothing counts
+  ▼
+⎋, the button, or the panic chord
+  │
+  ▼
+startNextWorkInterval()            state: .working, a full interval
 ```
 
-- **Views**: Pure SwiftUI views that observe state changes
-- **Managers**: Business logic and state management (ViewModels)
-- **Models**: Simple data structures and enums
+`BreakTimerManager.tick()` is the only thing that ends a break. `BreakCountdown`
+draws and nothing more — reaching zero there ends nothing. That split is what
+lets the overlay set be rebuilt when a display is attached or detached without
+restarting the break.
 
-### Observable Pattern
+The manager is split across three files: `BreakTimerManager.swift` (state and
+the tick), `+Break.swift` (the break phase), `+SystemEvents.swift` (sleep, wake,
+screen lock, idle).
 
-All managers conform to `ObservableObject` and use `@Published` properties to notify views of changes:
+## Models
 
-```swift
-class BreakTimerManager: ObservableObject {
-    @Published var state: TimerState = .idle
-    @Published var secondsRemaining: Int = 0
-}
-```
-
-## Core Components
-
-### 1. App Entry Point
-
-**File**: `EyeBreakApp.swift`
-
-```swift
-@main
-struct EyeBreakApp: App {
-    @StateObject private var timerManager = BreakTimerManager()
-    @StateObject private var idleDetector = IdleDetector()
-
-    var body: some Scene {
-        MenuBarExtra("EyeBreak", systemImage: "eye") {
-            MenuBarView()
-        }
-        .menuBarExtraStyle(.window)
-    }
-}
-```
-
-- Uses `MenuBarExtra` for menu bar integration
-- Creates and injects managers into the environment
-- Manages app lifecycle
-
-### 2. Managers (Business Logic)
-
-#### BreakTimerManager
-
-**Purpose**: Core timer logic and state management
-
-**Key Responsibilities**:
-
-- Start/stop/pause timer
-- Countdown logic
-- State transitions (idle → working → preBreak → break)
-- Coordinate with other managers
-- Persist statistics
-
-**Key Properties**:
-
-```swift
-@Published var state: TimerState
-@Published var secondsRemaining: Int
-@Published var totalBreaks: Int
-@Published var breakHistory: [BreakRecord]
-```
-
-#### IdleDetector
-
-**Purpose**: Monitor user activity and pause timer when idle
-
-**Key Responsibilities**:
-
-- Use IOKit to track system idle time
-- Detect when user goes idle (>5 min default)
-- Auto-resume on activity return
-- Handle sleep/wake events
-
-**Implementation**:
-
-```swift
-func checkIdleTime() {
-    let idleTime = CGEventSource.secondsSinceLastEventType(
-        .combinedSessionState,
-        eventType: .mouseMoved
-    )
-    if idleTime > threshold {
-        pauseTimer()
-    }
-}
-```
-
-#### NotificationManager
-
-**Purpose**: Handle all notification logic
-
-**Key Responsibilities**:
-
-- Request notification permissions
-- Schedule pre-break warnings
-- Send break notifications
-- Handle notification actions
-
-#### ScreenBlurManager
-
-**Purpose**: Manage full-screen blur overlay
-
-**Key Responsibilities**:
-
-- Create and manage NSWindow overlays
-- Apply blur effects
-- Handle multi-display setups
-- Capture user input to dismiss
-
-### 3. Models
-
-#### TimerState
+### TimerState
 
 ```swift
 enum TimerState: Equatable {
     case idle
     case working(remainingSeconds: Int)
-    case preBreak(remainingSeconds: Int)
     case breaking(remainingSeconds: Int)
     case paused(wasWorking: Bool, remainingSeconds: Int)
     case awaitingDismissal
 }
 ```
 
-`awaitingDismissal` is a break that has been served and is waiting for the user
-to dismiss it. It reports `isActive == false`, because nothing is counting during
-the wait — and because `pause()` guards on `isActive`, which is what makes sleep,
-screen lock and idle detection leave the waiting overlay where it is.
+`awaitingDismissal` reports `isActive == false`, because nothing is counting
+during the wait — and because `pause()` guards on `isActive`, which is what
+makes sleep, screen lock and idle detection leave the waiting overlay where it
+is.
 
-#### Settings
+`hasBreakOnScreen` covers `.breaking` and `.awaitingDismissal` together, so a
+second break cannot start on top of either.
 
-```swift
-struct AppSettings {
-    var workInterval: Int = 20
-    var breakDuration: Int = 20
-    var preBreakWarning: Int = 30
-    var breakStyle: BreakStyle = .blurScreen
-    var soundEnabled: Bool = true
-    // ... more settings
-}
-```
+### AppSettings
 
-#### BreakRecord
+Six settings, all `@AppStorage`. Three of them — work interval, break duration,
+idle threshold — **clamp on read, not on write**. `BreakTimerManager` reads the
+stored values at eight sites, so a clamp in the view would let Settings show 45
+while the timer ran 50. The setter stays open on purpose, so a hand-written
+out-of-range value keeps its stored form if a range ever widens back.
 
-```swift
-struct BreakRecord: Codable {
-    let timestamp: Date
-    let completed: Bool
-    let duration: Int
-}
-```
+Break duration is stored in seconds and shown in minutes. A 60–600 second slider
+gives under a point per second, so the thumb could not land on a round number.
 
-### 4. Views
+`resetToDefaults()` deliberately skips `launchAtLogin`: writing that key
+registers or unregisters a macOS login item, which is system state rather than a
+preference.
 
-#### MenuBarView
+### BreakCountdown
 
-- Main popover interface
-- Shows timer state and controls
-- Displays quick stats
-- Access to settings and stats views
+One instance per break, shared by the overlay on every screen. It carries the
+seconds left and whether the break has been served. Two views counting
+separately would drift.
 
-#### BreakOverlayView
+### TimeFormat
 
-- Full-screen overlay during breaks
-- Circular progress indicator
-- Break instructions
-- Early dismissal option
+One function, `compact(_:)`, producing `M:SS`. Every countdown in the app goes
+through it — the status button, the overlay ring, the timer strip, the menu-bar
+tooltip. Before 3.0.0 there were three formats and one of them printed raw
+seconds.
 
-#### SettingsView
+## Managers
 
-- Comprehensive settings interface
-- Real-time preview of changes
-- Preset configurations
-- Reset to defaults
+| File                        | Does                                                                |
+| --------------------------- | ------------------------------------------------------------------- |
+| `BreakTimerManager`         | The loop above. Owns `TimerState` and the one-second tick           |
+| `ScreenBlurManager`         | Builds and tears down one overlay window per display                |
+| `ScreenBlurManager+Windows` | Window level, screen-change rebuilds, focus hand-back               |
+| `BreakOverlayWindow`        | The borderless `NSWindow` and a hosting view that takes first mouse |
+| `BreakInputTap`             | The `CGEvent` tap that holds the keyboard during a break            |
+| `BreakInputPolicy`          | The rules the tap runs on, kept separate so they are testable       |
+| `AccessibilityPermission`   | Watches the grant the tap and ⌃⌥B both need                         |
+| `IdleDetector`              | IOKit idle time, polled; pauses and resumes the timer               |
+| `StatusBarController`       | The status item and its `NSMenu`                                    |
+| `SoundManager`              | Four system sounds                                                  |
+| `LaunchAtLoginManager`      | `SMAppService` registration                                         |
 
-#### OnboardingView
+### BreakInputTap and BreakInputPolicy
 
-- 4-page welcome flow
-- Educational content
-- Permission requests
-- Only shown on first launch
+The riskiest code in the app, and the reason the policy is a separate file with
+its own tests.
 
-#### StatsView
+A full-screen overlay stops the mouse. It does not stop ⌘Tab, ⌘Q, ⌘H, or any
+global hotkey another app has registered. The tap consumes all of that. A live
+process holding an active tap that no longer consumes correctly leaves the
+machine with no keyboard, and recovery is a power cycle.
 
-- Daily/weekly/monthly statistics
-- Charts and graphs (macOS 13+)
-- Insights and recommendations
-- History management
+`BreakInputPolicy.decision(keyCode:flags:)` reads only the event in hand. It
+never asks which app is frontmost or what the break is doing — that would be a
+race, in a callback that runs on every keystroke.
 
-## Data Flow
+Three independent ways out, each working without the other two:
 
-### Timer Flow
+1. **⌘⌥⎋** (Force Quit) always passes. It opens behind the overlay, so it is a
+   way out only once the overlay is gone.
+2. **⌃⌥⌘⎋**, the panic chord, tears the tap down inside the callback, on the
+   callback's own thread, before the break is told anything.
+3. A **watchdog** on its own queue tears the tap down at break duration, plus a
+   dismissal allowance if the break will wait, plus slack. It is armed once when
+   the break starts, reads no break state, and must never be re-armable.
 
-```
-User clicks Start
-       │
-       ▼
-BreakTimerManager.startTimer()
-       │
-       ▼
-State: idle → working
-       │
-       ▼
-Timer ticks every second
-       │
-       ▼
-secondsRemaining decreases
-       │
-       ▼
-Views auto-update (@Published)
-       │
-       ▼
-When secondsRemaining == 30
-       │
-       ▼
-State: working → preBreak
-       │
-       ▼
-NotificationManager sends warning
-       │
-       ▼
-When secondsRemaining == 0
-       │
-       ▼
-State: preBreak → onBreak
-       │
-       ▼
-ScreenBlurManager shows overlay
-       │
-       ▼
-After break duration
-       │
-       ▼
-State: onBreak → working
-       │
-       ▼
-Cycle repeats
-```
+Bare **⎋** ends the break from the tap rather than from the overlay's own
+monitor. The monitor only sees keys macOS has routed to EyeBreak, and under
+cooperative activation (macOS 14+) a self-activation from a timer can be
+refused. The tap sees ⎋ whichever app has focus.
 
-### Idle Detection Flow
+### StatusBarController
 
-```
-IdleDetector polls every 5 seconds
-       │
-       ▼
-Check CGEventSource idle time
-       │
-       ├──▶ Idle > threshold
-       │    │
-       │    ▼
-       │    timerManager.pause()
-       │    │
-       │    ▼
-       │    Show notification
-       │
-       └──▶ Activity detected
-            │
-            ▼
-            timerManager.resume()
-            │
-            ▼
-            Show notification
-```
+The menu bar has always been an AppKit `NSMenu`. There is no `MenuBarExtra` and
+no `NSPopover`; the SwiftUI popover that used to be in the tree was never
+reachable and was deleted in 3.0.0.
 
-## State Management
+Four commands and two separators: Open Settings…, then one Start-or-Stop item
+retitled by `menuNeedsUpdate`, Take Break Now, and Quit. One item covers both timer
+directions because `start()` guards on `.idle` and `stop()` always returns
+there, so the state names the only move available.
 
-### @StateObject vs @ObservedObject
+**A status-item menu's key equivalents never dispatch.** They are labels. The
+chord that works is the `NSEvent` monitor pair in `EyeBreakApp.swift` — a global
+monitor for other apps, a local one to stop the chord reaching the rest of
+EyeBreak.
 
-- **@StateObject**: Used when creating the manager (owns the lifecycle)
+## Views
 
-  ```swift
-  @StateObject private var timerManager = BreakTimerManager()
-  ```
+`SettingsWindowHost` wraps `SettingsView` and builds it only while the window is
+on screen. SwiftUI instantiates the `Window` scene at launch and keeps it alive
+after it is closed; `SettingsView` observes a manager that publishes once a
+second, so the whole tree was being laid out and rendered every second into a
+window nobody could see. That was about 24 percentage points of idle CPU.
 
-- **@ObservedObject**: Used when receiving from environment
-  ```swift
-  @ObservedObject var timerManager: BreakTimerManager
-  ```
+`SettingsView` is a one-row timer strip (`TimerStatusBanner`) over a single
+scrolling `Form(.grouped)`. Two sections: `Timer` — three sliders and four
+toggles — and an untitled tail with the permission row, Reset to Defaults, and
+the version. There is no sidebar and there are no tabs.
 
-### @AppStorage for Persistence
+`BreakOverlayView` draws the ground and the frame; `BreakOverlayContent` holds
+the two content arms — the running break and the completion state.
+`BreakOverlayTimerDisplay` is the ring.
 
-Settings are persisted using `@AppStorage`:
+The overlay uses **system colours and no hex constant anywhere**. The ground is
+`Color(nsColor: .windowBackgroundColor)` at 85% over a clear window — a flat
+veil, not a blur. `NSVisualEffectView` renders flat under Reduce Transparency,
+which is on on the machine this app runs on, so the blur it used to draw had
+never blurred anything. `.secondary` is not used: over a veiled desktop it is
+the first thing to fail.
 
-```swift
-@AppStorage("workInterval") var workInterval: Int = 20
-@AppStorage("breakDuration") var breakDuration: Int = 20
-```
+## Settings and persistence
 
-### UserDefaults for Complex Data
+`@AppStorage` throughout, in `com.eyebreak.app`. Note that `@AppStorage` writes
+a key when the setting is **set**, not when it is read, so a default that was
+never changed leaves nothing on disk.
 
-Statistics and history use `UserDefaults`:
+Nothing else is persisted. 3.0.0 stopped writing the `breakStatistics` history,
+and the app records nothing about how many breaks you take or skip.
 
-```swift
-let encoder = JSONEncoder()
-let data = try encoder.encode(breakHistory)
-UserDefaults.standard.set(data, forKey: "breakHistory")
-```
+`scripts/prune-prefs.sh` clears the 38 keys 3.0.0 orphaned.
 
 ## Permissions
 
-### Screen Recording
+**Accessibility** is the only grant. `BreakInputTap` needs it to create the
+`CGEvent` tap, and the ⌃⌥B global monitor needs it too.
 
-Required for screen blur overlay.
+EyeBreak is signed with a local certificate, so its designated requirement is
+pinned to the build's `cdhash`. Every build produces a different hash, so macOS
+treats each install as a different program and drops the grant.
+`AccessibilityPermission` watches for that and the Settings window shows a
+warning row with a button to the right pane.
 
-**Request**:
+The app requests **no other permission**. It does not link `UserNotifications`
+and never asks for Screen Recording — the overlay is a plain window, and drawing
+one needs no capture grant.
 
-```swift
-CGRequestScreenRecordingPermission()
-```
+## Tests
 
-**Check**:
+Four test files, all unit tests on logic that can run without a screen:
 
-```swift
-CGPreflightScreenCaptureAccess()
-```
+| File                    | Covers                                        |
+| ----------------------- | --------------------------------------------- |
+| `BreakInputPolicyTests` | Every branch of the tap's decision table      |
+| `TimerStateTests`       | `isActive`, `hasBreakOnScreen`, `displayText` |
+| `BreakCountdownTests`   | Ticking, the served phase, boundaries         |
+| `SettingsHelperTests`   | Clamping and the derived minutes properties   |
 
-**Fallback**: Use notification-only mode if denied
+The test target compiles its own subset of app sources. Adding a file to the app
+target is half the job — check both `Sources` phases in `project.pbxproj`.
 
-### Notifications
-
-Required for break reminders.
-
-**Request**:
-
-```swift
-UNUserNotificationCenter.current()
-    .requestAuthorization(options: [.alert, .sound])
-```
-
-**Graceful Degradation**: App works without, but less effective
-
-## Threading Model
-
-### Main Thread
-
-- All UI updates
-- Timer callbacks
-- State changes
-
-### Background Threads
-
-- None (app is lightweight enough for main thread)
-- Future: Could move statistics calculations to background
-
-## Performance Considerations
-
-### Timer Optimization
-
-- Uses `Timer.publish()` from Combine (efficient)
-- Cancels timer when app is idle
-- No unnecessary updates
-
-### Memory Management
-
-- Weak references where appropriate
-- No retain cycles
-- Proper cleanup in `deinit`
-
-### Window Management
-
-- Break overlay windows created on-demand
-- Released immediately after break
-- One window per display (multi-monitor support)
-
-## Testing Strategy
-
-### Manual Testing
-
-- Core functionality tests in `TESTING.md`
-- Permission scenarios
-- Edge cases (sleep, multiple displays, etc.)
-
-### Future: Unit Tests
-
-- Test timer logic in isolation
-- Test state transitions
-- Mock managers for view testing
-
-### Future: UI Tests
-
-- Test user flows
-- Test accessibility
-- Automated smoke tests
-
-## Future Enhancements
-
-### Planned Architecture Improvements
-
-1. **Dependency Injection**: Use a proper DI container
-2. **Repository Pattern**: Abstract data persistence
-3. **Coordinator Pattern**: Improve navigation
-4. **Unit Tests**: Add comprehensive test coverage
-5. **Analytics**: Optional, privacy-respecting usage metrics
-
-### Scalability Considerations
-
-- App is designed to be lightweight and simple
-- Architecture supports adding new break styles
-- Easy to add new reminder types
-- Extensible settings system
-
----
-
-For implementation details, see the source code in `/EyeBreak/`.
+Everything else is tested by hand. See [TESTING.md](TESTING.md), which also
+records what a script can and cannot drive on this machine.

@@ -1,284 +1,193 @@
-# EyeBreak - Feature Checklist & Testing Guide
+# Testing EyeBreak
 
-## ✅ Core Features Implementation Status
+Four unit-test files cover the logic that runs without a screen. Everything else
+is checked by hand against a running app. This is that walkthrough.
 
-### Menu Bar Integration
+Run it before a release, and run the sections a change touches before merging
+that change.
 
-- [x] Menu bar icon with SF Symbol
-- [x] Popover with controls
-- [x] Start/Stop timer toggle
-- [x] Current session status display
-- [x] "Take Break Now" button
-- [x] Quick settings access
-- [x] Real-time timer countdown
-- [x] Visual status indicator
-- [x] Today's progress stats
+## Unit tests
 
-### Timer and Reminder System
+```bash
+xcodebuild test \
+  -project EyeBreak.xcodeproj \
+  -scheme EyeBreak \
+  -destination 'platform=macOS' \
+  CODE_SIGN_IDENTITY="" \
+  CODE_SIGNING_REQUIRED=NO \
+  CODE_SIGNING_ALLOWED=NO \
+  DEVELOPMENT_TEAM=""
+```
 
-- [x] Precise countdown using Timer
-- [x] Work interval tracking
-- [x] Pre-break warning notification (30s default)
-- [x] Full-screen blur overlay during breaks
-- [x] Motivational break messages
-- [x] Progress circle countdown
-- [x] Early break exit (ESC or Skip Break button)
-- [x] Break waits for dismissal once it is served (ESC or Back to Work)
-- [x] Auto-resume after break
-- [x] Success notification after break
+The four signing flags are required. Without them this machine fails with
+`No signing certificate "Mac Development" found`, because the project pins
+`DEVELOPMENT_TEAM = SM4A6Z8B5H` and no matching identity exists here.
 
-### Idle Detection
+## Before you start
 
-- [x] IOKit-based idle time detection
-- [x] Automatic pause when idle (5min default)
-- [x] Auto-resume on activity
-- [x] Configurable idle threshold
-- [x] Idle status notifications
-- [x] Sleep/wake cycle handling
+**A scratchpad build shares preferences with `/Applications`.** Both read
+`com.eyebreak.app`. Changing a setting to reach a state changes it for the
+installed app too, so note what you changed and put it back.
 
-### Customization Settings
+**A scratchpad build can never hold the Accessibility grant.** macOS pins the
+grant to the code-signing hash, and a throwaway build has a new one. So a test
+build gets no keyboard hold and no working ⌃⌥B. To see the granted-permission UI,
+build a throwaway with `AXIsProcessTrusted()` forced true. To test the real
+behaviour, install with `./scripts/dev-install.sh` and re-grant Accessibility.
 
-- [x] Work interval slider (10-60 minutes)
-- [x] Break duration slider (10-60 seconds)
-- [x] Pre-break warning adjustment
-- [x] Break style selection (Blur/Notification/Exercise)
-- [x] Sound toggle
-- [x] Pomodoro mode (25/5)
-- [x] Session type presets
-- [x] Settings persistence via UserDefaults
-- [x] Reset to defaults option
+**Quit the installed app first** if you are running a second copy. Two status
+items and two timers is not a useful test.
 
-### Onboarding
+## What a script can and cannot drive
 
-- [x] Welcome screen on first launch
-- [x] 20-20-20 rule explanation
-- [x] Feature overview
-- [x] Permission requests (Notifications/Screen Recording)
-- [x] Multi-page onboarding flow
-- [x] Skip option
-- [x] Beautiful, informative design
+Worth reading before you spend a session rediscovering it.
 
-### Statistics
+**Works:**
 
-- [x] Daily break tracking
-- [x] Breaks completed counter
-- [x] Breaks skipped counter
-- [x] Total break time tracking
-- [x] Historical data (30 days)
-- [x] Progress charts (macOS 13+)
-- [x] Daily goal progress bar
-- [x] Streak calculation
-- [x] Insights generation
-- [x] Stats reset option
+- `screencapture -R` for a region, and full-screen captures.
+- `osascript` against System Events to read window titles, click buttons, and
+  drive the Settings form.
+- `defaults write com.eyebreak.app <key> <value>` to reach a state faster —
+  within the clamps, see below.
+- Opening the status-item menu and clicking its items.
 
-### Additional Polish
+**Does not work:**
 
-- [x] Multiple display support
-- [x] Screen Recording permission handling
-- [x] Notification permission handling
-- [x] VoiceOver accessibility hints
-- [x] Reduced motion support
-- [x] Sound effects (system sounds)
-- [x] Error handling for permissions
-- [x] Graceful degradation (notification-only mode)
-- [x] App doesn't show in Dock (menu bar only)
-- [x] Survives sleep/wake cycle
+- **Giving the app keyboard focus.** Five routes were tried — `activate`,
+  `set frontmost`, `NSApp.activate` from a menu item, and synthetic clicks on
+  both the title bar and the window body. All of them leave the app not
+  frontmost while the window still reads as focused. macOS 14+ cooperative
+  activation refuses an accessory app's request, and a synthetic click carries
+  no activation.
+- **Therefore neither ⌃⌥B monitor is script-reachable.** The local monitor needs
+  focus; the global one needs a grant a scratchpad signature cannot hold. **Press
+  the chords by hand.**
+- **Getting under the setting clamps.** Work interval clamps on read to a floor
+  of 15 minutes, so no `defaults write` can make a work interval shorter than
+  that. Use **Take Break Now** to reach `.breaking` immediately — it covers every
+  break-phase check. Only `tick()`'s work arm needs a real 15-minute wait.
 
-## 🧪 Testing Checklist
+**A locked screen looks exactly like a bug.** With the screen locked,
+`screencapture -R` fails and System Events reports zero windows — which reads as
+`openSettings()` being broken. Check the screen is awake before believing a
+window is gone.
 
-### Basic Functionality
+## 1. The status-item menu
 
-- [ ] App launches and appears in menu bar
-- [ ] Menu bar icon changes during breaks
-- [ ] Popover opens on click
-- [ ] Timer starts correctly
-- [ ] Countdown displays properly
-- [ ] Timer stops correctly
-- [ ] "Take Break Now" triggers immediate break
+- [ ] The eye icon is in the menu bar at launch, and the timer is already
+      running — the countdown appears next to it
+- [ ] Clicking it opens four commands split by two separators: Open Settings…,
+      Stop Timer, Take Break Now ⌃⌥B, Quit EyeBreak
+- [ ] Stop Timer stops it. Reopening the menu now reads **Start Timer**
+- [ ] Start Timer starts it. Reopening reads Stop Timer again
+- [ ] The countdown in the menu bar reads `M:SS` and does not shift width as it
+      ticks
+- [ ] Hovering the icon shows a tooltip in the same `M:SS` format — not raw
+      seconds
+- [ ] The icon changes during a break
+- [ ] Open Settings… brings the window forward, whether it was closed or just
+      behind something
 
-### Break Flow
+## 2. The Settings window
 
-- [ ] Pre-break notification appears at 30s
-- [ ] Screen blurs at break time
-- [ ] Break overlay shows on all displays
-- [ ] Countdown timer visible during break
-- [ ] Break ends automatically after duration
-- [ ] ESC key exits break early
-- [ ] Skip Break button exits break early
-- [ ] A click elsewhere on the overlay does not exit the break
-- [ ] Success notification appears after break
+One scrolling form. No sidebar, no tabs.
 
-### Waiting for Dismissal
+- [ ] A one-row timer strip sits above the form: a dot, the state, and buttons
+- [ ] The strip reads Start when idle, and Stop plus Break Now when running
+- [ ] The strip's countdown reads `M:SS`
+- [ ] The **Timer** section holds Work Interval, Break Duration, "Wait for me to
+      dismiss the break", Launch at Login, Enable Sound Effects, and Idle
+      Detection
+- [ ] Each slider is one row: icon, title, track, value
+- [ ] Work Interval runs 15 to 45 in steps of 5 — it cannot reach 10 or 50
+- [ ] Break Duration runs 1 to 10 **minutes** in whole-minute steps
+- [ ] Turning Idle Detection off hides the Idle Threshold slider; turning it on
+      brings it back
+- [ ] Idle Threshold runs 1 to 15 minutes
+- [ ] The section footer names ⎋ and ⌃⌥⌘⎋ when Accessibility is granted, and
+      names the missing permission when it is not
+- [ ] The tail section shows the permission row, Reset to Defaults in red, and
+      `Version <n>` with a GitHub link
+- [ ] Reset to Defaults writes 25 minutes, 5 minutes, dismissal on, sound on,
+      idle on, 5-minute threshold — and **leaves Launch at Login alone**
+- [ ] Every setting survives quitting and relaunching the app
+- [ ] With the grant missing, the permission row shows a warning and an **Open
+      Accessibility Settings** button that opens the right pane
+- [ ] With the grant held, the row reads "Keyboard Shortcuts — Enabled"
+
+## 3. The break overlay
+
+Reach it with **Take Break Now**.
+
+- [ ] Every display is covered, at once
+- [ ] Each shows the same countdown, counting the same number
+- [ ] The overlay is a flat veil over the desktop — system colours, an eye-slash
+      icon, "Time for a Break", one instruction line, a ring, and one
+      "Skip Break" button
+- [ ] The ring's countdown reads `M:SS` — a five-minute break opens on `5:00`,
+      not `287` or `300`
+- [ ] It reads correctly in both light and dark appearance
+- [ ] A click on the overlay away from the button does **not** end the break
+- [ ] The button ends the break, in one click
+- [ ] ⎋ ends the break early
+- [ ] Attaching or detaching a display mid-break covers or uncovers it without
+      restarting the countdown
+- [ ] When the break ends, focus goes back to the app you were using
+
+### The keyboard hold
+
+Needs a real install with the Accessibility grant. Press these by hand.
+
+- [ ] During a break, ⌘Tab, ⌘Q and ⌘H do nothing
+- [ ] ⌃⌥B does nothing during a break
+- [ ] ⎋ ends the break even when another app was frontmost
+- [ ] ⌃⌥⌘⎋ releases the keyboard and ends the break
+- [ ] ⌘⌥⎋ opens Force Quit, behind the overlay
+- [ ] Left alone, the keyboard comes back on its own after the break length,
+      plus two minutes if it is waiting for dismissal, plus ten seconds
+
+### Waiting for dismissal
 
 With **Wait for me to dismiss the break** on, which is the default.
 
 - [ ] The overlay stays up when the countdown reaches zero, on every display
 - [ ] It shows a checkmark, "Break Complete", and one "Back to Work" button
-- [ ] The break is counted once, at zero — the stats do not move again on dismissal
-- [ ] ESC dismisses it
-- [ ] The "Back to Work" button dismisses it
-- [ ] The panic chord (⌃⌥⌘⎋) dismisses it
+- [ ] The countdown is gone — nothing is counting
+- [ ] ⎋, the button, and ⌃⌥⌘⎋ each dismiss it
 - [ ] The next work interval is a full one, however long the wait was
-- [ ] Attaching or detaching a display during the wait keeps the completion state
+- [ ] The menu bar drops the countdown
 - [ ] Sleeping the Mac and waking it leaves the overlay waiting
 - [ ] Locking the screen and unlocking it leaves the overlay waiting
-- [ ] Leaving the machine idle past the idle threshold leaves the overlay waiting
-- [ ] The keyboard comes back on its own after break length + 2 min + 10 s, and the overlay keeps waiting for a click
-- [ ] The menu bar drops the countdown and shows a checkmark
-- [ ] The popover offers one "Back to Work" button
-- [ ] Floating Window style: the panel waits, and only a click dismisses it
-- [ ] Turning the setting off restores the old behavior — the break ends itself
+- [ ] Going idle past the threshold leaves the overlay waiting
+- [ ] Attaching or detaching a display during the wait keeps the completion state
+- [ ] Turning the setting off makes breaks end themselves again
 
-### Settings
+## 4. Idle detection
 
-- [ ] Settings window opens
-- [ ] All sliders function correctly
-- [ ] Break style changes take effect
-- [ ] Sound toggle works
-- [ ] Session type presets work
-- [ ] Pomodoro mode activates correctly
-- [ ] Settings persist after app restart
-- [ ] Reset to defaults works
+- [ ] With Idle Detection on, leaving the Mac past the threshold pauses the
+      timer
+- [ ] The status item reflects the pause
+- [ ] Activity resumes it, with the remaining time intact
+- [ ] Turning the toggle off stops it pausing at all
 
-### Idle Detection
+## 5. Edge cases
 
-- [ ] Timer pauses after idle threshold
-- [ ] Pause notification appears
-- [ ] Timer resumes on activity
-- [ ] Idle threshold is configurable
-- [ ] Toggle enables/disables idle detection
+- [ ] Launching the app starts the timer with no click
+- [ ] The app does not appear in the Dock or the ⌘Tab switcher
+- [ ] Sleeping and waking the Mac leaves a running timer running
+- [ ] Rapid Start / Stop from the menu does not leave the state stuck
+- [ ] Idle CPU stays near zero with the Settings window closed
+- [ ] The overlay costs a few percent of CPU during a break, not tens
+- [ ] `defaults read com.eyebreak.app` shows only keys the app still reads
+      (run `./scripts/prune-prefs.sh --dry-run` to check)
 
-### Statistics
+## Known limitations
 
-- [ ] Today's stats display correctly
-- [ ] Stats update after break
-- [ ] Charts render properly (macOS 13+)
-- [ ] Historical data persists
-- [ ] Insights are generated
-- [ ] Streak calculates correctly
-- [ ] Stats reset clears data
-
-### Onboarding
-
-- [ ] Shows on first launch only
-- [ ] Navigation works (back/continue)
-- [ ] Page indicators update
-- [ ] Permission requests function
-- [ ] Get Started completes onboarding
-- [ ] Doesn't show again after completion
-
-### Edge Cases
-
-- [ ] App handles multiple displays
-- [ ] Survives Mac sleep/wake
-- [ ] Works without Screen Recording permission
-- [ ] Works without Notification permission
-- [ ] Handles rapid start/stop
-- [ ] No memory leaks during long usage
-- [ ] Timer accurate over hours
-- [ ] Doesn't interfere with full-screen apps
-
-### Accessibility
-
-- [ ] VoiceOver announces break messages
-- [ ] All buttons have labels
-- [ ] Settings readable with larger text
-- [ ] Reduced motion respected
-- [ ] Keyboard navigation works
-- [ ] Color contrast sufficient
-
-### Performance
-
-- [ ] App size < 10MB (compiled)
-- [ ] Low CPU usage when idle
-- [ ] Minimal memory footprint
-- [ ] No lag during screen blur
-- [ ] Fast app launch time
-
-## 🐛 Known Limitations
-
-1. **Screen Recording Permission**: Required for blur effect on macOS 10.15+
-2. **Charts**: Require macOS 13.0+ (graceful fallback for older systems)
-3. **Multiple Spaces**: Overlay may not cover all spaces simultaneously
-4. **Full-Screen Apps**: May not blur over full-screen apps (macOS limitation)
-5. **Menu Bar Icons**: May be hidden if menu bar is full
-
-## 🔮 Future Enhancements (Not Implemented)
-
-- [ ] Launch at login (requires separate helper app)
-- [ ] Cloud sync for settings
-- [ ] Customizable break messages
-- [ ] Break exercise videos
-- [ ] Integration with calendar for smart scheduling
-- [ ] Focus mode integration
-- [ ] Multiple timer profiles
-- [ ] Export statistics to CSV
-- [ ] Menu bar icon customization
-- [ ] Custom sound effects
-- [ ] Break animations
-- [ ] Achievement badges
-- [ ] Social features (share streak)
-- [ ] Widget support
-
-## 📊 Test Results Template
-
-Use this template to document your testing:
-
-```
-Date: ___________
-macOS Version: ___________
-Xcode Version: ___________
-Test Device: ___________
-
-Feature | Status | Notes
---------|--------|------
-Menu Bar Integration | ✅ | Working perfectly
-Timer System | ✅ | Accurate countdown
-Screen Blur | ⚠️  | Permission needed
-Idle Detection | ✅ | Pauses at 5min
-Statistics | ✅ | All data tracked
-Settings | ✅ | Persist correctly
-Onboarding | ✅ | Shows once
-Notifications | ✅ | All appear
-
-Overall: ✅ Ready for use
-
-Issues Found:
-1. [Issue description]
-2. [Issue description]
-
-Performance Notes:
-- Memory: ___ MB
-- CPU: ___ %
-- App Size: ___ MB
-```
-
-## 🎯 Definition of Done
-
-For the app to be considered "production-ready":
-
-- ✅ All core features implemented
-- ✅ No critical bugs
-- ✅ Tested on macOS 14.0+
-- ✅ Permissions handled gracefully
-- ✅ Settings persist correctly
-- ✅ Accessible to VoiceOver users
-- ✅ Code documented
-- ✅ README complete
-- ✅ Build instructions clear
-- [ ] App icons designed (optional for menu bar app)
-- [ ] Tested on multiple Macs
-- [ ] Performance validated
-
-## 🌟 Production Readiness
-
-Current Status: **✅ PRODUCTION READY**
-
-The app includes all requested features and is ready for:
-
-- Personal use
-- Internal distribution
-- App Store submission (with proper icons and signing)
-- Open source release
-
-All core functionality works as specified. The app is lightweight, privacy-focused, and follows macOS design guidelines.
+1. **Accessibility resets on every install.** The signature changes, so macOS
+   treats each build as a new program. Re-grant after `dev-install.sh`.
+2. **Force Quit opens behind the overlay.** ⌘⌥⎋ is passed through, but the keys
+   that would drive the panel are consumed, so it is usable only once the break
+   has ended. ⌃⌥⌘⎋ and the watchdog are the outs that work.
+3. **Multiple Spaces.** The overlay may not cover every Space at once.
+4. **Full-screen apps.** The overlay may not cover a full-screen app on every
+   configuration — a macOS window-level limitation.

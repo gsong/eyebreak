@@ -14,9 +14,9 @@ keychain. Run it **once**, before the first `dev-install.sh`.
 ./scripts/create-cert.sh
 ```
 
-macOS ties Accessibility and Screen Recording grants to the code signature. An
-ad-hoc signature changes on every build, so every rebuild would ask again. A
-stable certificate keeps the grants.
+macOS ties the Accessibility grant to the code signature. An ad-hoc signature
+changes on every build, so every rebuild would ask again. A stable certificate
+keeps the grant.
 
 ## dev-install.sh
 

@@ -52,7 +52,14 @@
     "gsong",
     "swiftlint",
     "appcast",
-    "libexec"
+    "libexec",
+    "colour",
+    "colours",
+    "behaviour",
+    "prefs",
+    "screencapture",
+    "osascript",
+    "cdhash"
   ],
   "ignoreWords": [],
   "ignorePaths": [

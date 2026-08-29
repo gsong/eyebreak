@@ -10,10 +10,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+3.0.0 removes about 5,800 lines of Swift - roughly half the app - and adds no
+feature. What is left is one timer: work 25 minutes, break 5 minutes, hold the
+break on screen until it is dismissed. Six settings, one window, one keyboard
+shortcut.
+
+**Why this is a major version.** Not because anything new arrived. Because
+eleven features that existed in 2.5.0 do not exist now, the global shortcut
+moved, the Settings window lost its sidebar and its four tabs, and 38
+preference keys are orphaned. Nothing that survived changed its meaning. Almost
+nothing that was optional survived.
+
+**How the cuts were chosen.** `defaults read com.eyebreak.app` held seven keys.
+Every other setting sat at a compiled-in default that had never been moved, and
+for the features that default to off, that is proof of disuse. Two of the
+deletions turned out to be code the app could never reach at all - it had no
+call site in this fork or its parent.
+
 ### Changed
 
-- **Requires macOS 26** - The deployment target moves from 14.0 to 26.0. This
-  is a personal build on a Tahoe machine, so nothing older needs to run it
+#### Timing
+
 - **Break Duration is set in minutes, and reaches 10** - The slider used to stop
   at 120 seconds while the Pomodoro preset had written 300, so one drag silently
   cut a 5-minute break to 2 minutes. It now runs 1 to 10 minutes in whole-minute
@@ -21,20 +38,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Work Interval runs 15 to 45 minutes in 5-minute stops** - Narrowed from 10 to
   60. Both timing settings now clamp to their range when read, so the timer and
   Settings can never disagree
+- **Idle Threshold is a slider over 1 to 15 minutes** - It was a picker offering
+  3, 5, 10 and 15, which nobody chose; it was inherited. A slider cannot refuse
+  an out-of-range stored value the way a picker could, so this setting now
+  clamps when read, like the two sliders above it
 - **Reset to Defaults writes 25 minutes and 5 minutes** - Was 20 minutes and 20
   seconds. It also restores "Wait for me to dismiss the break", and deliberately
   leaves Launch at Login alone, because that key registers a macOS login item
   rather than storing a preference
-- **"Wait for me to dismiss the break" now sits under Timing** - It lived in the
+
+#### The break overlay
+
+- **It is drawn in system colours** - An icon, a title, one instruction line, a
+  plain ring, and a standard button, over a flat veil. It reads correctly in
+  both light and dark appearance; the old white-on-gradient text washed out in
+  light
+- **It counts down in `M:SS`** - It showed raw seconds, so a five-minute break
+  opened on `287` while the menu bar showed `4:47` for the same instant
+
+#### Settings
+
+- **It is one scrolling form** - The 160pt sidebar and the General / Breaks /
+  About tabs are gone. What is left is a Timer section holding three sliders and
+  four toggles, then an untitled tail with the permission row, Reset to
+  Defaults, and the version. A grouped form charges about 80pt at every section
+  seam, so four headers cost more than any of them was worth
+- **"Wait for me to dismiss the break" now sits under Timer** - It lived in the
   Break Style section, which no longer exists. The keyboard note that sat under
   it moved with it
-- **The break overlay is drawn in system colours** - An icon, a title, one
-  instruction line, a plain ring, and a standard button, over a flat veil. It
-  reads correctly in both light and dark appearance; the old white-on-gradient
-  text washed out in light
-- **The break overlay counts down in `M:SS`** - It showed raw seconds, so a
-  five-minute break opened on `287` while the menu bar showed `4:47` for the same
-  instant. Both surfaces now share one formatter
+- **The timer strip above the form is one row** - A dot, the state, and Stop and
+  Break Now - or Start when the timer is idle. The three-ring status indicator,
+  the gradient progress bar, and the five per-state button sets go
+- **Each slider is one row** - Icon, title, track, value on a single line. The
+  card each one used to sit in spent about 200pt restating, in a 24pt gradient
+  numeral, the number the track already showed
+
+#### The menu bar
+
 - **Take Break Now is `⌃⌥B`** - Rebound from `⌘⇧B`. It is the only global
   shortcut left, so it no longer has to share a modifier pattern with four
   others
@@ -42,41 +82,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   is available, because `start()` only works from idle and `stop()` only returns
   there. The menu bar menu is now Open Settings, that one item, Take Break Now,
   and Quit
-- **Settings is one scrolling form** - The 160pt sidebar and the General /
-  Breaks / About tabs are gone. What is left is a Timer section holding three
-  sliders and four toggles, then an untitled tail with the permission row, Reset
-  to Defaults, and the version. A grouped form charges about 80pt at every
-  section seam, so four headers cost more than any of them was worth
-- **The timer strip above the form is one row** - A dot, the state, and Stop and
-  Break Now - or Start when the timer is idle. The three-ring status indicator,
-  the gradient progress bar, and the five per-state button sets go
-- **Each slider is one row** - Icon, title, track, value on a single line. The
-  card each one used to sit in spent about 200pt restating, in a 24pt gradient
-  numeral, the number the track already showed
-- **Idle Threshold is a slider over 1 to 15 minutes** - It was a picker offering
-  3, 5, 10 and 15, which nobody chose; it was inherited. A slider cannot refuse
-  an out-of-range stored value the way a picker could, so this setting now
-  clamps when read, like the two sliders above it
+
+#### Everywhere
+
 - **Every countdown in the app reads `M:SS`** - The timer strip said "Break
   time! 287s remaining" and the menu bar tooltip said "287 seconds remaining"
   while the status button showed `4:47` for the same instant. All three now
   share the one formatter
+- **Requires macOS 26** - The deployment target moves from 14.0 to 26.0. This
+  is a personal build on a Tahoe machine, so nothing older needs to run it
 
 ### Removed
 
-- **The Session Type picker** - 20-20-20, Pomodoro, and Custom were three ways to
-  write two numbers the sliders already set, and picking one silently overwrote
-  both. The work interval and break duration are now plain settings
-
-- **The onboarding flow** - Four view files totalling 650 lines that nothing had
-  constructed since before this fork. The welcome, 20-20-20 rule, features, and
-  permissions pages are gone, along with the `hasLaunchedBefore` setting and
-  `completeOnboarding()` that tracked a flow no one could reach
-
-- **The SwiftUI menu-bar popover** - Three view files totalling 504 lines that
-  nothing had constructed: the app has no `MenuBarExtra` and no `NSPopover`, so
-  the status bar has always been an AppKit `NSMenu`. The stat badges, the hover
-  effect, and the popover's button wrapper go with them
+#### Features
 
 - **Water reminders** - The hourly drink-water overlay, its pop-up variant, the
   custom icon and message, and the settings section behind them. Five files,
@@ -85,6 +103,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Ambient reminders** - The floating blink-and-stretch pop-up, its interval and
   duration settings, the custom emoji and message, and the two SF Symbol pickers
   both reminders shared. Four files, 943 lines. It was explicitly switched off
+
+- **Statistics** - The Statistics tab, the week and month chart, the insight
+  cards and streak count, and the Daily Break Goal stepper. Five files, 848
+  lines. The tab was never opened. The timer also stops writing the
+  `breakStatistics` history it kept behind that tab, so nothing records how many
+  breaks you take or skip
 
 - **Smart Schedule** - Work hours, active days, and the "Outside Work Hours"
   alert that offered to take a break anyway. Seven guard sites across the timer
@@ -95,20 +119,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   surfaces, plus the four-colour picker, the four quick presets, and the theme
   section in Settings. Six files, 1,104 lines. All three surfaces were on
   Default, and two of the three no longer exist
-
-- **The break overlay's blur** - `NSVisualEffectView` renders flat under Reduce
-  Transparency, which is on here, so the blur has never blurred anything on this
-  machine. A flat veil now says plainly what the screen was already doing
-
-- **The eight orbiting dots and the second instruction line** - The dots animated
-  once a second for the length of every break, and the animation, not the blur,
-  was where the overlay's CPU went
-
-- **Statistics** - The Statistics tab, the week and month chart, the insight
-  cards and streak count, and the Daily Break Goal stepper. Five files, 848
-  lines. The tab was never opened. The timer also stops writing the
-  `breakStatistics` history it kept behind that tab, so nothing records how many
-  breaks you take or skip
 
 - **The Floating Window and Eye Exercise break styles** - Both are gone, and with
   them the Break Style picker, the Preview Break Style button, and the Exercise
@@ -132,23 +142,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   last half minute of every work interval. The timer now runs work, break,
   dismissal, work
 
+- **The Session Type picker** - 20-20-20, Pomodoro, and Custom were three ways to
+  write two numbers the sliders already set, and picking one silently overwrote
+  both. The work interval and break duration are now plain settings
+
 - **The Auto-Start Timer toggle** - Behaviour is unchanged: the timer still
   starts on launch, now unconditionally. The switch was a way to open the app
   with the clock stopped, which is the app doing nothing
 
-- **Four of the five global shortcuts** - Start `⌘⇧S`, Stop `⌘⇧X`, and Open
-  Settings `⌘⇧O` are gone, and Take Break Now is rebound. There is one chord,
-  and Settings opens by clicking the menu bar icon. The Start, Break Now, and
-  Stop buttons in Settings lose their key equivalents too, so no `⌘⇧` chord
-  drives the timer from anywhere
-
-- **The app's Start / Take Break / Stop menu commands** - The three items
-  EyeBreak added to the standard app menu, which only appeared while the
-  Settings window had focus and duplicated the menu bar menu
-
-- **A dead second Settings window** - `openSettings()` built a whole `NSWindow`
-  for the case where the scan for the existing window failed. The SwiftUI
-  `Window` scene is in the window list from launch, so that case never happened
+#### Interface
 
 - **The About tab** - The app icon, the version badge, the 20-20-20 description,
   the Key Features card and the GitHub and Report Issue buttons. 239 lines. The
@@ -163,8 +165,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Ambient Reminder and Water Reminder - were deleted earlier in this line of
   work. 223 lines, plus the `CountdownRow` it was built from
 
+- **The break overlay's blur** - `NSVisualEffectView` renders flat under Reduce
+  Transparency, which is on here, so the blur has never blurred anything on this
+  machine. A flat veil now says plainly what the screen was already doing
+
+- **The eight orbiting dots and the second instruction line** - The dots animated
+  once a second for the length of every break, and the animation, not the blur,
+  was where the overlay's CPU went
+
+- **Four of the five global shortcuts** - Start `⌘⇧S`, Stop `⌘⇧X`, and Open
+  Settings `⌘⇧O` are gone, and Take Break Now is rebound. There is one chord,
+  and Settings opens by clicking the menu bar icon. The Start, Break Now, and
+  Stop buttons in Settings lose their key equivalents too, so no `⌘⇧` chord
+  drives the timer from anywhere
+
+- **The app's Start / Take Break / Stop menu commands** - The three items
+  EyeBreak added to the standard app menu, which only appeared while the
+  Settings window had focus and duplicated the menu bar menu
+
+#### Code nothing could reach
+
+- **The onboarding flow** - Four view files totalling 650 lines that nothing had
+  constructed since before this fork. The welcome, 20-20-20 rule, features, and
+  permissions pages are gone, along with the `hasLaunchedBefore` setting and
+  `completeOnboarding()` that tracked a flow no one could reach
+
+- **The SwiftUI menu-bar popover** - Three view files totalling 504 lines that
+  nothing had constructed: the app has no `MenuBarExtra` and no `NSPopover`, so
+  the status bar has always been an AppKit `NSMenu`. The stat badges, the hover
+  effect, and the popover's button wrapper go with them
+
+- **A dead second Settings window** - `openSettings()` built a whole `NSWindow`
+  for the case where the scan for the existing window failed. The SwiftUI
+  `Window` scene is in the window list from launch, so that case never happened
+
 - **Two unused settings components** - The feature row the Key Features card was
   built from, and a section card that no view had ever called
+
+#### Stored settings and documentation
 
 - **38 orphaned preference keys** - The cuts above left 32 settings in
   `com.eyebreak.app` with no code that reads them, and the Sparkle removal
@@ -172,6 +210,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   divider make 38. Run `scripts/prune-prefs.sh` once after installing 3.0.0 to
   clear them. Nothing in the app reads them, so leaving them costs only a
   `defaults read` that no longer describes the app
+
+- **`docs/WATER_REMINDER_FEATURE.md` and `docs/DEVELOPMENT.md`** - The first
+  documented a feature deleted here. The second gave App Store submission and
+  notarization steps for an app that ships to nobody, over a file tree of
+  deleted files. `README.md`, `docs/ARCHITECTURE.md` and `docs/TESTING.md` are
+  rewritten against the app that is actually here
 
 ## [2.5.0] - 2026-08-27
 
@@ -379,7 +423,7 @@ This release introduces intelligent screen lock detection that automatically pau
 
 This release introduces automatic startup functionality and a comprehensive hydration reminder system to promote convenience and holistic health during computer work.
 
-**[Water Reminder Guide](docs/WATER_REMINDER_FEATURE.md)**
+**Water Reminder Guide** (`docs/WATER_REMINDER_FEATURE.md`, removed in 3.0.0)
 
 ### Added
 
