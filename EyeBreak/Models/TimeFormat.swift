@@ -15,8 +15,9 @@ enum TimeFormat {
     /// `M:SS` — minutes, a colon, two digits of seconds. The colon carries the
     /// unit, so no caller needs a "seconds" caption.
     ///
-    /// The widest value the app can pass is a ten-minute break, so the minutes
-    /// field is one digit for every value below `10:00`.
+    /// The minutes field is as wide as it needs to be: a break reads `5:00`, a
+    /// 45-minute work interval reads `45:00`. There is no hours field, so a value
+    /// past an hour keeps counting minutes rather than rolling over.
     static func compact(_ seconds: Int) -> String {
         "\(seconds / 60):\(String(format: "%02d", seconds % 60))"
     }

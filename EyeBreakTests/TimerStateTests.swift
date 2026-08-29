@@ -41,8 +41,10 @@ final class TimerStateTests: XCTestCase {
 
     // MARK: - Time formatting
     //
-    // displayText is what the menu bar shows every second, so the exact shape of
-    // the string matters more than most strings in the app.
+    // displayText is the settings window's timer strip, refreshed every second,
+    // so the exact shape of the string matters more than most strings in the app.
+    // Every arm formats through TimeFormat.compact — one definition of what a
+    // countdown looks like, shared with the status button and the break overlay.
 
     func testWorkingPadsSecondsToTwoDigits() {
         XCTAssertEqual(TimerState.working(remainingSeconds: 90).displayText,
@@ -65,9 +67,13 @@ final class TimerStateTests: XCTestCase {
                        "Next break in 90:00")
     }
 
-    func testBreakingUsesBareSeconds() {
+    func testBreakingFormatsLikeEveryOtherCountdown() {
+        // It used to read "20s". A five-minute break then opened on "300s"
+        // while the status button showed 5:00 for the same instant.
         XCTAssertEqual(TimerState.breaking(remainingSeconds: 20).displayText,
-                       "Break time! 20s remaining")
+                       "Break time! 0:20 remaining")
+        XCTAssertEqual(TimerState.breaking(remainingSeconds: 300).displayText,
+                       "Break time! 5:00 remaining")
     }
 
     func testPausedFormatsLikeWorkingAndHidesWasWorking() {

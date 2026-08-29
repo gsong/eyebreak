@@ -107,7 +107,7 @@ class StatusBarController: NSObject, ObservableObject {
         case .working(let seconds):
             return "Working - Break in \(TimeFormat.compact(seconds))"
         case .breaking(let seconds):
-            return "On break - \(seconds) seconds remaining"
+            return "On break - \(TimeFormat.compact(seconds)) remaining"
         case .paused:
             return "Timer paused"
         case .awaitingDismissal:
