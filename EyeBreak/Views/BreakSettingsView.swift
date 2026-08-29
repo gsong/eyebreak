@@ -18,7 +18,6 @@ struct BreakSettingsView: View {
     var body: some View {
         Form {
             timingSection
-            colorThemesSection
         }
         .formStyle(.grouped)
         .padding()

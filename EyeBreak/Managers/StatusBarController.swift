@@ -92,20 +92,9 @@ class StatusBarController: NSObject, ObservableObject {
         case .idle, .awaitingDismissal:
             return ""
         case .working(let seconds), .preBreak(let seconds), .breaking(let seconds):
-            return formatTimeCompact(seconds)
+            return TimeFormat.compact(seconds)
         case .paused(_, let seconds):
-            return formatTimeCompact(seconds)
-        }
-    }
-
-    private func formatTimeCompact(_ seconds: Int) -> String {
-        let minutes = seconds / 60
-        let secs = seconds % 60
-
-        if minutes > 0 {
-            return "\(minutes):\(String(format: "%02d", secs))"
-        } else {
-            return "0:\(String(format: "%02d", secs))"
+            return TimeFormat.compact(seconds)
         }
     }
 
@@ -114,7 +103,7 @@ class StatusBarController: NSObject, ObservableObject {
         case .idle:
             return "EyeBreak - Click to start"
         case .working(let seconds):
-            return "Working - Break in \(formatTimeCompact(seconds))"
+            return "Working - Break in \(TimeFormat.compact(seconds))"
         case .preBreak(let seconds):
             return "Break starting in \(seconds) seconds"
         case .breaking(let seconds):

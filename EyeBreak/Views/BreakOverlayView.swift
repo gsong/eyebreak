@@ -21,13 +21,6 @@ struct BreakOverlayView: View {
     @State private var scale: CGFloat = 0.8
     @AccessibilityFocusState var isMessageFocused: Bool
 
-    // Get the color theme from settings
-    @ObservedObject private var settings = AppSettings.shared
-
-    var currentTheme: ColorTheme {
-        settings.breakOverlayTheme
-    }
-
     init(
         countdown: BreakCountdown,
         onSkip: @escaping () -> Void,
@@ -40,22 +33,8 @@ struct BreakOverlayView: View {
 
     var body: some View {
         ZStack {
-            // Theme-based background gradient
-            currentTheme.backgroundGradient()
-                .ignoresSafeArea()
+            veil
 
-            // Background blur
-            VisualEffectView()
-            .ignoresSafeArea()
-            .opacity(0.8)
-
-            // Dimming overlay with theme color
-            currentTheme.backgroundColor.opacity(currentTheme.backgroundOpacity * 0.3)
-                .ignoresSafeArea()
-
-            // Optimized: Remove floating particles to reduce CPU usage
-
-            // Content
             VStack(spacing: 40) {
                 Spacer()
 
@@ -92,17 +71,21 @@ struct BreakOverlayView: View {
         }
     }
 
-    // MARK: - Completion Content
+    // MARK: - Ground
 
-    // MARK: - Standard Break Content
-
-    // MARK: - Timer Display
-
-    // MARK: - Dismiss Hint
-
-    // MARK: - Skip Hint
-
-    // MARK: - Computed Properties
+    /// One flat colour over the clear window, heavy enough that nothing behind
+    /// it stays readable — a break the desktop can be worked through is not a
+    /// break — while a window shape still shows through.
+    ///
+    /// Not a blur. Reduce Transparency is on on this Mac, and under it macOS
+    /// renders every `NSVisualEffectView` material as an opaque flat colour at
+    /// every window level — so the blur this overlay used to draw never blurred
+    /// anything here. See issue #55.
+    private var veil: some View {
+        Color(nsColor: .windowBackgroundColor)
+            .opacity(0.85)
+            .ignoresSafeArea()
+    }
 
     // MARK: - Methods
 
@@ -121,10 +104,4 @@ struct BreakOverlayView: View {
             scale = 1
         }
     }
-
 }
-
-// MARK: - Visual Effect View (for blur)
-
-// MARK: - Optimized: Removed AnimatedGradientBackground and FloatingParticlesView to reduce CPU usage
-// These heavy animation effects were causing performance issues
