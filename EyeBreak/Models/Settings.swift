@@ -59,19 +59,6 @@ class AppSettings: ObservableObject {
     @AppStorage("launchAtLogin") var launchAtLogin: Bool = false
     @AppStorage("autoStartTimer") var autoStartTimer: Bool = true // Auto-start timer when app launches
 
-    // Color Theme Settings
-    @AppStorage("ambientReminderThemeType") var ambientReminderThemeTypeRaw: String = ColorThemeType.defaultTheme.rawValue
-    @AppStorage("ambientReminderCustomTheme") var ambientReminderCustomThemeData: Data?
-    @AppStorage("breakOverlayThemeType") var breakOverlayThemeTypeRaw: String = ColorThemeType.defaultTheme.rawValue
-    @AppStorage("breakOverlayCustomTheme") var breakOverlayCustomThemeData: Data?
-    @AppStorage("waterReminderThemeType") var waterReminderThemeTypeRaw: String = ColorThemeType.defaultTheme.rawValue
-    @AppStorage("waterReminderCustomTheme") var waterReminderCustomThemeData: Data?
-
-    // Cached random themes (regenerated each time a new overlay/reminder appears)
-    var cachedAmbientReminderRandomTheme: ColorTheme?
-    var cachedBreakOverlayRandomTheme: ColorTheme?
-    var cachedWaterReminderRandomTheme: ColorTheme?
-
     // MARK: - Computed Properties
 
     var workIntervalSeconds: Int {
@@ -88,10 +75,6 @@ class AppSettings: ObservableObject {
     var idleThresholdSeconds: Int {
         idleThresholdMinutes * 60
     }
-
-    // MARK: - Color Theme Computed Properties
-
-    // MARK: - Water Reminder Theme Properties
 
     // MARK: - Helper Methods
 

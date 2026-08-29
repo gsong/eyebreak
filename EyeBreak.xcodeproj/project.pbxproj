@@ -11,6 +11,7 @@
 		99EB42272EACA748003A7CDA /* LaunchAtLoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99EB42262EACA748003A7CDA /* LaunchAtLoginManager.swift */; };
 		A10000001 /* EyeBreakApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000 /* EyeBreakApp.swift */; };
 		A10000003 /* TimerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000002 /* TimerState.swift */; };
+		A10000029 /* TimeFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000028 /* TimeFormat.swift */; };
 		A10000005 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000004 /* Settings.swift */; };
 		A10000007 /* BreakTimerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000006 /* BreakTimerManager.swift */; };
 		A10000009 /* IdleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000008 /* IdleDetector.swift */; };
@@ -21,38 +22,30 @@
 		A10000011 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000010 /* SettingsView.swift */; };
 		A10000013 /* BreakOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000012 /* BreakOverlayView.swift */; };
 		A10000019 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A10000018 /* Assets.xcassets */; };
-		A10000023 /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000021 /* ColorTheme.swift */; };
 		A10000026 /* BreakCountdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000025 /* BreakCountdown.swift */; };
 		A10000101 /* BreakInputPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000100 /* BreakInputPolicy.swift */; };
 		A10000103 /* BreakInputTap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000102 /* BreakInputTap.swift */; };
-		A10000024 /* ColorThemeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000022 /* ColorThemeSettingsView.swift */; };
 		A20000001 /* TimerStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000 /* TimerStateTests.swift */; };
 		A20000005 /* SettingsHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000004 /* SettingsHelperTests.swift */; };
 		A20000010 /* TimerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000002 /* TimerState.swift */; };
 		A20000011 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000004 /* Settings.swift */; };
-		A20000012 /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000021 /* ColorTheme.swift */; };
 		A20000013 /* BreakCountdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000025 /* BreakCountdown.swift */; };
 		A20000014 /* BreakInputPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000100 /* BreakInputPolicy.swift */; };
 		A20000009 /* BreakInputPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000008 /* BreakInputPolicyTests.swift */; };
 		A20000007 /* BreakCountdownTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000006 /* BreakCountdownTests.swift */; };
 		1E25122978258ECDAE8473D5 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1111B6FE9F816B497AC899D3 /* SoundManager.swift */; };
 		DA35B4CFD82C9E4B6C2945BF /* BreakOverlayWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E20054B505D04DEEAFCBEC /* BreakOverlayWindow.swift */; };
-		97B6705C596B5A145BE6721B /* QuickPresetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F84F7A22B8F5C9DCB1394350 /* QuickPresetsView.swift */; };
-		3902FD331CE625006ECFC7F6 /* ColorPickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD44D6BCB136B4190685DD8 /* ColorPickerRow.swift */; };
 		0196CB232F68722039D49092 /* BreakOverlayContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6059A8030254621E6BB628 /* BreakOverlayContent.swift */; };
 		BFF4EF85B07AFD437A19D0BE /* BreakOverlayTimerDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0678129D3C7B6E5E6FA6BFFB /* BreakOverlayTimerDisplay.swift */; };
 		A64BDE6D23C5D49E4B4E9E99 /* BreakTimerManager+Break.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AF0789BBB5FF132491F1663 /* BreakTimerManager+Break.swift */; };
 		AC8973888A122AA324C370BD /* BreakTimerManager+SystemEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A021A3DBE04B36BDC62B232 /* BreakTimerManager+SystemEvents.swift */; };
 		DAB715AB0C6562FEEEA1DEE0 /* ScreenBlurManager+Windows.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE255DFE4A8592542004144D /* ScreenBlurManager+Windows.swift */; };
-		B981AD9518E7AE8A34B57FDC /* AppSettings+Themes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB9FFA02D21C54F0E5FCBF8 /* AppSettings+Themes.swift */; };
 		A05F6BD9DC4FB75F70E0FD94 /* SettingsComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710FE3BF2F1DB48C20C0E946 /* SettingsComponents.swift */; };
 		8E0A253269E5B76762339334 /* TimerStatusBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60FC3767A779F1C5F49A03E /* TimerStatusBanner.swift */; };
 		882D9B102CEB5B88B175AA11 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABD3A2BEA778F8771F41474C /* AboutView.swift */; };
 		E2BE58DAEC5DB7498BBF9035 /* UnifiedCountdownCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6CE3C421125866CF99B009 /* UnifiedCountdownCard.swift */; };
 		BCB43827D78D9BE740C85290 /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC152E86318450BAA3F983BA /* GeneralSettingsView.swift */; };
 		7F68689E694F07B089DB0CFF /* BreakSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FCF7449772244E6A52768F /* BreakSettingsView.swift */; };
-		F897CB0D1A95264C76D9D69C /* BreakSettingsAppearanceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304592FDB20DEA3FFEA217E5 /* BreakSettingsAppearanceSection.swift */; };
-		A46807A81CD8CD0D299CAB6E /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0D07EE568D00A62BEA5BB1 /* VisualEffectView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +53,7 @@
 		99EB42262EACA748003A7CDA /* LaunchAtLoginManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginManager.swift; sourceTree = "<group>"; };
 		A10000000 /* EyeBreakApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EyeBreakApp.swift; sourceTree = "<group>"; };
 		A10000002 /* TimerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerState.swift; sourceTree = "<group>"; };
+		A10000028 /* TimeFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeFormat.swift; sourceTree = "<group>"; };
 		A10000004 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		A10000006 /* BreakTimerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakTimerManager.swift; sourceTree = "<group>"; };
 		A10000008 /* IdleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdleDetector.swift; sourceTree = "<group>"; };
@@ -72,11 +66,9 @@
 		A10000018 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1000001A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1000001B /* EyeBreak.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EyeBreak.entitlements; sourceTree = "<group>"; };
-		A10000021 /* ColorTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTheme.swift; sourceTree = "<group>"; };
 		A10000025 /* BreakCountdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakCountdown.swift; sourceTree = "<group>"; };
 		A10000100 /* BreakInputPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakInputPolicy.swift; sourceTree = "<group>"; };
 		A10000102 /* BreakInputTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakInputTap.swift; sourceTree = "<group>"; };
-		A10000022 /* ColorThemeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorThemeSettingsView.swift; sourceTree = "<group>"; };
 		A1FFFFFF1 /* EyeBreak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EyeBreak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A20000000 /* TimerStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerStateTests.swift; sourceTree = "<group>"; };
 		A20000004 /* SettingsHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelperTests.swift; sourceTree = "<group>"; };
@@ -85,22 +77,17 @@
 		A2FFFFFF1 /* EyeBreakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EyeBreakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1111B6FE9F816B497AC899D3 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
 		31E20054B505D04DEEAFCBEC /* BreakOverlayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayWindow.swift; sourceTree = "<group>"; };
-		F84F7A22B8F5C9DCB1394350 /* QuickPresetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickPresetsView.swift; sourceTree = "<group>"; };
-		2FD44D6BCB136B4190685DD8 /* ColorPickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerRow.swift; sourceTree = "<group>"; };
 		6E6059A8030254621E6BB628 /* BreakOverlayContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayContent.swift; sourceTree = "<group>"; };
 		0678129D3C7B6E5E6FA6BFFB /* BreakOverlayTimerDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayTimerDisplay.swift; sourceTree = "<group>"; };
 		6AF0789BBB5FF132491F1663 /* BreakTimerManager+Break.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BreakTimerManager+Break.swift"; sourceTree = "<group>"; };
 		2A021A3DBE04B36BDC62B232 /* BreakTimerManager+SystemEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BreakTimerManager+SystemEvents.swift"; sourceTree = "<group>"; };
 		AE255DFE4A8592542004144D /* ScreenBlurManager+Windows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScreenBlurManager+Windows.swift"; sourceTree = "<group>"; };
-		9EB9FFA02D21C54F0E5FCBF8 /* AppSettings+Themes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppSettings+Themes.swift"; sourceTree = "<group>"; };
 		710FE3BF2F1DB48C20C0E946 /* SettingsComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsComponents.swift; sourceTree = "<group>"; };
 		B60FC3767A779F1C5F49A03E /* TimerStatusBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerStatusBanner.swift; sourceTree = "<group>"; };
 		ABD3A2BEA778F8771F41474C /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		6B6CE3C421125866CF99B009 /* UnifiedCountdownCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnifiedCountdownCard.swift; sourceTree = "<group>"; };
 		AC152E86318450BAA3F983BA /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
 		94FCF7449772244E6A52768F /* BreakSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakSettingsView.swift; sourceTree = "<group>"; };
-		304592FDB20DEA3FFEA217E5 /* BreakSettingsAppearanceSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakSettingsAppearanceSection.swift; sourceTree = "<group>"; };
-		2C0D07EE568D00A62BEA5BB1 /* VisualEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,10 +104,9 @@
 		A10000020 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				9EB9FFA02D21C54F0E5FCBF8 /* AppSettings+Themes.swift */,
 				A10000002 /* TimerState.swift */,
+				A10000028 /* TimeFormat.swift */,
 				A10000004 /* Settings.swift */,
-				A10000021 /* ColorTheme.swift */,
 				A10000025 /* BreakCountdown.swift */,
 			);
 			path = Models;
@@ -150,8 +136,6 @@
 		A10000040 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				2C0D07EE568D00A62BEA5BB1 /* VisualEffectView.swift */,
-				304592FDB20DEA3FFEA217E5 /* BreakSettingsAppearanceSection.swift */,
 				94FCF7449772244E6A52768F /* BreakSettingsView.swift */,
 				AC152E86318450BAA3F983BA /* GeneralSettingsView.swift */,
 				6B6CE3C421125866CF99B009 /* UnifiedCountdownCard.swift */,
@@ -160,12 +144,9 @@
 				710FE3BF2F1DB48C20C0E946 /* SettingsComponents.swift */,
 				0678129D3C7B6E5E6FA6BFFB /* BreakOverlayTimerDisplay.swift */,
 				6E6059A8030254621E6BB628 /* BreakOverlayContent.swift */,
-				2FD44D6BCB136B4190685DD8 /* ColorPickerRow.swift */,
-				F84F7A22B8F5C9DCB1394350 /* QuickPresetsView.swift */,
 				A10000010 /* SettingsView.swift */,
 				A100000B0 /* SettingsWindowHost.swift */,
 				A10000012 /* BreakOverlayView.swift */,
-				A10000022 /* ColorThemeSettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -309,28 +290,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A46807A81CD8CD0D299CAB6E /* VisualEffectView.swift in Sources */,
-				F897CB0D1A95264C76D9D69C /* BreakSettingsAppearanceSection.swift in Sources */,
 				7F68689E694F07B089DB0CFF /* BreakSettingsView.swift in Sources */,
 				BCB43827D78D9BE740C85290 /* GeneralSettingsView.swift in Sources */,
 				E2BE58DAEC5DB7498BBF9035 /* UnifiedCountdownCard.swift in Sources */,
 				882D9B102CEB5B88B175AA11 /* AboutView.swift in Sources */,
 				8E0A253269E5B76762339334 /* TimerStatusBanner.swift in Sources */,
 				A05F6BD9DC4FB75F70E0FD94 /* SettingsComponents.swift in Sources */,
-				B981AD9518E7AE8A34B57FDC /* AppSettings+Themes.swift in Sources */,
 				DAB715AB0C6562FEEEA1DEE0 /* ScreenBlurManager+Windows.swift in Sources */,
 				AC8973888A122AA324C370BD /* BreakTimerManager+SystemEvents.swift in Sources */,
 				A64BDE6D23C5D49E4B4E9E99 /* BreakTimerManager+Break.swift in Sources */,
 				BFF4EF85B07AFD437A19D0BE /* BreakOverlayTimerDisplay.swift in Sources */,
 				0196CB232F68722039D49092 /* BreakOverlayContent.swift in Sources */,
-				3902FD331CE625006ECFC7F6 /* ColorPickerRow.swift in Sources */,
-				97B6705C596B5A145BE6721B /* QuickPresetsView.swift in Sources */,
 				DA35B4CFD82C9E4B6C2945BF /* BreakOverlayWindow.swift in Sources */,
 				1E25122978258ECDAE8473D5 /* SoundManager.swift in Sources */,
 				A10000001 /* EyeBreakApp.swift in Sources */,
 				A10000003 /* TimerState.swift in Sources */,
+				A10000029 /* TimeFormat.swift in Sources */,
 				A10000005 /* Settings.swift in Sources */,
-				A10000023 /* ColorTheme.swift in Sources */,
 				A10000026 /* BreakCountdown.swift in Sources */,
 				99BD678B2E92516200D6FF8C /* StatusBarController.swift in Sources */,
 				99EB42272EACA748003A7CDA /* LaunchAtLoginManager.swift in Sources */,
@@ -344,7 +320,6 @@
 				A100000B1 /* SettingsWindowHost.swift in Sources */,
 				A10000011 /* SettingsView.swift in Sources */,
 				A10000013 /* BreakOverlayView.swift in Sources */,
-				A10000024 /* ColorThemeSettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,7 +331,6 @@
 				A20000005 /* SettingsHelperTests.swift in Sources */,
 				A20000010 /* TimerState.swift in Sources */,
 				A20000011 /* Settings.swift in Sources */,
-				A20000012 /* ColorTheme.swift in Sources */,
 				A20000013 /* BreakCountdown.swift in Sources */,
 				A20000007 /* BreakCountdownTests.swift in Sources */,
 				A20000014 /* BreakInputPolicy.swift in Sources */,

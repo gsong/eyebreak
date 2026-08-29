@@ -99,9 +99,6 @@ class ScreenBlurManager {
         awaitsDismissal: Bool,
         onSkip: @escaping () -> Void
     ) {
-        // Generate a new random color theme for this break overlay (if using random color theme)
-        AppSettings.shared.regenerateBreakOverlayRandomTheme()
-
         // Clear anything a previous break left behind, the keyboard tap included.
         // Starting a break inside a break must not leave the last one's watchdog
         // holding the only teardown.

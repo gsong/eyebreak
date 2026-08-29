@@ -28,6 +28,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **"Wait for me to dismiss the break" now sits under Timing** - It lived in the
   Break Style section, which no longer exists. The keyboard note that sat under
   it moved with it
+- **The break overlay is drawn in system colours** - An icon, a title, one
+  instruction line, a plain ring, and a standard button, over a flat veil. It
+  reads correctly in both light and dark appearance; the old white-on-gradient
+  text washed out in light
+- **The break overlay counts down in `M:SS`** - It showed raw seconds, so a
+  five-minute break opened on `287` while the menu bar showed `4:47` for the same
+  instant. Both surfaces now share one formatter
 
 ### Removed
 
@@ -57,6 +64,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   alert that offered to take a break anyway. Seven guard sites across the timer
   and the two reminder managers go with it, along with `forceBreakNow()`, which
   existed only to answer that alert. Breaks now run whenever the timer says so
+
+- **Colour themes** - Default, Random Color, and Custom, across all three
+  surfaces, plus the four-colour picker, the four quick presets, and the theme
+  section in Settings. Six files, 1,104 lines. All three surfaces were on
+  Default, and two of the three no longer exist
+
+- **The break overlay's blur** - `NSVisualEffectView` renders flat under Reduce
+  Transparency, which is on here, so the blur has never blurred anything on this
+  machine. A flat veil now says plainly what the screen was already doing
+
+- **The eight orbiting dots and the second instruction line** - The dots animated
+  once a second for the length of every break, and the animation, not the blur,
+  was where the overlay's CPU went
 
 - **Statistics** - The Statistics tab, the week and month chart, the insight
   cards and streak count, and the Daily Break Goal stepper. Five files, 848
