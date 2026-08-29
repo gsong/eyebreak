@@ -166,6 +166,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Two unused settings components** - The feature row the Key Features card was
   built from, and a section card that no view had ever called
 
+- **38 orphaned preference keys** - The cuts above left 32 settings in
+  `com.eyebreak.app` with no code that reads them, and the Sparkle removal
+  before them left four more; the Settings window's saved frame and sidebar
+  divider make 38. Run `scripts/prune-prefs.sh` once after installing 3.0.0 to
+  clear them. Nothing in the app reads them, so leaving them costs only a
+  `defaults read` that no longer describes the app
+
 ## [2.5.0] - 2026-08-27
 
 ### Added
