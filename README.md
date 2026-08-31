@@ -127,11 +127,15 @@ EyeBreak/
 └── Resources/           # Assets.xcassets
 EyeBreakTests/           # Unit tests: timer state, countdown, input policy, settings
 scripts/                 # create-cert, dev-install, prune-prefs, update_app_icon
-docs/                    # Architecture, testing, agent conventions
+docs/                    # Architecture, testing, decision records, agent conventions
+CONTEXT.md               # Glossary of the domain terms the timer behavior uses
 ```
 
 MVVM with SwiftUI and Combine. See
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+Decisions about timer behavior live in [docs/adr/](docs/adr/). Several record
+behavior that is decided but not yet built; each says so at the top.
 
 ## Troubleshooting
 
