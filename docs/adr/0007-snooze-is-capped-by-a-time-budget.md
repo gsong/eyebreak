@@ -12,7 +12,10 @@ one.
 - **Budget** is half the work interval. The number of snoozes is therefore
   `floor((work / 2) / snoozeLength)` — 4 at the 25/3 default.
 - **No count ceiling.** Half the interval is the protection. Four deferrals of
-  3 minutes is the same screen time as two of 6.
+  3 minutes is the same screen time as two of 6. That count holds when every
+  deferral runs to its end; a deferral an absence cuts short spends only what
+  elapsed, so more of them fit — see
+  [ADR-0008](0008-any-absence-discharges-a-deferral.md).
 - **No partial snooze.** Once the next full snooze would exceed the budget,
   Snooze is shown **disabled** and the leftover budget is forfeited. Shown rather
   than hidden, so the cap is legible.
