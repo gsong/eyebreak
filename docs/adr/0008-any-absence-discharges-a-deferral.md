@@ -15,11 +15,27 @@ interval, so the status text reads "Break in N:NN".
 The deferred break runs its **full** length when it arrives. A snooze defers a
 break; it does not shorten one.
 
+This holds even when an absence had already shortened the break being deferred.
+A five minute break interrupted at minute three rebuilds with two minutes left
+([ADR-0003](0003-an-absence-during-a-break-counts-toward-it.md)); snoozing it
+defers a **full** five minute break, not the two that were owed. The absence
+credit does not carry across a snooze. More rest is the direction to err in, and
+one break length is one number rather than per-break state. Decided in
+[#92](https://github.com/gsong/eyebreak/issues/92).
+
 **Take Break Now** during a deferral serves the deferred break at once — the same
 break pulled forward, with Skip only on its overlay. That makes Take Break Now
 the decisive way out of a deferral rather than a re-entry into it. **Stop**
 forgets the deferral with everything else, and **Skip** starts a full fresh work
 interval. The budget resets whenever the break ends, however it ends.
+
+**A discharged deferral spends only what elapsed.** A three minute snooze cut
+short by an absence at minute one spends one minute of the budget, not three.
+The budget bounds the screen time a user gains by deferring, and only the
+elapsed minute was gained. This makes the budget measured rather than counted:
+the app records when each deferral started, in keeping with the rule that every
+duration is worked out from a recorded start. Decided in
+[#92](https://github.com/gsong/eyebreak/issues/92).
 
 ## Why this carves out of the absence rule
 
