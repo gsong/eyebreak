@@ -26,6 +26,14 @@ The stretch after a break's countdown reaches zero, while the overlay stays up
 waiting for the user to acknowledge it.
 _Avoid_: overtime, hold, grace period
 
+**Natural end**:
+The moment a break that went up runs out of its length. It arrives whether the
+user is at the screen or away, and it is the only moment the app makes a sound.
+A break the user skips or snoozes has no natural end, and neither has a break an
+absence fulfils before it ever went up. See
+[ADR-0009](docs/adr/0009-one-sound-at-a-breaks-natural-end.md).
+_Avoid_: break end, expiry, completion, timeout
+
 ### Being away
 
 **Absence**:
