@@ -21,6 +21,14 @@ whether the dismissal is still asked for.
 There is **no separate timeout on the wait**. Absence is the bound. A second
 timeout would be a second arithmetic rule doing the same job.
 
+## The floor is now shared with ADR-0003
+
+[ADR-0003](0003-an-absence-during-a-break-counts-toward-it.md) carries the same
+floor, added in [#28](https://github.com/gsong/eyebreak/issues/28) for the same
+reason. So a running break and a dismissal wait differ in **what the threshold
+decides**, not in how the absence is measured. Both measure from the moment the
+overlay took the keyboard.
+
 ## Why the floor is not optional
 
 Without it, [ADR-0001](0001-absence-is-time-since-the-last-input-event.md)'s
