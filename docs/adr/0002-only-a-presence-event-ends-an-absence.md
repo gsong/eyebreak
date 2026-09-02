@@ -2,19 +2,27 @@
 
 Status: accepted, not yet implemented. Decided in
 [#95](https://github.com/gsong/eyebreak/issues/95), verified by
-[#96](https://github.com/gsong/eyebreak/issues/96).
+[#96](https://github.com/gsong/eyebreak/issues/96), amended by
+[#30](https://github.com/gsong/eyebreak/issues/30).
 
 **A wake is a power event. Only a presence event ends an absence.** Return is
-the **later** of two moments: when the last outstanding cause clears, and the
-first presence event after the absence began. A presence event is an unlock
+the **later** of two moments: when the last outstanding cause clears, and a
+presence event after the last cause arrival. A presence event is an unlock
 (`com.apple.screenIsUnlocked`), a screensaver stop
 (`com.apple.screensaver.didstop`), or a real user input event the app observes.
+The set is also checked against real system state on every presence event, so a
+dropped clear signal cannot strand the absence — see
+[ADR-0010](0010-a-presence-event-checks-the-cause-set-against-reality.md).
 
 **An absence is one span.** `Away` is one state. The set of outstanding causes
 lives inside it as bookkeeping, not as its definition, so the set may empty and
 refill without ending the absence. A dark wake followed by a re-sleep is one
-absence, not two. The idle counter is read **once**, at the first cause arrival
-of the absence; later arrivals within the same absence read nothing.
+absence, not two. The idle counter's reading rides **every** cause arrival, and
+only the arrival that starts an absence uses it — an arrival inside a live
+absence discards what it carries. Reading it and discarding it is deliberate:
+the caller stays free of any judgment about whether an absence is live, and
+[#30](https://github.com/gsong/eyebreak/issues/30) settled that the reading is a
+cheap local query.
 
 ## Why a wake cannot be trusted
 
@@ -45,13 +53,14 @@ event ([ADR-0001](0001-absence-is-time-since-the-last-input-event.md)), so no
 input exists between the start and Return. A wake keystroke lands after the
 start and is banked; the cause clears milliseconds later; Return fires there.
 
-## Why the idle counter is read once
+## Why only one reading is used
 
 `CGEventSourceSecondsSinceLastEventType` **does not survive a wake.** #96
 measured 17 counter resets across 9h15m with nobody at the machine, and every
 one landed 4–76 s after a system wake — none anywhere else. The counter reads
-small after a wake whether or not anyone touched anything. Reading it at a later
-cause arrival, or at Return, would import a post-wake value every time. #93's
+small after a wake whether or not anyone touched anything. Using a later cause
+arrival's reading, or reading at Return, would import a post-wake value every
+time. #93's
 unexplained resets have the same cause: one read at 19:43 gave 0.342 s in an
 empty room, and a re-read would have moved that absence's start forward by
 twenty minutes.
@@ -65,6 +74,25 @@ neither is a subset of the other and neither is the narrower. The narrowing come
 from the `NSEvent` global monitor or from nowhere. #96 measured that monitor
 firing **zero** times in 9h15m unattended, with its own positive control proving
 it was observing, so it is a sound presence signal and the counter is not.
+
+## Why a banked presence event expires
+
+Presence can arrive while causes are still outstanding, and "later of" banks it
+until the set empties. That bank does **not** survive a fresh cause arrival: a
+`causeArrived` inside a live absence clears it, so Return needs a presence event
+after the last arrival.
+
+Without that, one stray event ends the absence hours later. Bank something at
+02:59, let the set empty and refill across a dark wake, and the next clear fires
+Return in an empty room — the bug this ADR exists to close, reached by a
+different route. #96 measured the `NSEvent` monitor firing zero times in 9h15m
+unattended, so the stray event is unmeasured rather than impossible, and the
+monitor now runs during exactly the stretch when the room is empty.
+
+The case "later of" was built for is untouched. A wake keystroke banks presence,
+the cause **clears** milliseconds later, and Return fires there. No arrival
+intervenes, so nothing expires. Added in
+[#30](https://github.com/gsong/eyebreak/issues/30).
 
 ## Considered and rejected
 

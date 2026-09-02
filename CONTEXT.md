@@ -54,7 +54,7 @@ _Avoid_: activity, wake, resume signal
 
 **Return**:
 The end of an absence — the later of the moment the last outstanding cause
-clears and the first presence event after the absence began.
+clears and the first presence event after the last cause arrival.
 _Avoid_: wake, resume, come back
 
 **Absence rule**:
