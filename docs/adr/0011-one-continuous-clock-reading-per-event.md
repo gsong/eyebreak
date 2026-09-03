@@ -54,6 +54,16 @@ keyboard watchdog in `BreakInputTap`, which is a safety backstop and stays
 independent of the machine. `BreakCountdown` is deleted, and `IdleDetector`
 becomes a one-shot reader with no timer of its own.
 
+**A reading is not a clock.** Two more `ContinuousClock` readings live outside
+the count above, and neither one drives the cycle. The presence monitor keeps the
+instant of its last report, so that it reports at most one presence event a
+second. The `showOverlay` effect carries a `remaining: Duration`, read once when
+the overlay goes up, so that the overlay and the keyboard watchdog are armed from
+one number — the overlay's own seconds still come from `project`. Neither reading
+reaches `reduce` or `project`, so neither can disagree with the manager's one
+reading per event, and neither counts down. Decided in
+[#104](https://github.com/gsong/eyebreak/issues/104).
+
 **The tick only has to be roughly punctual.** Derived durations mean a coalesced
 or delayed tick loses no time; it only delays a redraw. The single exception is
 [ADR-0009](0009-one-sound-at-a-breaks-natural-end.md)'s freshness window, which
