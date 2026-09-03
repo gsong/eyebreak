@@ -17,6 +17,14 @@ user's act. See [ADR-0005](docs/adr/0005-no-user-facing-pause.md).
 The stretch of screen time between one break and the next.
 _Avoid_: work period, session, pomodoro, cycle
 
+**Break warning**:
+The last stretch of a work interval, and of a deferral, where a banner says the
+break is coming and offers Snooze. It is taken out of that stretch rather than
+added to it, so the break still arrives on time. A break the user raises has no
+warning. See
+[ADR-0012](docs/adr/0012-a-break-announces-itself-before-it-takes-the-keyboard.md).
+_Avoid_: pre-break, warning period, countdown, heads-up, alert
+
 **Break**:
 The stretch where the overlay covers every display and the eyes rest.
 _Avoid_: rest, break time, pause
@@ -81,7 +89,8 @@ _Avoid_: cancel, dismiss, close
 
 **Snooze**:
 The user defers _this_ break by a fixed length. Declared, and it remembers —
-the same break arrives later at its full length.
+the same break arrives later at its full length. It is offered on two surfaces:
+the break warning, before the break goes up, and the overlay once it has.
 _Avoid_: postpone, delay, remind me later
 
 **Deferral**:
@@ -91,5 +100,5 @@ _Avoid_: snoozed time, pending break, countdown
 
 **Snooze budget**:
 The total deferral one break may collect — half the work interval, fixed when
-the break goes up.
+the break is first offered.
 _Avoid_: snooze cap, snooze limit, quota
