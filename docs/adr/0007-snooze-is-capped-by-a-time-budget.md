@@ -2,11 +2,12 @@
 
 Status: accepted, not yet implemented. Settled while charting
 [#85](https://github.com/gsong/eyebreak/issues/85), extended by
-[#89](https://github.com/gsong/eyebreak/issues/89).
+[#89](https://github.com/gsong/eyebreak/issues/89), amended by
+[#108](https://github.com/gsong/eyebreak/issues/108).
 
-Snooze is an overlay action distinct from Skip: the overlay comes down, and the
-same break returns after the snooze length. Skip forfeits a break; Snooze defers
-one.
+Snooze is distinct from Skip: the break returns after the snooze length instead
+of being forfeited. It is offered twice — on the break warning before the break
+goes up, and on the overlay once it has, where taking it brings the overlay down.
 
 - **Length** is its own setting: default 3 minutes, range 1–5.
 - **Budget** is half the work interval. The number of snoozes is therefore
@@ -19,16 +20,27 @@ one.
 - **No partial snooze.** Once the next full snooze would exceed the budget,
   Snooze is shown **disabled** and the leftover budget is forfeited. Shown rather
   than hidden, so the cap is legible.
-- **Frozen at break time.** Budget and length are read once, when the break goes
-  up, and hold for that break's whole deferral. A work interval dropped from 45
-  to 15 mid-deferral cannot retroactively put the user over a budget they were
-  under a moment ago.
+- **Frozen when the break is first offered.** Budget and length are read once,
+  when the break warning goes up, and hold for that break's whole deferral. A
+  work interval dropped from 45 to 15 mid-deferral cannot retroactively put the
+  user over a budget they were under a moment ago. This used to say "frozen at
+  break time... read once, when the break goes up", which
+  [ADR-0012](0012-a-break-announces-itself-before-it-takes-the-keyboard.md) left
+  without a referent: a break deferred from its warning never puts an overlay up,
+  so that moment may never arrive. The break warning is the earliest moment
+  Snooze is offered, so it is where the budget freezes.
 - **Only on a timer-raised break.** A break started by Take Break Now offers
-  Skip only. You asked for it; deferring it a moment later is incoherent.
+  Skip only, and gets no break warning at all. You asked for it; deferring it a
+  moment later is incoherent.
 
-**The trigger is one key plus a button on the overlay, at the fixed length.**
-Keys are ignored until the overlay has been up about one second, because the
-overlay arrives mid-typing.
+**Two surfaces offer Snooze, both at the fixed length.** On the overlay it is one
+key plus a button, and keys are ignored until the overlay has been up about one
+second, because the overlay arrives mid-typing. On the break warning it is the
+`⌃⌥S` chord plus a button, and **no guard applies** — a chord cannot be typed by
+accident, and a click needs a pointer already on the button. This used to name
+the overlay alone; see
+[ADR-0012](0012-a-break-announces-itself-before-it-takes-the-keyboard.md). The
+break warning offers **no Skip**, because Skip is capped by nothing.
 
 ## One invariant, stated and not built
 
