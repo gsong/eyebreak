@@ -3,7 +3,8 @@
 Status: accepted, not yet implemented. Settled while charting
 [#85](https://github.com/gsong/eyebreak/issues/85), extended by
 [#89](https://github.com/gsong/eyebreak/issues/89), amended by
-[#108](https://github.com/gsong/eyebreak/issues/108).
+[#108](https://github.com/gsong/eyebreak/issues/108) and
+[#32](https://github.com/gsong/eyebreak/issues/32).
 
 Snooze is distinct from Skip: the break returns after the snooze length instead
 of being forfeited. It is offered twice — on the break warning before the break
@@ -17,6 +18,15 @@ goes up, and on the overlay once it has, where taking it brings the overlay down
   deferral runs to its end; a deferral an absence cuts short spends only what
   elapsed, so more of them fit — see
   [ADR-0008](0008-any-absence-discharges-a-deferral.md).
+- **Measured against the deferral in flight.** The budget test counts what the
+  running deferral has spent so far, not only the deferrals that have finished.
+  Leaving the running one out lets a fifth snooze through: at the 25/3 default,
+  four deferrals ended early by their own warning have spent 660 s, so the test
+  reads 660 + 180 against a 750 s budget and offers a fifth. Total screen time
+  gained is then 840 s against a 750 s budget, and the count is five rather than
+  the four this ADR states. Counting the deferral in flight gives four, and the
+  budget holds. Worked out in
+  [#32](https://github.com/gsong/eyebreak/issues/32).
 - **No partial snooze.** Once the next full snooze would exceed the budget,
   Snooze is shown **disabled** and the leftover budget is forfeited. Shown rather
   than hidden, so the cap is legible.

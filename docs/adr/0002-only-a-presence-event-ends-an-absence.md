@@ -3,7 +3,8 @@
 Status: accepted, not yet implemented. Decided in
 [#95](https://github.com/gsong/eyebreak/issues/95), verified by
 [#96](https://github.com/gsong/eyebreak/issues/96), amended by
-[#30](https://github.com/gsong/eyebreak/issues/30).
+[#30](https://github.com/gsong/eyebreak/issues/30) and
+[#32](https://github.com/gsong/eyebreak/issues/32).
 
 **A wake is a power event. Only a presence event ends an absence.** Return is
 the **later** of two moments: when the last outstanding cause clears, and a
@@ -23,6 +24,16 @@ absence discards what it carries. Reading it and discarding it is deliberate:
 the caller stays free of any judgment about whether an absence is live, and
 [#30](https://github.com/gsong/eyebreak/issues/30) settled that the reading is a
 cheap local query.
+
+**One user act also ends an absence: Take Break Now.** A menu act is a deliberate
+human reaching the app, which is stronger evidence than the mouse movement this
+ADR already trusts. It is not in the presence set because the global `NSEvent`
+monitor cannot see events aimed at EyeBreak's own menu — a limit of the signal,
+not a judgment about the act. The row matters because
+[ADR-0010](0010-a-presence-event-checks-the-cause-set-against-reality.md) accepts
+that a dropped unlock wedges an absence for good, and without this the user's only
+way out is Stop then Start. Stop already ends an absence, by forgetting
+everything. Added in [#32](https://github.com/gsong/eyebreak/issues/32).
 
 ## Why a wake cannot be trusted
 

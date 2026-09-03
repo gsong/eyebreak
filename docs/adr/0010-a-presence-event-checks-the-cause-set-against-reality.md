@@ -1,7 +1,8 @@
 # A presence event checks the cause set against reality
 
 Status: accepted, not yet implemented. Decided in
-[#30](https://github.com/gsong/eyebreak/issues/30).
+[#30](https://github.com/gsong/eyebreak/issues/30), wired in
+[#32](https://github.com/gsong/eyebreak/issues/32).
 
 Return waits for the cause set to empty
 ([ADR-0002](0002-only-a-presence-event-ends-an-absence.md)). The set empties only
@@ -19,6 +20,15 @@ causes and clears each one it finds false.
 The check is unconditional and reads no app state. It runs on all four causes
 whether or not the app thinks they are outstanding, because clearing a cause that
 is not outstanding does nothing.
+
+**The reading happens outside the machine.** A pure reducer cannot query the
+system, so the host does the four reads and reports each false cause as an
+ordinary cause-cleared event before it reports the presence event. The check
+needs no event of its own and no payload. Order does not matter, because Return
+is the later of two conditions and both event kinds test it: if the clears land
+first, Return fires on the presence event; if the presence event lands first, it
+banks and Return fires on the last clear. Decided in
+[#32](https://github.com/gsong/eyebreak/issues/32).
 
 ## Why bookkeeping alone is not enough
 

@@ -2,7 +2,8 @@
 
 Status: accepted, not yet implemented. Settled while charting
 [#85](https://github.com/gsong/eyebreak/issues/85), floored by
-[#28](https://github.com/gsong/eyebreak/issues/28).
+[#28](https://github.com/gsong/eyebreak/issues/28), floor restated by
+[#32](https://github.com/gsong/eyebreak/issues/32).
 
 Walking away mid-break is resting. The absence counts toward the break, and it is
 measured from `max(last input event, the moment the break went up)`:
@@ -32,6 +33,13 @@ break goes up, so a user who sits still through it has a last-input event that
 goes stale at exactly the rate the break runs. Without the floor,
 [ADR-0001](0001-absence-is-time-since-the-last-input-event.md)'s last-input rule
 reads back through the break itself.
+
+Stated so that one phrase covers both floors, it is **the moment the current
+stretch began** — here, when the overlay went up or was last rebuilt. It is
+**not** "the moment the overlay took the keyboard", which names the right instant
+for a running break and one a break length early for a dismissal wait. See "Which
+instant the floor names" in ADR-0004. Restated in
+[#32](https://github.com/gsong/eyebreak/issues/32).
 
 The failure is concrete. A display sleep at minute one of a five-minute break
 backdates to whenever the user last typed, which the keyboard hold guarantees is
