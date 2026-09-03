@@ -1,10 +1,16 @@
-# A dismissal wait survives a short absence, floored at the moment the break was served
+# A dismissal wait survives a short absence, floored at the moment the wait began
 
 Status: accepted, not yet implemented. Decided in
-[#94](https://github.com/gsong/eyebreak/issues/94).
+[#94](https://github.com/gsong/eyebreak/issues/94), floor restated by
+[#32](https://github.com/gsong/eyebreak/issues/32).
 
 An absence that begins while a served break waits to be dismissed is measured
-from `max(last input event, the moment the break was served)` to Return.
+from `max(last input event, the moment the wait began)` to Return. The wait
+begins at the break's natural end.
+
+This used to say "the moment the break was served", which reads two ways — the
+break going up, or the break being given in full. Only the second is the floor.
+See "Which instant the floor names" below.
 
 - **Absence at least as long as the break clears the wait.** On Return the
   overlay does not come back, and a fresh work interval starts.
@@ -26,8 +32,31 @@ timeout would be a second arithmetic rule doing the same job.
 [ADR-0003](0003-an-absence-during-a-break-counts-toward-it.md) carries the same
 floor, added in [#28](https://github.com/gsong/eyebreak/issues/28) for the same
 reason. So a running break and a dismissal wait differ in **what the threshold
-decides**, not in how the absence is measured. Both measure from the moment the
-overlay took the keyboard.
+decides**, not in how the absence is measured. Both measure from **the moment the
+current stretch began**.
+
+## Which instant the floor names
+
+This paragraph used to say both floors measure from "the moment the overlay took
+the keyboard". For a running break that is the same instant. For a dismissal wait
+it is a whole break length earlier, and it breaks the rule.
+
+Take the overlay's keyboard grab as the floor. The wait starts at the break's
+natural end, so every absence during a wait then measures at least a break
+length, the threshold is met every time, and the wait is always cleared. That is
+the failure this ADR exists to stop, in the ADR's own words below: "any cause
+arriving then measures at least a break length, and the threshold is met every
+time."
+
+The floor is the start of the wait. That is what the reason below already says —
+the break's own time is already spent and must not be counted twice. So the
+phrase that covers both floors is **the moment the current stretch began**: for a
+running break, when the overlay went up or was last rebuilt; for a dismissal
+wait, the natural end.
+
+In [#25](https://github.com/gsong/eyebreak/issues/25)'s reducer both read as one
+field, `ctx.enteredAt`. Found while writing the transition table in
+[#32](https://github.com/gsong/eyebreak/issues/32).
 
 ## Why the floor is not optional
 
