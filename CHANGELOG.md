@@ -24,6 +24,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- A stuck audio daemon no longer freezes a break. `NSSound.play` waits for the
+  output device to start, and with coreaudiod wedged it waited about 24 seconds
+  per sound on the main thread. The countdown stopped, ESC and Skip did nothing,
+  and with the overlay up and the keyboard held the Mac looked frozen. Sounds now
+  play on a queue of their own, and a sound asked for while another is still
+  playing is dropped rather than queued, so it cannot go off late once audio
+  recovers. A skip's `Tink` is lost to the `Purr` just before it. ADR-0009
+  removes it anyway.
 - `BreakInputTap` still described the app as ad-hoc signed and said macOS drops
   the Accessibility grant on every update. 3e280c2 corrected that claim in two
   other files and missed this one.
