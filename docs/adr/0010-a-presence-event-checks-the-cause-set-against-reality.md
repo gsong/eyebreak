@@ -10,12 +10,12 @@ when a clear signal arrives, and a clear signal can fail to arrive. So **every
 presence event is also a check**: the app reads real system state for all four
 causes and clears each one it finds false.
 
-| Cause | What clears it on a presence event |
-| --- | --- |
-| Display sleep | `CGDisplayIsAsleep` reads false |
-| System sleep | the app's run loop is running, so the system is awake |
-| Screen lock | nothing — only `com.apple.screenIsUnlocked` clears it |
-| Screensaver | the presence event itself |
+| Cause         | What clears it on a presence event                    |
+| ------------- | ----------------------------------------------------- |
+| Display sleep | `CGDisplayIsAsleep` reads false                       |
+| System sleep  | the app's run loop is running, so the system is awake |
+| Screen lock   | nothing — only `com.apple.screenIsUnlocked` clears it |
+| Screensaver   | the presence event itself                             |
 
 The check is unconditional and reads no app state. It runs on all four causes
 whether or not the app thinks they are outstanding, because clearing a cause that

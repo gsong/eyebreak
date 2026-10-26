@@ -32,10 +32,10 @@ today's counter one second.
 
 Measured on this Mac on 2026-08-30, seconds since boot:
 
-| | |
-| --- | --- |
-| Wall clock (`kern.boottime` to now) | 979,418 |
-| `ContinuousClock` | 979,422 |
+|                                                |         |
+| ---------------------------------------------- | ------- |
+| Wall clock (`kern.boottime` to now)            | 979,418 |
+| `ContinuousClock`                              | 979,422 |
 | `SuspendingClock` / `ProcessInfo.systemUptime` | 652,959 |
 
 That is 91 hours of sleep in 11 days of uptime that the suspending clock never

@@ -51,7 +51,7 @@ typing. Tinting that countdown for the last 15 seconds costs nothing and would
 change nothing, for the same reason.
 
 **A fading veil is the wrong medium.** Bringing the overlay up gradually is
-unmissable, but the user is trying to *read* the sentence they are finishing, and
+unmissable, but the user is trying to _read_ the sentence they are finishing, and
 a dimming screen makes that harder. The warning must be visible without covering
 the work.
 
@@ -74,7 +74,7 @@ its own.
 
 **Two effects**, `showWarning` and `hideWarning`, taking
 [#104](https://github.com/gsong/eyebreak/issues/104)'s list from five to seven.
-The banner's *contents* come from `Display`, its *existence* from effects —
+The banner's _contents_ come from `Display`, its _existence_ from effects —
 the same split #104 made for the overlay. Both `tick` rows that emit
 `showWarning` fire on all fifteen ticks and rely on #104's rule that every
 collaborator absorbs a repeat.
