@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.1] - 2026-10-26
+
 ### Removed
 
 - Dead code the 3.0.0 cut left behind: `CGEventIdleDetector`, an unused backup
@@ -919,7 +921,8 @@ None! Zero external dependencies. Pure Swift and native frameworks only.
 - **Icons**: SF Symbols
 - **License**: MIT (commercial use allowed)
 
-[Unreleased]: https://github.com/gsong/eyebreak/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/gsong/eyebreak/compare/v3.0.1...HEAD
+[3.0.1]: https://github.com/gsong/eyebreak/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/gsong/eyebreak/compare/v2.5.0...v3.0.0
 [2.5.0]: https://github.com/gsong/eyebreak/compare/v2.4.1...v2.5.0
 [2.3.0]: https://github.com/gsong/eyebreak/compare/v2.2.0...v2.3.0
