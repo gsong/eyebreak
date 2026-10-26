@@ -1,5 +1,8 @@
 # 👁️ EyeBreak
 
+[![CI](https://github.com/gsong/eyebreak/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/gsong/eyebreak/actions/workflows/ci.yml?query=branch%3Amain)
+[![Release](https://img.shields.io/github/v/release/gsong/eyebreak)](https://github.com/gsong/eyebreak/releases/latest)
+
 A macOS menu bar app that runs a 25/5 work-and-break timer. Every 25 minutes it
 covers every display with a break overlay and holds the break there until you
 dismiss it.
