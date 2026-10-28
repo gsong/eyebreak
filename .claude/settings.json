@@ -1,6 +1,7 @@
 {
   "enabledPlugins": {
-    "repo-maintenance@gsong-marketplace": true
+    "repo-maintenance@gsong-marketplace": true,
+    "swift-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "gsong-marketplace": {
